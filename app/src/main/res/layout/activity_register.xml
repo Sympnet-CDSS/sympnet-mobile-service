@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Bon retour !"
+            android:textColor="@color/gray_900"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginVertical="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Connexion"
+                android:textColor="@color/gray_400"
+                android:textSize="18sp"
+                android:paddingEnd="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Inscription"
+                android:textColor="@color/teal_700"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:paddingStart="20dp" />
+        </LinearLayout>
+
+        <!-- Étape 1 : Informations personnelles -->
+        <LinearLayout
+            android:id="@+id/step1_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Informations personnelles"
+                android:textColor="@color/gray_900"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp" />
+
+            <EditText
+                android:id="@+id/et_first_name"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:hint="Prénom"
+                android:background="@drawable/edittext_background"
+                android:padding="16dp"
+                android:layout_marginBottom="12dp" />
+
+            <EditText
+                android:id="@+id/et_last_name"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:hint="Nom"
+                android:background="@drawable/edittext_background"
+                android:padding="16dp"
+                android:layout_marginBottom="12dp" />
+
+            <EditText
+                android:id="@+id/et_email"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:hint="Email"
+                android:background="@drawable/edittext_background"
+                android:padding="16dp"
+                android:inputType="textEmailAddress"
+                android:layout_marginBottom="12dp" />
+
+            <EditText
+                android:id="@+id/et_phone"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:hint="Téléphone"
+                android:background="@drawable/edittext_background"
+                android:padding="16dp"
+                android:inputType="phone" />
+        </LinearLayout>
+
+        <!-- Étape 2 : Informations médicales -->
+        <LinearLayout
+            android:id="@+id/step2_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Informations médicales"
+                android:textColor="@color/gray_900"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="DATE DE NAISSANCE"
+                android:textColor="@color/gray_600"
+                android:textSize="12sp" />
+
+            <EditText
+                android:id="@+id/et_dob"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:hint="15/05/1998"
+                android:background="@drawable/edittext_background"
+                android:padding="16dp"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="GROUPE SANGUIN"
+                android:textColor="@color/gray_600"
+                android:textSize="12sp" />
+
+            <EditText
+                android:id="@+id/et_blood_type"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:hint="A+"
+                android:background="@drawable/edittext_background"
+                android:padding="16dp"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="VILLE"
+                android:textColor="@color/gray_600"
+                android:textSize="12sp" />
+
+            <EditText
+                android:id="@+id/et_city"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:hint="Tunis"
+                android:background="@drawable/edittext_background"
+                android:padding="16dp"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ALLERGIES CONNUES"
+                android:textColor="@color/gray_600"
+                android:textSize="12sp" />
+
+            <EditText
+                android:id="@+id/et_allergies"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:hint="Pénicilline, Aspirine..."
+                android:background="@drawable/edittext_background"
+                android:padding="16dp" />
+        </LinearLayout>
+
+        <!-- Étape 3 : Sécurité -->
+        <LinearLayout
+            android:id="@+id/step3_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🔒 Sécurité"
+                android:textColor="@color/gray_900"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="MOT DE PASSE"
+                android:textColor="@color/gray_600"
+                android:textSize="12sp" />
+
+            <EditText
+                android:id="@+id/et_password"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:hint="Min. 8 caractères"
+                android:background="@drawable/edittext_background"
+                android:padding="16dp"
+                android:inputType="textPassword"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="CONFIRMER LE MOT DE PASSE"
+                android:textColor="@color/gray_600"
+                android:textSize="12sp" />
+
+            <EditText
+                android:id="@+id/et_confirm_password"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:hint="*********"
+                android:background="@drawable/edittext_background"
+                android:padding="16dp"
+                android:inputType="textPassword"
+                android:layout_marginBottom="16dp" />
+
+            <CheckBox
+                android:id="@+id/cb_terms"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="J'accepte les conditions d'utilisation et la politique de confidentialité de SympNet."
+                android:textColor="@color/gray_600"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_register"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="@color/teal_500"
+            android:text="Étape suivante →"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_gravity="center"
+            android:text="Déjà inscrit ? Se connecter"
+            android:textColor="@color/teal_500"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+</ScrollView>
