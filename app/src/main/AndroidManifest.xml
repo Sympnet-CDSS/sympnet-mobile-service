@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/Theme.SympNetMobile"
         android:usesCleartextTraffic="true">
+
+        <!-- ✅ LA META DATA DOIT ETRE ICI -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCUPDh57AstBm2EU1H0Raf2g6wUWqwgTHY" />
 
         <activity
             android:name=".activities.SplashActivity"
@@ -23,6 +33,11 @@
         <activity android:name=".activities.RegisterActivity" />
         <activity android:name=".activities.ForgotPasswordActivity" />
         <activity android:name=".activities.MainActivity" />
+        <activity android:name=".activities.SettingsActivity" />
+        <activity android:name=".activities.EditProfileActivity" />
+        <activity android:name=".activities.PasswordManagerActivity" />
+        <activity android:name=".activities.NotificationSettingsActivity" />
+        <activity android:name=".home.ActivityHome"/>
 
     </application>
 
