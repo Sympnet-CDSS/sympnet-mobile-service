@@ -7,7 +7,6 @@
 
     <!-- ══════════════════════════════════════
          HEADER GRADIENT (bleu médical pro)
-         Remplace le header plat précédent
     ════════════════════════════════════════ -->
     <LinearLayout
         android:id="@+id/header"
@@ -346,13 +345,16 @@
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
+                <!-- ← android:id ajouté ici -->
                 <TextView
+                    android:id="@+id/tvVoirTout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Voir tout"
                     android:textColor="#2980B9"
                     android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:padding="4dp" />
             </LinearLayout>
 
             <!-- ── RECYCLERVIEW DOCTORS ── -->

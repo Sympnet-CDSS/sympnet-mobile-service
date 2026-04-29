@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.sympnet.app.R;
+import com.sympnet.app.activities.AllDoctorsActivity;
 import com.sympnet.app.activities.LoginActivity;
 import com.sympnet.app.activities.MainActivity;
 import com.sympnet.app.activities.NotificationDetailsActivity;
@@ -50,8 +51,8 @@ public class ActivityHome extends AppCompatActivity {
     private DoctorAdapter doctorAdapter;
     private List<Doctor> allDoctors = new ArrayList<>();
 
-    private ImageView btnNotifications, btnSettings, ivAvatar; // ← ivAvatar ajouté
-    private TextView tvPatientName, tvCurrentDate;
+    private ImageView btnNotifications, btnSettings, ivAvatar;
+    private TextView tvPatientName, tvCurrentDate, tvVoirTout; // ← tvVoirTout ajouté
     private EditText etSearch;
     private ImageView navHome, navChat, navProfile, navCalendar;
 
@@ -69,15 +70,15 @@ public class ActivityHome extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         initViews();
-        loadUserData(prefs);   // ← charge nom + photo
+        loadUserData(prefs);
         setupRecyclerView();
         setupBottomNav();
         setupSearch();
+        setupVoirTout();   // ← ajouté
         loadDoctors();
         updateNavIcons(navHome);
     }
 
-    // ── onResume : rafraîchit la photo si elle change dans EditProfile ────────
     @Override
     protected void onResume() {
         super.onResume();
@@ -88,11 +89,12 @@ public class ActivityHome extends AppCompatActivity {
     private void initViews() {
         tvPatientName    = findViewById(R.id.tvPatientName);
         tvCurrentDate    = findViewById(R.id.tvCurrentDate);
+        tvVoirTout       = findViewById(R.id.tvVoirTout);       // ← ajouté
         etSearch         = findViewById(R.id.etSearch);
         btnNotifications = findViewById(R.id.btnNotifications);
         btnSettings      = findViewById(R.id.btnSettings);
         recyclerDoctors  = findViewById(R.id.recyclerDoctors);
-        ivAvatar         = findViewById(R.id.ivAvatar);          // ← ajouté
+        ivAvatar         = findViewById(R.id.ivAvatar);
         navHome          = findViewById(R.id.nav_home_icon);
         navChat          = findViewById(R.id.nav_chat_icon);
         navProfile       = findViewById(R.id.nav_profile_icon);
@@ -100,15 +102,12 @@ public class ActivityHome extends AppCompatActivity {
     }
 
     private void loadUserData(SharedPreferences prefs) {
-        // ── Nom ──────────────────────────────────────────────────────────────
         String name = prefs.getString("userName", "").trim();
         tvPatientName.setText(name.isEmpty() ? "Patient" : name);
 
-        // ── Date ─────────────────────────────────────────────────────────────
         String date = new SimpleDateFormat("EEEE, MMM dd", Locale.getDefault()).format(new Date());
         tvCurrentDate.setText(date);
 
-        // ── Photo de profil ───────────────────────────────────────────────────
         if (ivAvatar != null) {
             String base64 = prefs.getString("userPhotoBase64", null);
             if (base64 != null) {
@@ -144,6 +143,15 @@ public class ActivityHome extends AppCompatActivity {
     private void setupRecyclerView() {
         recyclerDoctors.setLayoutManager(new LinearLayoutManager(this));
         recyclerDoctors.setHasFixedSize(false);
+    }
+
+    // ── Bouton "Voir tout" → ouvre AllDoctorsActivity ────────────────────────
+    private void setupVoirTout() {
+        if (tvVoirTout != null) {
+            tvVoirTout.setOnClickListener(v -> {
+                startActivity(new Intent(this, AllDoctorsActivity.class));
+            });
+        }
     }
 
     private void setupBottomNav() {
