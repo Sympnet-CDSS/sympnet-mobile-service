@@ -5,7 +5,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
 
-    private static final String BASE_URL = "https://faster-say-trimmer.ngrok-free.dev";
+    private static final String BASE_URL = " https://faster-say-trimmer.ngrok-free.dev ";
     private static Retrofit retrofit;
 
     public static Retrofit getInstance() {

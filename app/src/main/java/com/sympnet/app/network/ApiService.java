@@ -21,7 +21,7 @@ public interface ApiService {
     @POST("api/auth/login")
     Call<User> login(@Body Map<String, String> credentials);
 
-    @POST("api/auth/register")
+    @POST("api/auth/register-mobile")
     Call<User> register(@Body Map<String, String> body);
 
     // ── Password reset (3-step flow) ──────────────────────────────────────
@@ -31,7 +31,7 @@ public interface ApiService {
     @POST("api/auth/forgot-password")
     Call<Void> forgotPassword(@Body Map<String, String> body);
 
-    @POST("api/auth/verify-reset-code")          // ← corrigé
+    @POST("api/auth/verify-reset-code")
     Call<Void> verifyResetCode(@Body Map<String, String> body);
 
     @POST("api/auth/reset-password")

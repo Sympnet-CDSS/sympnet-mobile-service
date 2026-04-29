@@ -148,7 +148,7 @@ public class RegisterActivity extends AppCompatActivity {
                     MediaType.parse("application/json"), body.toString());
 
             Request request = new Request.Builder()
-                    .url(BASE_URL + "/api/auth/register")
+                    .url(BASE_URL + "/api/auth/register-mobile")
                     .addHeader("ngrok-skip-browser-warning", "true")
                     .post(requestBody)
                     .build();

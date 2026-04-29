@@ -15,7 +15,7 @@
         android:theme="@style/Theme.SympNetMobile"
         android:usesCleartextTraffic="true">
 
-        <!-- ✅ LA META DATA DOIT ETRE ICI -->
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCUPDh57AstBm2EU1H0Raf2g6wUWqwgTHY" />

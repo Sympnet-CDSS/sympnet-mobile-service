@@ -44,7 +44,7 @@ import java.util.Locale;
 
 public class DoctorDetailsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    private static final String TAG = "DoctorDetails"; // ← TAG pour tous les logs
+    private static final String TAG = "DoctorDetails";
 
     public static final String EXTRA_DOCTOR_NAME      = "doctor_name";
     public static final String EXTRA_DOCTOR_SPECIALTY = "doctor_specialty";
@@ -56,6 +56,7 @@ public class DoctorDetailsActivity extends AppCompatActivity implements OnMapRea
 
     private static final String PREFS_RATINGS = "doctor_ratings";
     private static final int LOCATION_PERMISSION_REQUEST = 1001;
+    private static final String DISTANCE_MATRIX_KEY = "GW1LsWPQ2nGMUEWT9KI8QbHgT6S3tmeLqztbVzYX5Yp4X3tkc3mDki7USn36NUwo";
 
     private TextView tvDoctorName, tvDoctorSpecialty, tvDistance;
     private RatingBar ratingBar;
@@ -308,7 +309,10 @@ public class DoctorDetailsActivity extends AppCompatActivity implements OnMapRea
             return;
         }
 
-        // Ligne sur la carte
+        Log.d(TAG, "Computing distance to (" + clinicLatLng.latitude
+                + ", " + clinicLatLng.longitude + ")");
+
+        // Ligne droite sur la carte
         LatLng userLatLng = new LatLng(
                 userLocation.getLatitude(), userLocation.getLongitude());
 
@@ -317,27 +321,106 @@ public class DoctorDetailsActivity extends AppCompatActivity implements OnMapRea
                 .width(4f)
                 .color(0xFF009688));
 
-        // Calcul distance avec formule Haversine — 100% gratuit, pas d'API
+        // ── Appel distancematrix.ai (même format JSON que Google) ────────────
+        String origins      = userLocation.getLatitude() + "," + userLocation.getLongitude();
+        String destinations = clinicLatLng.latitude + "," + clinicLatLng.longitude;
+
+        // URL distancematrix.ai — remplace juste le domaine vs Google
+        String url = "https://api.distancematrix.ai/maps/api/distancematrix/json"
+                + "?origins=" + origins
+                + "&destinations=" + destinations
+                + "&mode=driving"
+                + "&key=" + DISTANCE_MATRIX_KEY;
+
+        Log.d(TAG, "distancematrix.ai URL: " + url);
+
+        new Thread(() -> {
+            try {
+                java.net.URL requestUrl = new java.net.URL(url);
+                java.net.HttpURLConnection connection =
+                        (java.net.HttpURLConnection) requestUrl.openConnection();
+                connection.setRequestMethod("GET");
+                connection.setConnectTimeout(10000);
+                connection.setReadTimeout(10000);
+
+                int responseCode = connection.getResponseCode();
+                Log.d(TAG, "HTTP response code: " + responseCode);
+
+                java.io.BufferedReader reader = new java.io.BufferedReader(
+                        new java.io.InputStreamReader(connection.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                reader.close();
+
+                String jsonString = response.toString();
+                Log.d(TAG, "Raw response: " + jsonString);
+
+                // ── Parse JSON — format identique à Google Distance Matrix ──
+                org.json.JSONObject json = new org.json.JSONObject(jsonString);
+
+                String globalStatus = json.optString("status", "UNKNOWN");
+                Log.d(TAG, "Global status: " + globalStatus);
+
+                if (!globalStatus.equals("OK")) {
+                    String errorMsg = json.optString("error_message", "Erreur inconnue");
+                    Log.e(TAG, "API error: " + globalStatus + " | " + errorMsg);
+                    runOnUiThread(() -> {
+                        if (tvDistance != null)
+                            tvDistance.setText("Erreur API: " + globalStatus);
+                    });
+                    return;
+                }
+
+                org.json.JSONObject element = json
+                        .getJSONArray("rows").getJSONObject(0)
+                        .getJSONArray("elements").getJSONObject(0);
+
+                String elementStatus = element.getString("status");
+                Log.d(TAG, "Element status: " + elementStatus);
+
+                if (elementStatus.equals("OK")) {
+                    String distanceText = element.getJSONObject("distance").getString("text");
+                    String durationText = element.getJSONObject("duration").getString("text");
+                    Log.d(TAG, "Distance: " + distanceText + " | Duration: " + durationText);
+
+                    runOnUiThread(() -> {
+                        if (tvDistance != null) {
+                            tvDistance.setText("🚗 " + distanceText + " · ⏱ " + durationText);
+                        }
+                    });
+                } else {
+                    Log.e(TAG, "Element status not OK: " + elementStatus);
+                    // Fallback Haversine si distancematrix.ai échoue
+                    showHaversineDistance(clinicLatLng);
+                }
+
+            } catch (Exception e) {
+                Log.e(TAG, "distancematrix.ai call failed: " + e.getMessage(), e);
+                // Fallback Haversine en cas d'erreur réseau
+                runOnUiThread(() -> showHaversineDistance(clinicLatLng));
+            }
+        }).start();
+    }
+    // ── Fallback Haversine si distancematrix.ai échoue ───────────────────────
+    private void showHaversineDistance(LatLng clinicLatLng) {
+        if (userLocation == null) return;
+
         double distanceKm = calculateHaversineDistance(
                 userLocation.getLatitude(), userLocation.getLongitude(),
                 clinicLatLng.latitude, clinicLatLng.longitude);
 
-        // Estimation du temps en voiture (vitesse moyenne 40 km/h en ville)
         int estimatedMinutes = (int) (distanceKm / 40.0 * 60);
 
-        String distanceText;
-        if (distanceKm < 1.0) {
-            distanceText = (int)(distanceKm * 1000) + " m";
-        } else {
-            distanceText = String.format(Locale.getDefault(), "%.1f km", distanceKm);
-        }
+        String distanceText = distanceKm < 1.0
+                ? (int)(distanceKm * 1000) + " m"
+                : String.format(Locale.getDefault(), "%.1f km", distanceKm);
 
-        String durationText;
-        if (estimatedMinutes < 60) {
-            durationText = estimatedMinutes + " min";
-        } else {
-            durationText = (estimatedMinutes / 60) + "h" + (estimatedMinutes % 60) + "min";
-        }
+        String durationText = estimatedMinutes < 60
+                ? estimatedMinutes + " min"
+                : (estimatedMinutes / 60) + "h" + (estimatedMinutes % 60) + "min";
 
         if (tvDistance != null) {
             tvDistance.setText("📍 " + distanceText + " · ⏱ ~" + durationText);

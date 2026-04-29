@@ -1,10 +1,12 @@
 package com.sympnet.app.home;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,12 +18,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.sympnet.app.R;
 import com.sympnet.app.activities.AllDoctorsActivity;
 import com.sympnet.app.activities.LoginActivity;
@@ -35,6 +46,7 @@ import com.sympnet.app.network.ApiService;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -46,15 +58,21 @@ import retrofit2.Response;
 public class ActivityHome extends AppCompatActivity {
 
     private static final String TAG = "ActivityHome";
+    private static final int LOCATION_PERMISSION_REQUEST = 2001;
 
     private RecyclerView recyclerDoctors;
     private DoctorAdapter doctorAdapter;
     private List<Doctor> allDoctors = new ArrayList<>();
 
     private ImageView btnNotifications, btnSettings, ivAvatar;
-    private TextView tvPatientName, tvCurrentDate, tvVoirTout; // ← tvVoirTout ajouté
+    private TextView tvPatientName, tvCurrentDate, tvVoirTout;
     private EditText etSearch;
     private ImageView navHome, navChat, navProfile, navCalendar;
+
+    // ── Localisation ──────────────────────────────────────────────────────────
+    private FusedLocationProviderClient fusedLocationClient;
+    private Location userLocation;
+    private LocationCallback locationCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,13 +87,15 @@ public class ActivityHome extends AppCompatActivity {
 
         setContentView(R.layout.activity_home);
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
         initViews();
         loadUserData(prefs);
         setupRecyclerView();
         setupBottomNav();
         setupSearch();
-        setupVoirTout();   // ← ajouté
-        loadDoctors();
+        setupVoirTout();
+        requestLocationAndLoadDoctors(); // ← charge position puis médecins triés
         updateNavIcons(navHome);
     }
 
@@ -86,10 +106,18 @@ public class ActivityHome extends AppCompatActivity {
         loadUserData(prefs);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (locationCallback != null) {
+            fusedLocationClient.removeLocationUpdates(locationCallback);
+        }
+    }
+
     private void initViews() {
         tvPatientName    = findViewById(R.id.tvPatientName);
         tvCurrentDate    = findViewById(R.id.tvCurrentDate);
-        tvVoirTout       = findViewById(R.id.tvVoirTout);       // ← ajouté
+        tvVoirTout       = findViewById(R.id.tvVoirTout);
         etSearch         = findViewById(R.id.etSearch);
         btnNotifications = findViewById(R.id.btnNotifications);
         btnSettings      = findViewById(R.id.btnSettings);
@@ -145,19 +173,155 @@ public class ActivityHome extends AppCompatActivity {
         recyclerDoctors.setHasFixedSize(false);
     }
 
-    // ── Bouton "Voir tout" → ouvre AllDoctorsActivity ────────────────────────
     private void setupVoirTout() {
         if (tvVoirTout != null) {
-            tvVoirTout.setOnClickListener(v -> {
-                startActivity(new Intent(this, AllDoctorsActivity.class));
-            });
+            tvVoirTout.setOnClickListener(v ->
+                    startActivity(new Intent(this, AllDoctorsActivity.class)));
         }
+    }
+
+    // ── Demande permission GPS puis charge les médecins ───────────────────────
+    private void requestLocationAndLoadDoctors() {
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            getUserLocationThenLoadDoctors();
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    LOCATION_PERMISSION_REQUEST);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == LOCATION_PERMISSION_REQUEST
+                && grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            getUserLocationThenLoadDoctors();
+        } else {
+            // Sans GPS → charge les médecins sans tri
+            Log.w(TAG, "Location permission denied — loading without distance sort");
+            loadDoctors();
+        }
+    }
+
+    // ── Récupère la position GPS puis lance le chargement ────────────────────
+    @SuppressLint("MissingPermission")
+    private void getUserLocationThenLoadDoctors() {
+        fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
+            if (location != null) {
+                Log.d(TAG, "Location OK: " + location.getLatitude()
+                        + ", " + location.getLongitude());
+                userLocation = location;
+                loadDoctors();
+            } else {
+                Log.w(TAG, "getLastLocation null — requesting fresh location");
+                requestFreshLocation();
+            }
+        }).addOnFailureListener(e -> {
+            Log.e(TAG, "getLastLocation failed", e);
+            loadDoctors(); // charge sans tri
+        });
+    }
+
+    // ── Fallback si getLastLocation retourne null ─────────────────────────────
+    @SuppressLint("MissingPermission")
+    private void requestFreshLocation() {
+        LocationRequest locationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setNumUpdates(1)
+                .setInterval(5000)
+                .setFastestInterval(2000);
+
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult != null && !locationResult.getLocations().isEmpty()) {
+                    userLocation = locationResult.getLocations().get(0);
+                    Log.d(TAG, "Fresh location OK: " + userLocation.getLatitude()
+                            + ", " + userLocation.getLongitude());
+                    fusedLocationClient.removeLocationUpdates(locationCallback);
+                }
+                loadDoctors();
+            }
+        };
+
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+    }
+
+    // ── Charge les médecins et trie par distance ──────────────────────────────
+    private void loadDoctors() {
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+        apiService.getDoctors().enqueue(new Callback<List<Doctor>>() {
+            @Override
+            public void onResponse(Call<List<Doctor>> call, Response<List<Doctor>> response) {
+                if (response.isSuccessful()
+                        && response.body() != null
+                        && !response.body().isEmpty()) {
+
+                    allDoctors = response.body();
+
+                    // ── Tri par distance Haversine si GPS disponible ──────────
+                    if (userLocation != null) {
+                        sortDoctorsByDistance(allDoctors);
+                        Log.d(TAG, "Doctors sorted by distance from user");
+                    } else {
+                        Log.d(TAG, "No location — doctors loaded without sorting");
+                    }
+
+                    doctorAdapter = new DoctorAdapter(allDoctors);
+                    recyclerDoctors.setAdapter(doctorAdapter);
+                    Log.d(TAG, "Loaded " + allDoctors.size() + " doctors");
+
+                } else {
+                    Log.w(TAG, "Empty doctor list. HTTP " + response.code());
+                    Toast.makeText(ActivityHome.this,
+                            "No doctors available", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Doctor>> call, Throwable t) {
+                Log.e(TAG, "loadDoctors failed", t);
+                Toast.makeText(ActivityHome.this,
+                        "Connection error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    // ── Trie du plus proche au plus loin ──────────────────────────────────────
+    private void sortDoctorsByDistance(List<Doctor> doctors) {
+        Collections.sort(doctors, (d1, d2) -> {
+            double dist1 = calculateHaversineDistance(
+                    userLocation.getLatitude(), userLocation.getLongitude(),
+                    d1.getLatitude(), d1.getLongitude());
+            double dist2 = calculateHaversineDistance(
+                    userLocation.getLatitude(), userLocation.getLongitude(),
+                    d2.getLatitude(), d2.getLongitude());
+            return Double.compare(dist1, dist2);
+        });
+    }
+
+    // ── Formule Haversine — distance en km entre 2 points GPS ────────────────
+    private double calculateHaversineDistance(double lat1, double lon1,
+                                              double lat2, double lon2) {
+        final int R = 6371;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1))
+                * Math.cos(Math.toRadians(lat2))
+                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
     }
 
     private void setupBottomNav() {
         navHome.setOnClickListener(v -> {
             updateNavIcons(navHome);
-            loadDoctors();
+            requestLocationAndLoadDoctors();
         });
 
         navChat.setOnClickListener(v -> {
@@ -195,37 +359,6 @@ public class ActivityHome extends AppCompatActivity {
         selected.setColorFilter(active);
     }
 
-    private void loadDoctors() {
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-
-        apiService.getDoctors().enqueue(new Callback<List<Doctor>>() {
-            @Override
-            public void onResponse(Call<List<Doctor>> call, Response<List<Doctor>> response) {
-                if (response.isSuccessful()
-                        && response.body() != null
-                        && !response.body().isEmpty()) {
-
-                    allDoctors = response.body();
-                    doctorAdapter = new DoctorAdapter(allDoctors);
-                    recyclerDoctors.setAdapter(doctorAdapter);
-                    Log.d(TAG, "Loaded " + allDoctors.size() + " doctors");
-
-                } else {
-                    Log.w(TAG, "Empty doctor list. HTTP " + response.code());
-                    Toast.makeText(ActivityHome.this,
-                            "No doctors available", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Doctor>> call, Throwable t) {
-                Log.e(TAG, "loadDoctors failed", t);
-                Toast.makeText(ActivityHome.this,
-                        "Connection error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
     private void setupSearch() {
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int i, int i1, int i2) {}
@@ -249,7 +382,11 @@ public class ActivityHome extends AppCompatActivity {
         String lower = query.toLowerCase().trim();
         List<Doctor> filtered = new ArrayList<>();
         for (Doctor d : allDoctors) {
-            if (d.getName() != null && d.getName().toLowerCase().contains(lower)) {
+            boolean matchName      = d.getName() != null
+                    && d.getName().toLowerCase().contains(lower);
+            boolean matchSpecialty = d.getSpecialty() != null
+                    && d.getSpecialty().toLowerCase().contains(lower);
+            if (matchName || matchSpecialty) {
                 filtered.add(d);
             }
         }
