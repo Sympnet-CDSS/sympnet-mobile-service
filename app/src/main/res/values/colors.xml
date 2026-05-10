@@ -25,9 +25,21 @@
     <color name="green_500">#4CAF50</color>
     <color name="gray_50">#FAFAFA</color>
     <color name="gray_100">#F5F5F5</color>
+    <color name="gray_600">#757575</color>
     <color name="gray_200">#EEEEEE</color>
     <color name="gray_400">#BDBDBD</color>
-    <color name="gray_600">#757575</color>
+
     <color name="gray_900">#212121</color>
     <color name="bottom_nav_color">#757575</color>
+    <color name="status_pending">#FF9800</color>    <!-- Orange -->
+    <color name="status_confirmed">#4CAF50</color>  <!-- Green -->
+    <color name="status_cancelled">#F44336</color>  <!-- Red -->
+    <color name="status_completed">#2196F3</color>  <!-- Blue -->
+
+    <!-- Onboarding colors merged from colors_onboarding.xml -->
+    <color name="onboarding_bg_1">#0A6E6E</color>  <!-- Deep Teal      — Welcome        -->
+    <color name="onboarding_bg_2">#0D5C8C</color>  <!-- Ocean Blue     — Symptômes      -->
+    <color name="onboarding_bg_3">#1A3A5C</color>  <!-- Midnight Navy  — Confidentialité -->
+    <color name="onboarding_bg_4">#0B4F63</color>  <!-- Teal-Navy      — Commencer       -->
+    <color name="onboarding_teal_700">#005F5F</color> <!-- Specific dark teal for onboarding -->
 </resources>

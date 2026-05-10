@@ -19,23 +19,36 @@ public class Doctor {
     private double latitude;
     private double longitude;
 
+    @SerializedName("address")
+    private String address;
+
+    // ── Getters ──────────────────────────────────────────────────────────────
+
     public int getId() { return id; }
 
     public String getName() {
         String f = firstName != null ? firstName : "";
-        String l = lastName != null ? lastName : "";
+        String l = lastName  != null ? lastName  : "";
         return (f + " " + l).trim();
     }
 
-    public String getFullName() { return getName(); }
-    public String getSpecialty() { return speciality != null ? speciality : ""; }
-    public float getRating() { return rating; }
-    public double getLatitude() { return latitude; }
-    public double getLongitude() { return longitude; }
-    public String getFirstName() { return firstName; }
-    public String getLastName() { return lastName; }
-    @SerializedName("address")
-    private String address;
+    public String getFullName()    { return getName(); }
+    public String getSpecialty()   { return speciality != null ? speciality : ""; }
+    public float  getRating()      { return rating; }
+    public double getLatitude()    { return latitude; }
+    public double getLongitude()   { return longitude; }
+    public String getFirstName()   { return firstName; }
+    public String getLastName()    { return lastName; }
+    public String getAddress()     { return address != null ? address : ""; }
 
-    public String getAddress() { return address != null ? address : ""; }
+    // ── Setters (nécessaires pour reconstruire depuis le cache JSON) ─────────
+
+    public void setId(int id)                  { this.id = id; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public void setLastName(String lastName)   { this.lastName = lastName; }
+    public void setSpeciality(String s)        { this.speciality = s; }
+    public void setRating(float rating)        { this.rating = rating; }
+    public void setLatitude(double latitude)   { this.latitude = latitude; }
+    public void setLongitude(double longitude) { this.longitude = longitude; }
+    public void setAddress(String address)     { this.address = address; }
 }

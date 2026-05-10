@@ -1,7 +1,7 @@
 package com.sympnet.app.activities;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,6 +9,8 @@ import androidx.appcompat.widget.SwitchCompat;
 import com.sympnet.app.R;
 
 public class NotificationSettingsActivity extends AppCompatActivity {
+
+    private static final String PREFS = "NotificationPrefs";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,19 +20,41 @@ public class NotificationSettingsActivity extends AppCompatActivity {
         ImageView btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> finish());
 
-        setupSwitch(findViewById(R.id.settingGeneral), "General Notification", true);
-        setupSwitch(findViewById(R.id.settingSound), "Sound", true);
-        setupSwitch(findViewById(R.id.settingVibrate), "Vibrate", false);
-        setupSwitch(findViewById(R.id.settingSpecialOffers), "Special Offers", true);
-        setupSwitch(findViewById(R.id.settingPayments), "Payments", false);
-        setupSwitch(findViewById(R.id.settingCashback), "Cashback", true);
+        SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
+
+        setupSwitch(R.id.settingGeneral,      "🔔 General Notification", "general",      prefs, true);
+        setupSwitch(R.id.settingSound,        "🔊 Sound",                "sound",        prefs, true);
+        setupSwitch(R.id.settingVibrate,      "📳 Vibrate",              "vibrate",      prefs, false);
+        setupSwitch(R.id.settingSpecialOffers,"🎁 Special Offers",       "specialOffers",prefs, true);
+        setupSwitch(R.id.settingPayments,     "💳 Payments",             "payments",     prefs, false);
+        setupSwitch(R.id.settingCashback,     "💰 Cashback",             "cashback",     prefs, true);
     }
 
-    private void setupSwitch(View container, String title, boolean isChecked) {
+    private void setupSwitch(int containerId, String title, String key,
+                             SharedPreferences prefs, boolean defaultValue) {
+        android.view.View container = findViewById(containerId);
         if (container == null) return;
+
         TextView tvTitle = container.findViewById(R.id.tvNotificationTitle);
-        SwitchCompat sw = container.findViewById(R.id.switchNotification);
+        SwitchCompat sw  = container.findViewById(R.id.switchNotification);
+
         if (tvTitle != null) tvTitle.setText(title);
-        if (sw != null) sw.setChecked(isChecked);
+
+        if (sw != null) {
+            sw.setChecked(prefs.getBoolean(key, defaultValue));
+            // Couleur selon état
+            updateSwitchColor(sw, sw.isChecked());
+            sw.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                prefs.edit().putBoolean(key, isChecked).apply();
+                updateSwitchColor(sw, isChecked);
+            });
+        }
+    }
+
+    private void updateSwitchColor(SwitchCompat sw, boolean isChecked) {
+        int trackColor  = isChecked ? 0xFF80CBC4 : 0xFFBDBDBD;
+        int thumbColor  = isChecked ? 0xFF009688 : 0xFFFFFFFF;
+        sw.getTrackDrawable().setTint(trackColor);
+        sw.getThumbDrawable().setTint(thumbColor);
     }
 }

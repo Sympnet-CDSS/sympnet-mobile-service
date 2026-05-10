@@ -19,15 +19,24 @@
         android:id="@+id/nav_chat_icon"
         android:layout_width="28dp"
         android:layout_height="28dp"
-        android:layout_marginStart="40dp"
+        android:layout_marginStart="30dp"
         android:src="@drawable/ic_chat"
+        app:tint="#B2DFDB" />
+
+    <!-- Bouton AI Chatbot au centre -->
+    <ImageView
+        android:id="@+id/nav_ai_icon"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="30dp"
+        android:src="@android:drawable/ic_menu_help"
         app:tint="#B2DFDB" />
 
     <ImageView
         android:id="@+id/nav_profile_icon"
         android:layout_width="28dp"
         android:layout_height="28dp"
-        android:layout_marginStart="40dp"
+        android:layout_marginStart="30dp"
         android:src="@drawable/ic_profile"
         app:tint="#B2DFDB" />
 
@@ -35,7 +44,7 @@
         android:id="@+id/nav_calendar_icon"
         android:layout_width="28dp"
         android:layout_height="28dp"
-        android:layout_marginStart="40dp"
+        android:layout_marginStart="30dp"
         android:src="@drawable/ic_calendar"
         app:tint="#B2DFDB" />
 

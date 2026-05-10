@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 
 import com.sympnet.app.R;
 import com.sympnet.app.activities.EditProfileActivity;
+import com.sympnet.app.activities.FavoriteDoctorsActivity;
 import com.sympnet.app.activities.HelpActivity;
 import com.sympnet.app.activities.LoginActivity;
 import com.sympnet.app.activities.PrivacyPolicyActivity;
@@ -89,7 +90,7 @@ public class ProfileFragment extends Fragment {
 
         // Favorite Doctors
         view.findViewById(R.id.menuFavorite).setOnClickListener(v ->
-                Toast.makeText(getActivity(), "Favorites coming soon", Toast.LENGTH_SHORT).show());
+                startActivity(new Intent(requireActivity(), FavoriteDoctorsActivity.class)));
 
         // Payment
         view.findViewById(R.id.menuPayment).setOnClickListener(v ->

@@ -1,50 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/teal_700"
+    android:background="@color/onboarding_bg_1"
     android:gravity="center"
     android:orientation="vertical">
 
-    <LinearLayout
+    <ImageView
+        android:id="@+id/splash_logo"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:src="@drawable/ic_diagnostic"
+        android:tint="@color/white"
+        android:alpha="0" />
+
+    <TextView
+        android:id="@+id/splash_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:layout_marginTop="20dp"
+        android:text="SympNet"
+        android:textColor="@color/white"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.05"
+        android:alpha="0" />
 
-        <ImageView
-            android:id="@+id/logo_icon"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:src="@drawable/ic_sympnet_logo"
-            app:tint="@color/white" />
-
-        <TextView
-            android:id="@+id/logo_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:alpha="0"
-            android:text="SympNet"
-            android:textColor="@color/white"
-            android:textSize="32sp"
-            android:textStyle="bold" />
-
-        <LinearLayout
-            android:id="@+id/dots_container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:orientation="horizontal" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="3 microservices · 5 agents IA · XAI"
-            android:textColor="@color/white"
-            android:textSize="12sp" />
-    </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Diagnostic Intelligent"
+        android:textColor="#99ffffff"
+        android:textSize="13sp"
+        android:letterSpacing="0.12" />
 
 </LinearLayout>

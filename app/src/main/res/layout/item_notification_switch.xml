@@ -5,7 +5,8 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:padding="16dp">
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="14dp">
 
     <TextView
         android:id="@+id/tvNotificationTitle"
@@ -14,13 +15,13 @@
         android:layout_weight="1"
         android:text="Notification Title"
         android:textColor="#333333"
-        android:textSize="16sp" />
+        android:textSize="15sp" />
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/switchNotification"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:thumbTint="@color/white"
+        app:thumbTint="#FFFFFF"
         app:trackTint="#BDBDBD" />
 
 </LinearLayout>

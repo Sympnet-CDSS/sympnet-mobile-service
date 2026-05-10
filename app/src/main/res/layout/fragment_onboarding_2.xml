@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/onboarding_bg_2">
+
+    <View
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:layout_gravity="top|start"
+        android:layout_marginTop="-60dp"
+        android:layout_marginStart="-60dp"
+        android:alpha="0.07"
+        android:background="@drawable/shape_circle_white" />
+
+    <View
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="-40dp"
+        android:layout_marginBottom="100dp"
+        android:alpha="0.06"
+        android:background="@drawable/shape_circle_white" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingHorizontal="40dp"
+        android:paddingTop="60dp"
+        android:paddingBottom="40dp">
+
+        <FrameLayout
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:layout_marginBottom="48dp">
+
+            <View
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:alpha="0.15"
+                android:background="@drawable/shape_circle_white" />
+
+            <!-- ic_symptoms : Vector Asset "favorite" depuis Material Icons -->
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_diagnostic"
+                android:tint="@color/white" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/shape_tag_white"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="6dp"
+            android:text="ANALYSE · PRÉCISE · RAPIDE"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            android:letterSpacing="0.15"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Décrivez\nVos Symptômes"
+            android:textColor="@color/white"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:lineSpacingExtra="4dp" />
+
+        <View
+            android:layout_width="48dp"
+            android:layout_height="3dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/shape_divider_white" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:lineSpacingExtra="6dp"
+            android:text="Décrivez vos symptômes en langage naturel. Notre IA les analyse et vous oriente vers les soins les plus adaptés à votre situation."
+            android:textColor="#CCffffff"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+</FrameLayout>

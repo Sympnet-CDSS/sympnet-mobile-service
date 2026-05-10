@@ -44,6 +44,9 @@ import com.sympnet.app.model.Doctor;
 import com.sympnet.app.network.ApiClient;
 import com.sympnet.app.network.ApiService;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,9 +70,8 @@ public class ActivityHome extends AppCompatActivity {
     private ImageView btnNotifications, btnSettings, ivAvatar;
     private TextView tvPatientName, tvCurrentDate, tvVoirTout;
     private EditText etSearch;
-    private ImageView navHome, navChat, navProfile, navCalendar;
+    private ImageView navHome, navChat, navAi, navProfile, navCalendar;
 
-    // ── Localisation ──────────────────────────────────────────────────────────
     private FusedLocationProviderClient fusedLocationClient;
     private Location userLocation;
     private LocationCallback locationCallback;
@@ -95,7 +97,7 @@ public class ActivityHome extends AppCompatActivity {
         setupBottomNav();
         setupSearch();
         setupVoirTout();
-        requestLocationAndLoadDoctors(); // ← charge position puis médecins triés
+        requestLocationAndLoadDoctors();
         updateNavIcons(navHome);
     }
 
@@ -125,6 +127,7 @@ public class ActivityHome extends AppCompatActivity {
         ivAvatar         = findViewById(R.id.ivAvatar);
         navHome          = findViewById(R.id.nav_home_icon);
         navChat          = findViewById(R.id.nav_chat_icon);
+        navAi            = findViewById(R.id.nav_ai_icon);
         navProfile       = findViewById(R.id.nav_profile_icon);
         navCalendar      = findViewById(R.id.nav_calendar_icon);
     }
@@ -180,7 +183,6 @@ public class ActivityHome extends AppCompatActivity {
         }
     }
 
-    // ── Demande permission GPS puis charge les médecins ───────────────────────
     private void requestLocationAndLoadDoctors() {
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -200,13 +202,11 @@ public class ActivityHome extends AppCompatActivity {
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             getUserLocationThenLoadDoctors();
         } else {
-            // Sans GPS → charge les médecins sans tri
             Log.w(TAG, "Location permission denied — loading without distance sort");
             loadDoctors();
         }
     }
 
-    // ── Récupère la position GPS puis lance le chargement ────────────────────
     @SuppressLint("MissingPermission")
     private void getUserLocationThenLoadDoctors() {
         fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
@@ -221,11 +221,10 @@ public class ActivityHome extends AppCompatActivity {
             }
         }).addOnFailureListener(e -> {
             Log.e(TAG, "getLastLocation failed", e);
-            loadDoctors(); // charge sans tri
+            loadDoctors();
         });
     }
 
-    // ── Fallback si getLastLocation retourne null ─────────────────────────────
     @SuppressLint("MissingPermission")
     private void requestFreshLocation() {
         LocationRequest locationRequest = LocationRequest.create()
@@ -250,7 +249,6 @@ public class ActivityHome extends AppCompatActivity {
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
     }
 
-    // ── Charge les médecins et trie par distance ──────────────────────────────
     private void loadDoctors() {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
@@ -263,13 +261,15 @@ public class ActivityHome extends AppCompatActivity {
 
                     allDoctors = response.body();
 
-                    // ── Tri par distance Haversine si GPS disponible ──────────
                     if (userLocation != null) {
                         sortDoctorsByDistance(allDoctors);
                         Log.d(TAG, "Doctors sorted by distance from user");
                     } else {
                         Log.d(TAG, "No location — doctors loaded without sorting");
                     }
+
+                    // ✅ Sauvegarde le cache pour FavoriteDoctorsActivity
+                    cacheDoctors(allDoctors);
 
                     doctorAdapter = new DoctorAdapter(allDoctors);
                     recyclerDoctors.setAdapter(doctorAdapter);
@@ -291,7 +291,6 @@ public class ActivityHome extends AppCompatActivity {
         });
     }
 
-    // ── Trie du plus proche au plus loin ──────────────────────────────────────
     private void sortDoctorsByDistance(List<Doctor> doctors) {
         Collections.sort(doctors, (d1, d2) -> {
             double dist1 = calculateHaversineDistance(
@@ -304,7 +303,6 @@ public class ActivityHome extends AppCompatActivity {
         });
     }
 
-    // ── Formule Haversine — distance en km entre 2 points GPS ────────────────
     private double calculateHaversineDistance(double lat1, double lon1,
                                               double lat2, double lon2) {
         final int R = 6371;
@@ -318,6 +316,32 @@ public class ActivityHome extends AppCompatActivity {
         return R * c;
     }
 
+    // ✅ Sauvegarde tous les médecins en cache JSON pour les favoris
+    private void cacheDoctors(List<Doctor> doctors) {
+        try {
+            JSONArray array = new JSONArray();
+            for (Doctor d : doctors) {
+                JSONObject obj = new JSONObject();
+                obj.put("id",         d.getId());
+                obj.put("firstName",  d.getFirstName());
+                obj.put("lastName",   d.getLastName());
+                obj.put("speciality", d.getSpecialty());
+                obj.put("rating",     d.getRating());
+                obj.put("latitude",   d.getLatitude());
+                obj.put("longitude",  d.getLongitude());
+                obj.put("address",    d.getAddress());
+                array.put(obj);
+            }
+            getSharedPreferences("doctors_cache", MODE_PRIVATE)
+                    .edit()
+                    .putString("all_doctors", array.toString())
+                    .apply();
+            Log.d(TAG, "Doctors cached: " + doctors.size());
+        } catch (Exception e) {
+            Log.e(TAG, "cacheDoctors failed", e);
+        }
+    }
+
     private void setupBottomNav() {
         navHome.setOnClickListener(v -> {
             updateNavIcons(navHome);
@@ -328,6 +352,12 @@ public class ActivityHome extends AppCompatActivity {
             updateNavIcons(navChat);
             startActivity(new Intent(this, MainActivity.class)
                     .putExtra("TARGET_FRAGMENT", "CHAT"));
+        });
+
+        navAi.setOnClickListener(v -> {
+            updateNavIcons(navAi);
+            startActivity(new Intent(this, MainActivity.class)
+                    .putExtra("TARGET_FRAGMENT", "CHATBOT"));
         });
 
         navCalendar.setOnClickListener(v -> {
@@ -354,6 +384,7 @@ public class ActivityHome extends AppCompatActivity {
         int inactive = Color.parseColor("#B2DFDB");
         navHome.setColorFilter(inactive);
         navChat.setColorFilter(inactive);
+        navAi.setColorFilter(inactive);
         navProfile.setColorFilter(inactive);
         navCalendar.setColorFilter(inactive);
         selected.setColorFilter(active);

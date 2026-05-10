@@ -80,11 +80,11 @@ public class DoctorDetailsActivity extends AppCompatActivity implements OnMapRea
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         bindViews();
+
         loadIntentData();
         setupBackButton();
         setupMap();
         setupRatingBar();
-        setupCalendar();
         setupBookButton();
         requestLocationPermission();
     }
@@ -463,29 +463,24 @@ public class DoctorDetailsActivity extends AppCompatActivity implements OnMapRea
         });
     }
 
-    private void setupCalendar() {
-        calendarView.setOnDaySelectedListener(selectedDate -> {
-            Button btnBook = findViewById(R.id.btnBookAppointment);
-            btnBook.setTag(selectedDate);
-        });
-    }
+
 
     private void setupBookButton() {
         Button btnBook = findViewById(R.id.btnBookAppointment);
         btnBook.setOnClickListener(v -> {
-            Object tag = btnBook.getTag();
-            if (tag == null) {
-                Toast.makeText(this, "Please select a date first", Toast.LENGTH_SHORT).show();
-                return;
+            Intent intent = new Intent(this, BookAppointmentActivity.class);
+            if (doctorId != null) {
+                try {
+                    intent.putExtra("doctorId", Integer.parseInt(doctorId));
+                } catch (NumberFormatException e) {
+                    intent.putExtra("doctorId", -1);
+                }
+            } else {
+                intent.putExtra("doctorId", -1);
             }
-            Intent intent = getIntent();
-            Intent bookingIntent = new Intent(this, BookingActivity.class);
-            bookingIntent.putExtra(EXTRA_DOCTOR_ID,        intent.getStringExtra(EXTRA_DOCTOR_ID));
-            bookingIntent.putExtra(EXTRA_DOCTOR_NAME,      intent.getStringExtra(EXTRA_DOCTOR_NAME));
-            bookingIntent.putExtra(EXTRA_DOCTOR_SPECIALTY, intent.getStringExtra(EXTRA_DOCTOR_SPECIALTY));
-            bookingIntent.putExtra(BookingActivity.EXTRA_SELECTED_DATE, (long) tag);
-            startActivity(bookingIntent);
+            startActivity(intent);
         });
+
     }
 
     @Override

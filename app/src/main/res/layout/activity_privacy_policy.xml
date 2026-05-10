@@ -3,13 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="#F8FBFF"
     android:orientation="vertical">
 
     <!-- Header -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
+        android:background="#FFFFFF"
+        android:elevation="4dp"
         android:paddingHorizontal="16dp">
 
         <ImageView
@@ -33,63 +35,221 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="16dp">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="20dp">
 
+            <!-- Intro -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1. Terms &amp; Conditions"
-                android:textColor="#000000"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:text="Last updated: May 2026"
+                android:textColor="#9E9E9E"
+                android:textSize="12sp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-                android:textColor="#666666"
+                android:layout_marginTop="12dp"
+                android:lineSpacingExtra="4dp"
+                android:text="SympNet is committed to protecting your personal information and your right to privacy. This Privacy Policy explains how we collect, use, and safeguard your data when you use our application."
+                android:textColor="#555555"
                 android:textSize="14sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="2. Privacy Policy"
-                android:textColor="#000000"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-                android:textColor="#666666"
-                android:textSize="14sp" />
-
+            <!-- Section 1 -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="3. Data Collection"
-                android:textColor="#000000"
+                android:text="1. Information We Collect"
+                android:textColor="#009688"
                 android:textSize="16sp"
                 android:textStyle="bold" />
+
+            <View
+                android:layout_width="40dp"
+                android:layout_height="2dp"
+                android:layout_marginTop="4dp"
+                android:background="#009688" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident."
-                android:textColor="#666666"
+                android:layout_marginTop="10dp"
+                android:lineSpacingExtra="4dp"
+                android:text="We collect information you provide when creating an account, including your full name, email address, date of birth, gender, phone number, and medical history. We also collect appointment details, doctor preferences, and any messages you send through the app."
+                android:textColor="#555555"
                 android:textSize="14sp" />
+
+            <!-- Section 2 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="2. How We Use Your Information"
+                android:textColor="#009688"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="40dp"
+                android:layout_height="2dp"
+                android:layout_marginTop="4dp"
+                android:background="#009688" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:lineSpacingExtra="4dp"
+                android:text="Your information is used to:\n\n• Create and manage your patient account\n• Book and manage medical appointments\n• Connect you with qualified healthcare professionals\n• Send appointment reminders and notifications\n• Improve the quality and performance of our services\n• Comply with legal and regulatory requirements"
+                android:textColor="#555555"
+                android:textSize="14sp" />
+
+            <!-- Section 3 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="3. Data Security"
+                android:textColor="#009688"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="40dp"
+                android:layout_height="2dp"
+                android:layout_marginTop="4dp"
+                android:background="#009688" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:lineSpacingExtra="4dp"
+                android:text="We implement industry-standard security measures including data encryption (SSL/TLS), secure authentication with JWT tokens, and restricted access to personal data. All passwords are hashed using BCrypt before storage. We regularly review our security practices to protect your information."
+                android:textColor="#555555"
+                android:textSize="14sp" />
+
+            <!-- Section 4 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="4. Sharing Your Information"
+                android:textColor="#009688"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="40dp"
+                android:layout_height="2dp"
+                android:layout_marginTop="4dp"
+                android:background="#009688" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:lineSpacingExtra="4dp"
+                android:text="We do not sell or rent your personal information to third parties. Your medical data is only shared with the healthcare professionals you choose to consult through our platform. We may share anonymized, aggregated data for research and statistical purposes."
+                android:textColor="#555555"
+                android:textSize="14sp" />
+
+            <!-- Section 5 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="5. Your Rights"
+                android:textColor="#009688"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="40dp"
+                android:layout_height="2dp"
+                android:layout_marginTop="4dp"
+                android:background="#009688" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:lineSpacingExtra="4dp"
+                android:text="You have the right to:\n\n• Access and review your personal data at any time\n• Correct inaccurate or incomplete information\n• Request deletion of your account and associated data\n• Withdraw consent for data processing\n• Export your data in a portable format"
+                android:textColor="#555555"
+                android:textSize="14sp" />
+
+            <!-- Section 6 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="6. Terms &amp; Conditions"
+                android:textColor="#009688"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="40dp"
+                android:layout_height="2dp"
+                android:layout_marginTop="4dp"
+                android:background="#009688" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:lineSpacingExtra="4dp"
+                android:text="By using SympNet, you agree to use the app solely for lawful medical purposes. You are responsible for maintaining the confidentiality of your account credentials. SympNet is not a substitute for emergency medical care — in case of emergency, please contact your local emergency services immediately."
+                android:textColor="#555555"
+                android:textSize="14sp" />
+
+            <!-- Section 7 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="7. Contact Us"
+                android:textColor="#009688"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="40dp"
+                android:layout_height="2dp"
+                android:layout_marginTop="4dp"
+                android:background="#009688" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:lineSpacingExtra="4dp"
+                android:text="If you have any questions or concerns about this Privacy Policy, please contact us at:\n\n📧 support@sympnet.com\n🌐 www.sympnet.com\n📍 Tunisia"
+                android:textColor="#555555"
+                android:textSize="14sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="32dp"
+                android:background="#E0F2F1" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="24dp"
+                android:gravity="center"
+                android:text="© 2026 SympNet. All rights reserved."
+                android:textColor="#9E9E9E"
+                android:textSize="12sp" />
 
         </LinearLayout>
     </ScrollView>

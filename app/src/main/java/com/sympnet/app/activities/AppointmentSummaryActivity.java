@@ -15,7 +15,7 @@ public class AppointmentSummaryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_appointment_summary);
+        setContentView(R.layout.activity_appointment_detail);
 
         ImageView btnBack = findViewById(R.id.btnBack);
         Button btnDone = findViewById(R.id.btnDone);

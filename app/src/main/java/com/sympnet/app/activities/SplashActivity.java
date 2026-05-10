@@ -4,46 +4,58 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.appcompat.app.AppCompatActivity;
-import com.sympnet.app.R;
-import com.sympnet.app.home.ActivityHome;
+import android.os.Looper;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.sympnet.app.R;
+
+/**
+ * Splash screen — always the launcher activity.
+ * Routes to OnboardingActivity on first launch,
+ * or directly to LoginActivity on every subsequent launch.
+ *
+ * In AndroidManifest.xml, set this as the MAIN / LAUNCHER activity.
+ */
 public class SplashActivity extends AppCompatActivity {
 
-    private Handler handler = new Handler();
+    private static final String PREFS_NAME = "sympnet_prefs";
+    private static final String KEY_FIRST  = "onboarding_completed";
+    private static final int    SPLASH_MS  = 1800;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        handler.postDelayed(() -> {
-            checkNavigation();
-        }, 2500);
-    }
+        // Fade-in logo
+        ImageView logo  = findViewById(R.id.splash_logo);
+        TextView  title = findViewById(R.id.splash_title);
 
-    private void checkNavigation() {
-        SharedPreferences prefs = getSharedPreferences("SympNetPrefs", MODE_PRIVATE);
-        boolean isLoggedIn = prefs.getBoolean("isLoggedIn", false);
-        boolean isFirstTime = prefs.getBoolean("isFirstTime", true);
+        AlphaAnimation fadeIn = new AlphaAnimation(0f, 1f);
+        fadeIn.setDuration(700);
+        fadeIn.setFillAfter(true);
+        logo.startAnimation(fadeIn);
 
-        Intent intent;
-        if (isFirstTime) {
-            intent = new Intent(SplashActivity.this, OnboardingActivity.class);
-            prefs.edit().putBoolean("isFirstTime", false).apply();
-        } else if (isLoggedIn) {
-            intent = new Intent(SplashActivity.this, ActivityHome.class);
-        } else {
-            intent = new Intent(SplashActivity.this, LoginActivity.class);
-        }
-        
-        startActivity(intent);
-        finish();
-    }
+        AlphaAnimation fadeInDelayed = new AlphaAnimation(0f, 1f);
+        fadeInDelayed.setDuration(700);
+        fadeInDelayed.setStartOffset(300);
+        fadeInDelayed.setFillAfter(true);
+        title.startAnimation(fadeInDelayed);
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        handler.removeCallbacksAndMessages(null);
+        // Route after splash delay
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+            boolean completed = prefs.getBoolean(KEY_FIRST, false);
+
+            Class<?> destination = completed ? LoginActivity.class : OnboardingActivity.class;
+            startActivity(new Intent(SplashActivity.this, destination));
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            finish();
+        }, SPLASH_MS);
     }
 }

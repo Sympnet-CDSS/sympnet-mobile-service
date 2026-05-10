@@ -10,22 +10,23 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import com.sympnet.app.R;
 import com.sympnet.app.fragments.AppointmentsFragment;
-import com.sympnet.app.fragments.ChatFragment;
+import com.sympnet.app.fragments.ChatbotFragment;
 import com.sympnet.app.fragments.ProfileFragment;
 import com.sympnet.app.home.ActivityHome;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ImageView navHome, navChat, navProfile, navCalendar;
+    private ImageView navHome, navChat, navAi, navProfile, navCalendar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        navHome = findViewById(R.id.nav_home_icon);
-        navChat = findViewById(R.id.nav_chat_icon);
-        navProfile = findViewById(R.id.nav_profile_icon);
+        navHome     = findViewById(R.id.nav_home_icon);
+        navChat     = findViewById(R.id.nav_chat_icon);
+        navAi       = findViewById(R.id.nav_ai_icon);
+        navProfile  = findViewById(R.id.nav_profile_icon);
         navCalendar = findViewById(R.id.nav_calendar_icon);
 
         setupBottomNav();
@@ -38,9 +39,11 @@ public class MainActivity extends AppCompatActivity {
             finish();
         });
 
-        navChat.setOnClickListener(v -> {
-            loadFragment(new ChatFragment());
-            updateNavIcons(navChat);
+
+
+        navAi.setOnClickListener(v -> {
+            loadFragment(new ChatbotFragment());
+            updateNavIcons(navAi);
         });
 
         navCalendar.setOnClickListener(v -> {
@@ -55,11 +58,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateNavIcons(ImageView selectedIcon) {
-        int activeColor = ContextCompat.getColor(this, R.color.white);
-        int inactiveColor = Color.parseColor("#B2DFDB"); // Using the color from the layout
+        int activeColor   = ContextCompat.getColor(this, R.color.white);
+        int inactiveColor = Color.parseColor("#B2DFDB");
 
         navHome.setColorFilter(inactiveColor);
         navChat.setColorFilter(inactiveColor);
+        navAi.setColorFilter(inactiveColor);
         navProfile.setColorFilter(inactiveColor);
         navCalendar.setColorFilter(inactiveColor);
 
@@ -69,21 +73,22 @@ public class MainActivity extends AppCompatActivity {
     private void handleIntentExtras() {
         String target = getIntent().getStringExtra("TARGET_FRAGMENT");
         if (target != null) {
-            if (target.equals("CHAT")) {
-                loadFragment(new ChatFragment());
-                updateNavIcons(navChat);
-            } else if (target.equals("SCHEDULE")) {
-                loadFragment(new AppointmentsFragment());
-                updateNavIcons(navCalendar);
-            } else if (target.equals("PROFILE")) {
-                loadFragment(new ProfileFragment());
-                updateNavIcons(navProfile);
+            switch (target) {
+
+                case "CHATBOT":
+                    loadFragment(new ChatbotFragment());
+                    updateNavIcons(navAi);
+                    break;
+                case "SCHEDULE":
+                    loadFragment(new AppointmentsFragment());
+                    updateNavIcons(navCalendar);
+                    break;
+                case "PROFILE":
+                    loadFragment(new ProfileFragment());
+                    updateNavIcons(navProfile);
+                    break;
+
             }
-        } else {
-            // If no target, and we are here, it might be an error or default state.
-            // But usually we go to ActivityHome.
-            loadFragment(new ChatFragment()); // Default for MainActivity now
-            updateNavIcons(navChat);
         }
     }
 

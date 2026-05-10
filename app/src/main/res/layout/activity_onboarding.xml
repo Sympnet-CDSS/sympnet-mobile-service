@@ -1,58 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="match_parent" />
 
+    <!-- Bottom overlay panel -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:layout_gravity="bottom"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:paddingHorizontal="32dp"
+        android:paddingBottom="48dp"
+        android:paddingTop="24dp">
 
+        <!-- Dot indicators -->
         <LinearLayout
             android:id="@+id/dots_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="28dp"
             android:gravity="center"
             android:orientation="horizontal" />
 
+        <!-- Buttons row -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <Button
+            <TextView
                 android:id="@+id/btn_skip"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="12dp"
                 android:text="Passer"
-                android:textColor="@color/gray_600"
-                android:textSize="14sp" />
+                android:textColor="#99ffffff"
+                android:textSize="14sp"
+                android:letterSpacing="0.05" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
             <Button
                 android:id="@+id/btn_next"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/teal_500"
+                android:layout_width="160dp"
+                android:layout_height="52dp"
+                android:background="@drawable/shape_btn_next"
+                android:elevation="4dp"
                 android:text="SUIVANT →"
-                android:textColor="@color/white"
-                android:textSize="14sp" />
+                android:textColor="@color/onboarding_teal_700"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.08" />
+
         </LinearLayout>
+
     </LinearLayout>
 
-</LinearLayout>
+</FrameLayout>
