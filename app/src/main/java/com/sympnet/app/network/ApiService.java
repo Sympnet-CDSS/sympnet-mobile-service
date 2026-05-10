@@ -1,7 +1,9 @@
 package com.sympnet.app.network;
 
+import com.sympnet.app.model.AudioRequest;
 import com.sympnet.app.model.Doctor;
 import com.sympnet.app.model.Patient;
+import com.sympnet.app.model.TranscriptionResult;
 import com.sympnet.app.model.User;
 
 import java.util.List;
@@ -16,7 +18,7 @@ import retrofit2.http.Path;
 
 public interface ApiService {
 
-    // ── Auth ──────────────────────────────────────────────────────────────
+    //Auth
 
     @POST("api/auth/login")
     Call<User> login(@Body Map<String, String> credentials);
@@ -24,9 +26,9 @@ public interface ApiService {
     @POST("api/auth/register-mobile")
     Call<User> register(@Body Map<String, String> body);
 
-    // ── Password reset (3-step flow) ──────────────────────────────────────
+    //Password reset 
 
-    // ── Password reset (3-step flow) ──────────────────────────────────────
+    //Password reset 
 
     @POST("api/auth/forgot-password")
     Call<Void> forgotPassword(@Body Map<String, String> body);
@@ -41,7 +43,7 @@ public interface ApiService {
     Call<Void> verifyCode(@Body Map<String, String> body);
 
 
-    // ── Patient ───────────────────────────────────────────────────────────
+    //Patient 
 
     /**
      * GET /api/patients/{id}
@@ -54,8 +56,16 @@ public interface ApiService {
             @Path("id") String userId
     );
 
-    // ── Doctors ───────────────────────────────────────────────────────────
+    //Doctors 
 
     @GET("api/doctors")
     Call<List<Doctor>> getDoctors();
+
+    //Speech Transcription
+
+    @POST("api/Speech/transcribe")
+    Call<TranscriptionResult> transcribeAudio(
+            @Header("Authorization") String bearerToken,
+            @Body AudioRequest request
+    );
 }

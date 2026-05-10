@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <!-- Remote video -->
+    <org.webrtc.SurfaceViewRenderer
+        android:id="@+id/remoteRenderer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Local video (small overlay) -->
+    <org.webrtc.SurfaceViewRenderer
+        android:id="@+id/localRenderer"
+        android:layout_width="120dp"
+        android:layout_height="180dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="16dp"
+        android:scaleType="fitXY" />
+
+    <!-- Caller name -->
+    <TextView
+        android:id="@+id/tvCallerName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_marginTop="80dp"
+        android:textSize="24sp"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
+
+    <!-- Status -->
+    <TextView
+        android:id="@+id/tvStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_marginTop="120dp"
+        android:textSize="14sp"
+        android:textColor="@color/white" />
+
+    <!-- Controls -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardControls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="32dp"
+        app:cardBackgroundColor="#CC333333">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:padding="16dp">
+
+            <ImageButton
+                android:id="@+id/btnToggleMic"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_mic"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:tint="@color/white" />
+
+            <ImageButton
+                android:id="@+id/btnEndCall"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:src="@drawable/ic_call_end"
+                android:background="@drawable/bg_end_call"
+                android:layout_marginHorizontal="32dp"
+                android:tint="@color/white" />
+
+            <ImageButton
+                android:id="@+id/btnToggleCamera"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_videocam"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:tint="@color/white" />
+
+            <ImageButton
+                android:id="@+id/btnSwitchCamera"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_switch_camera"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:tint="@color/white" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</FrameLayout>
