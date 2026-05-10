@@ -80,6 +80,28 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- Section: Language -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Language"
+                android:textColor="#009688"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="#FFFFFF">
+
+                <include android:id="@+id/menuLanguage"
+                    layout="@layout/item_menu" />
+
+            </androidx.cardview.widget.CardView>
             <!-- Section: Support -->
             <TextView
                 android:layout_width="wrap_content"

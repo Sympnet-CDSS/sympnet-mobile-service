@@ -3,12 +3,14 @@ package com.sympnet.app.api;
 import com.sympnet.app.model.AppointmentCreatedResponse;
 import com.sympnet.app.model.AppointmentDto;
 import com.sympnet.app.model.CreateAppointmentRequest;
+import com.sympnet.app.model.PatientNotificationDto;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
@@ -35,4 +37,14 @@ public interface AppointmentService {
     Call<Void> cancelAppointment(
             @Header("Authorization") String token,
             @Path("id") int id);
+    // Ajouter dans AppointmentService.java
+    @GET("api/patient-notifications")
+    Call<List<PatientNotificationDto>> getMyNotifications(
+            @Header("Authorization") String token
+    );
+
+    @PATCH("api/patient-notifications/read-all")
+    Call<Void> markAllRead(
+            @Header("Authorization") String token
+    );
 }

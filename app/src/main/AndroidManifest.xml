@@ -7,6 +7,7 @@
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".MyApp"
@@ -55,6 +56,8 @@
         <activity android:name=".activities.FavoriteDoctorsActivity" />
         <activity android:name=".activities.HelpActivity" />
         <activity android:name=".activities.PrivacyPolicyActivity" />
+        <activity android:name=".activities.LanguageActivity" />
+        <activity android:name=".activities.NotificationDetailsActivity" />
 
     </application>
 

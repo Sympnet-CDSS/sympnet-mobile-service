@@ -1,4 +1,30 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SympNet</string>
+    <string name="settings">Settings</string>
+    <string name="language">Language</string>
+    <string name="account">Account</string>
+    <string name="support">Support</string>
+    <string name="notification_setting">Notification Setting</string>
+    <string name="password_manager">Password Manager</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="help_support">Help &amp; Support</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="my_schedules">My Schedules</string>
+    <string name="book_appointment">Book Appointment</string>
+    <string name="confirm_appointment">Confirm Appointment</string>
+    <string name="select_date">Select Date</string>
+    <string name="available_time">Available Time</string>
+    <string name="urgent_appointment">Urgent Appointment</string>
+    <string name="reason_hint">Reason for appointment…</string>
+    <string name="notes_hint">Additional notes (optional)…</string>
+    <string name="appointment_type">Appointment Type</string>
+    <string name="in_person">In-Person</string>
+    <string name="teleconsult">Teleconsult</string>
+    <string name="back_to_home">Back to Home</string>
+    <string name="logout">Log Out</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="favorite_doctors">Favorite Doctors</string>
+    <string name="payment_method">Payment Method</string>
+    <string name="profile">Profile</string>
+    <string name="general">General</string>
 </resources>

@@ -7,11 +7,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -40,9 +42,12 @@ import com.sympnet.app.activities.MainActivity;
 import com.sympnet.app.activities.NotificationDetailsActivity;
 import com.sympnet.app.activities.SettingsActivity;
 import com.sympnet.app.adapters.DoctorAdapter;
+import com.sympnet.app.api.AppointmentService;
 import com.sympnet.app.model.Doctor;
+import com.sympnet.app.model.PatientNotificationDto;
 import com.sympnet.app.network.ApiClient;
 import com.sympnet.app.network.ApiService;
+import com.sympnet.app.utils.NotificationHelper;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -62,12 +67,14 @@ public class ActivityHome extends AppCompatActivity {
 
     private static final String TAG = "ActivityHome";
     private static final int LOCATION_PERMISSION_REQUEST = 2001;
+    private static final int NOTIF_PERMISSION_REQUEST = 2002;
 
     private RecyclerView recyclerDoctors;
     private DoctorAdapter doctorAdapter;
     private List<Doctor> allDoctors = new ArrayList<>();
 
     private ImageView btnNotifications, btnSettings, ivAvatar;
+    private View notificationBadge;
     private TextView tvPatientName, tvCurrentDate, tvVoirTout;
     private EditText etSearch;
     private ImageView navHome, navChat, navAi, navProfile, navCalendar;
@@ -75,6 +82,9 @@ public class ActivityHome extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationClient;
     private Location userLocation;
     private LocationCallback locationCallback;
+    
+    // Liste statique pour ne pas notifier plusieurs fois le même message durant l'exécution
+    private static List<Integer> notifiedIds = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +109,10 @@ public class ActivityHome extends AppCompatActivity {
         setupVoirTout();
         requestLocationAndLoadDoctors();
         updateNavIcons(navHome);
+        
+        // Demande permission Notif (Android 13+) et vérification
+        requestNotificationPermission();
+        checkNotifications();
     }
 
     @Override
@@ -106,6 +120,7 @@ public class ActivityHome extends AppCompatActivity {
         super.onResume();
         SharedPreferences prefs = getSharedPreferences("SympNetPrefs", MODE_PRIVATE);
         loadUserData(prefs);
+        checkNotifications(); // Vérifier les notifs à chaque retour sur l'accueil
     }
 
     @Override
@@ -122,6 +137,7 @@ public class ActivityHome extends AppCompatActivity {
         tvVoirTout       = findViewById(R.id.tvVoirTout);
         etSearch         = findViewById(R.id.etSearch);
         btnNotifications = findViewById(R.id.btnNotifications);
+        notificationBadge = findViewById(R.id.notificationBadge);
         btnSettings      = findViewById(R.id.btnSettings);
         recyclerDoctors  = findViewById(R.id.recyclerDoctors);
         ivAvatar         = findViewById(R.id.ivAvatar);
@@ -130,6 +146,54 @@ public class ActivityHome extends AppCompatActivity {
         navAi            = findViewById(R.id.nav_ai_icon);
         navProfile       = findViewById(R.id.nav_profile_icon);
         navCalendar      = findViewById(R.id.nav_calendar_icon);
+    }
+
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) 
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, 
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS}, 
+                        NOTIF_PERMISSION_REQUEST);
+            }
+        }
+    }
+
+    private void checkNotifications() {
+        SharedPreferences prefs = getSharedPreferences("SympNetPrefs", MODE_PRIVATE);
+        String token = "Bearer " + prefs.getString("userToken", "");
+        if (token.length() < 10) return;
+
+        ApiClient.getClient().create(AppointmentService.class)
+                .getMyNotifications(token).enqueue(new Callback<List<PatientNotificationDto>>() {
+            @Override
+            public void onResponse(Call<List<PatientNotificationDto>> call, Response<List<PatientNotificationDto>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<PatientNotificationDto> notifs = response.body();
+                    boolean hasUnread = false;
+                    
+                    for (PatientNotificationDto n : notifs) {
+                        if (!n.isRead) {
+                            hasUnread = true;
+                            // Si nouvelle notif (pas encore alertée)
+                            if (!notifiedIds.contains(n.id)) {
+                                NotificationHelper.showNotification(ActivityHome.this, n.title, n.message);
+                                notifiedIds.add(n.id);
+                            }
+                        }
+                    }
+                    // Affiche ou cache le point rouge
+                    if (notificationBadge != null) {
+                        notificationBadge.setVisibility(hasUnread ? View.VISIBLE : View.GONE);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<PatientNotificationDto>> call, Throwable t) {
+                Log.e(TAG, "checkNotifications failed", t);
+            }
+        });
     }
 
     private void loadUserData(SharedPreferences prefs) {
@@ -201,9 +265,10 @@ public class ActivityHome extends AppCompatActivity {
                 && grantResults.length > 0
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             getUserLocationThenLoadDoctors();
-        } else {
-            Log.w(TAG, "Location permission denied — loading without distance sort");
-            loadDoctors();
+        } else if (requestCode == NOTIF_PERMISSION_REQUEST) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                checkNotifications();
+            }
         }
     }
 
@@ -268,7 +333,7 @@ public class ActivityHome extends AppCompatActivity {
                         Log.d(TAG, "No location — doctors loaded without sorting");
                     }
 
-                    // ✅ Sauvegarde le cache pour FavoriteDoctorsActivity
+                    // Sauvegarde le cache pour FavoriteDoctorsActivity
                     cacheDoctors(allDoctors);
 
                     doctorAdapter = new DoctorAdapter(allDoctors);
@@ -316,7 +381,7 @@ public class ActivityHome extends AppCompatActivity {
         return R * c;
     }
 
-    // ✅ Sauvegarde tous les médecins en cache JSON pour les favoris
+    // Sauvegarde tous les médecins en cache JSON pour les favoris
     private void cacheDoctors(List<Doctor> doctors) {
         try {
             JSONArray array = new JSONArray();

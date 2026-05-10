@@ -1,4 +1,30 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SympNet</string>
+    <string name="settings">Paramètres</string>
+    <string name="language">Langue</string>
+    <string name="account">Compte</string>
+    <string name="support">Support</string>
+    <string name="notification_setting">Paramètres de notification</string>
+    <string name="password_manager">Gestionnaire de mot de passe</string>
+    <string name="delete_account">Supprimer le compte</string>
+    <string name="help_support">Aide &amp; Support</string>
+    <string name="privacy_policy">Politique de confidentialité</string>
+    <string name="my_schedules">Mes rendez-vous</string>
+    <string name="book_appointment">Prendre rendez-vous</string>
+    <string name="confirm_appointment">Confirmer le rendez-vous</string>
+    <string name="select_date">Sélectionner une date</string>
+    <string name="available_time">Horaires disponibles</string>
+    <string name="urgent_appointment">Rendez-vous urgent</string>
+    <string name="reason_hint">Motif du rendez-vous…</string>
+    <string name="notes_hint">Notes supplémentaires (optionnel)…</string>
+    <string name="appointment_type">Type de rendez-vous</string>
+    <string name="in_person">En personne</string>
+    <string name="teleconsult">Téléconsultation</string>
+    <string name="back_to_home">Retour à l\'accueil</string>
+    <string name="logout">Se déconnecter</string>
+    <string name="edit_profile">Modifier le profil</string>
+    <string name="favorite_doctors">Médecins favoris</string>
+    <string name="payment_method">Méthode de paiement</string>
+    <string name="profile">Profil</string>
+    <string name="general">Général</string>
 </resources>

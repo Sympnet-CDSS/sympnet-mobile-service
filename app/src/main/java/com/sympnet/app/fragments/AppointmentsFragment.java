@@ -1,6 +1,8 @@
 package com.sympnet.app.fragments;
 
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,7 +34,7 @@ import static android.content.Context.MODE_PRIVATE;
 public class AppointmentsFragment extends Fragment {
 
     private RecyclerView rvAppointments;
-    private TextView filterAll, filterPending, filterConfirmed, filterCancelled;
+    private TextView filterAll, filterPending, filterConfirmed, filterCancelled, filterCompleted;
     private List<AppointmentDto> allAppointments = new ArrayList<>();
     private AppointmentsAdapter adapter;
 
@@ -45,6 +48,7 @@ public class AppointmentsFragment extends Fragment {
         filterPending   = view.findViewById(R.id.filterPending);
         filterConfirmed = view.findViewById(R.id.filterConfirmed);
         filterCancelled = view.findViewById(R.id.filterCancelled);
+        filterCompleted = view.findViewById(R.id.filterCompleted);
 
         rvAppointments.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -59,28 +63,23 @@ public class AppointmentsFragment extends Fragment {
                 .getSharedPreferences("SympNetPrefs", MODE_PRIVATE);
         String token = "Bearer " + prefs.getString("userToken", "");
 
-        AppointmentService service = ApiClient.getClient()
-                .create(AppointmentService.class);
-
-        service.getMyAppointments(token).enqueue(new Callback<List<AppointmentDto>>() {
+        ApiClient.getClient().create(AppointmentService.class)
+                .getMyAppointments(token).enqueue(new Callback<List<AppointmentDto>>() {
             @Override
-            public void onResponse(Call<List<AppointmentDto>> call,
-                                   Response<List<AppointmentDto>> response) {
+            public void onResponse(@NonNull Call<List<AppointmentDto>> call,
+                                   @NonNull Response<List<AppointmentDto>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     allAppointments = response.body();
                     showAppointments(allAppointments);
                 } else {
                     Log.e("APPOINTMENTS", "Error: " + response.code());
-                    Toast.makeText(getContext(),
-                            "Erreur " + response.code(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<List<AppointmentDto>> call, Throwable t) {
+            public void onFailure(@NonNull Call<List<AppointmentDto>> call, @NonNull Throwable t) {
                 Log.e("APPOINTMENTS", "onFailure: " + t.getMessage());
-                Toast.makeText(getContext(),
-                        "Connexion échouée", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Connexion échouée", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -98,44 +97,57 @@ public class AppointmentsFragment extends Fragment {
 
         filterPending.setOnClickListener(v -> {
             setActiveFilter(filterPending);
-            List<AppointmentDto> filtered = new ArrayList<>();
-            for (AppointmentDto a : allAppointments) {
-                if ("En attente".equalsIgnoreCase(a.status)) filtered.add(a);
-            }
-            showAppointments(filtered);
+            filterByStatus("Pending");
         });
 
         filterConfirmed.setOnClickListener(v -> {
             setActiveFilter(filterConfirmed);
-            List<AppointmentDto> filtered = new ArrayList<>();
-            for (AppointmentDto a : allAppointments) {
-                if ("Confirmed".equalsIgnoreCase(a.status)) filtered.add(a);
-            }
-            showAppointments(filtered);
+            filterByStatus("Confirmed");
+        });
+
+        filterCompleted.setOnClickListener(v -> {
+            setActiveFilter(filterCompleted);
+            filterByStatus("Completed");
         });
 
         filterCancelled.setOnClickListener(v -> {
             setActiveFilter(filterCancelled);
-            List<AppointmentDto> filtered = new ArrayList<>();
-            for (AppointmentDto a : allAppointments) {
-                if ("Annulé".equalsIgnoreCase(a.status) ||
-                        "Cancelled".equalsIgnoreCase(a.status)) {
-                    filtered.add(a);
-                }
-            }
-            showAppointments(filtered);
+            filterByStatus("Cancelled");
         });
     }
 
-    private void setActiveFilter(TextView selected) {
-        for (TextView filter : new TextView[]{
-                filterAll, filterPending, filterConfirmed, filterCancelled}) {
-            filter.setBackgroundTintList(
-                    requireContext().getColorStateList(R.color.gray_100));
-            filter.setTextColor(requireContext().getColor(R.color.gray_600));
+    private void filterByStatus(String targetStatus) {
+        List<AppointmentDto> filtered = new ArrayList<>();
+        for (AppointmentDto a : allAppointments) {
+            String s = a.status != null ? a.status : "";
+            if ("Pending".equals(targetStatus)) {
+                if (s.isEmpty() || s.equalsIgnoreCase("Pending") || s.equalsIgnoreCase("En attente")) {
+                    filtered.add(a);
+                }
+            } else if ("Confirmed".equals(targetStatus)) {
+                if (s.equalsIgnoreCase("Confirmed") || s.equalsIgnoreCase("Confirmé")) {
+                    filtered.add(a);
+                }
+            } else if ("Cancelled".equals(targetStatus)) {
+                if (s.equalsIgnoreCase("Cancelled") || s.equalsIgnoreCase("Annulé")) {
+                    filtered.add(a);
+                }
+            } else if ("Completed".equals(targetStatus)) {
+                if (s.equalsIgnoreCase("Completed") || s.equalsIgnoreCase("Terminé")) {
+                    filtered.add(a);
+                }
+            }
         }
-        selected.setBackgroundTintList(
-                requireContext().getColorStateList(R.color.teal_500));
-        selected.setTextColor(requireContext().getColor(android.R.color.white));
+        showAppointments(filtered);
+    }
+
+    private void setActiveFilter(TextView selected) {
+        TextView[] filters = {filterAll, filterPending, filterConfirmed, filterCancelled, filterCompleted};
+        for (TextView f : filters) {
+            f.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F5F5F5")));
+            f.setTextColor(Color.parseColor("#9E9E9E"));
+        }
+        selected.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#009688")));
+        selected.setTextColor(Color.WHITE);
     }
 }

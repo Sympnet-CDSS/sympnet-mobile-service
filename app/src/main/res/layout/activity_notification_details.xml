@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Notification"
+            android:text="Notifications"
             android:textColor="#009688"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:text="Mark all"
+            android:text="Tout lire"
             android:textColor="#009688"
             android:textSize="14sp" />
     </RelativeLayout>
@@ -45,45 +45,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- ← ID ajouté ici pour être rempli dynamiquement -->
         <LinearLayout
+            android:id="@+id/notifContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="16dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/search_bg"
-                android:backgroundTint="#E0F2F1"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="4dp"
-                android:text="Today"
-                android:textColor="#009688"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-            <include layout="@layout/item_notification_detail" />
-            <include layout="@layout/item_notification_detail" />
-            <include layout="@layout/item_notification_detail" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:background="@drawable/search_bg"
-                android:backgroundTint="#F5F5F5"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="4dp"
-                android:text="Yesterday"
-                android:textColor="#9E9E9E"
-                android:textSize="12sp"
-                android:textStyle="bold" />
-
-            <include layout="@layout/item_notification_detail" />
-            <include layout="@layout/item_notification_detail" />
-
-        </LinearLayout>
     </ScrollView>
 
 </LinearLayout>

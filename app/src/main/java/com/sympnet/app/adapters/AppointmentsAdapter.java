@@ -3,6 +3,8 @@ package com.sympnet.app.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,9 +38,9 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
     private static final DateTimeFormatter INPUT_FMT =
             DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
     private static final DateTimeFormatter DATE_FMT =
-            DateTimeFormatter.ofPattern("EEE, dd MMM yyyy", Locale.ENGLISH);
+            DateTimeFormatter.ofPattern("EEE, dd MMM yyyy", Locale.FRENCH);
     private static final DateTimeFormatter TIME_FMT =
-            DateTimeFormatter.ofPattern("hh:mm a", Locale.ENGLISH);
+            DateTimeFormatter.ofPattern("HH:mm", Locale.FRENCH);
 
     public AppointmentsAdapter(List<AppointmentDto> appointments) {
         this.appointments = appointments;
@@ -63,49 +65,31 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
         Context ctx = holder.itemView.getContext();
 
         // Doctor name
-        holder.tvDoctorName.setText(a.doctorName != null ? a.doctorName : "—");
+        holder.tvDoctorName.setText(a.doctorName != null ? a.doctorName : "Médecin");
 
         // Date + Time
         try {
-            if (a.dateTime != null && a.dateTime.length() >= 19) {
-                LocalDateTime dt = LocalDateTime.parse(
-                        a.dateTime.substring(0, 19), INPUT_FMT);
-                holder.tvDateTime.setText(
-                        "📅 " + dt.toLocalDate().format(DATE_FMT) +
-                                "  🕐 " + dt.toLocalTime().format(TIME_FMT));
+            if (a.dateTime != null && a.dateTime.length() >= 16) {
+                String cleanDt = a.dateTime;
+                if (cleanDt.length() > 19) cleanDt = cleanDt.substring(0, 19);
+                else if (cleanDt.length() == 16) cleanDt += ":00";
+                
+                LocalDateTime dt = LocalDateTime.parse(cleanDt, INPUT_FMT);
+                holder.tvDateTime.setText("📅 " + dt.format(DATE_FMT) + "  🕐 " + dt.format(TIME_FMT));
+            } else {
+                holder.tvDateTime.setText(a.dateTime != null ? a.dateTime : "—");
             }
         } catch (Exception e) {
             holder.tvDateTime.setText(a.dateTime != null ? a.dateTime : "—");
         }
 
         // Status
-        holder.tvStatus.setText(a.status != null ? a.status : "—");
-        if (a.status != null) {
-            switch (a.status) {
-                case "Confirmed":
-                    holder.tvStatus.setTextColor(0xFF4CAF50);
-                    holder.tvStatus.getBackground().setTint(0xFFE8F5E9);
-                    break;
-                case "Cancelled":
-                case "Annulé":
-                    holder.tvStatus.setTextColor(0xFFD32F2F);
-                    holder.tvStatus.getBackground().setTint(0xFFFFEBEE);
-                    break;
-                case "Completed":
-                    holder.tvStatus.setTextColor(0xFF1976D2);
-                    holder.tvStatus.getBackground().setTint(0xFFE3F2FD);
-                    break;
-                default: // En attente
-                    holder.tvStatus.setTextColor(0xFFFF9800);
-                    holder.tvStatus.getBackground().setTint(0xFFFFF3E0);
-                    break;
-            }
-        }
+        applyStatus(holder, a.status);
 
         // Type
         if (a.type != null) {
             boolean inPerson = "InPerson".equalsIgnoreCase(a.type);
-            holder.tvType.setText(inPerson ? "🏥 In-Person" : "📹 Teleconsult");
+            holder.tvType.setText(inPerson ? "🏥 Cabinet" : "📹 Téléconsultation");
         }
 
         // Urgent
@@ -114,17 +98,16 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
         // Reason
         if (a.reason != null && !a.reason.isEmpty()) {
             holder.tvReason.setVisibility(View.VISIBLE);
-            holder.tvReason.setText("📋 " + a.reason);
+            holder.tvReason.setText("📋 Motif : " + a.reason);
         } else {
             holder.tvReason.setVisibility(View.GONE);
         }
 
-        // Masquer Cancel et Reschedule si annulé ou complété
-        boolean canAct = !"Annulé".equals(a.status)
-                && !"Cancelled".equals(a.status)
-                && !"Completed".equals(a.status);
-        holder.btnCancel.setVisibility(canAct ? View.VISIBLE : View.GONE);
-        holder.btnReschedule.setVisibility(canAct ? View.VISIBLE : View.GONE);
+        // Action buttons visibility - hide if final status
+        boolean isFinal = "Annulé".equals(a.status) || "Cancelled".equals(a.status) || 
+                         "Completed".equals(a.status) || "Terminé".equals(a.status);
+        holder.btnCancel.setVisibility(isFinal ? View.GONE : View.VISIBLE);
+        holder.btnReschedule.setVisibility(isFinal ? View.GONE : View.VISIBLE);
 
         // Details
         holder.btnDetails.setOnClickListener(v -> {
@@ -169,6 +152,35 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
             intent.putExtra("rescheduleId", a.id);
             ctx.startActivity(intent);
         });
+    }
+
+    private void applyStatus(ViewHolder h, String status) {
+        if (status == null) status = "";
+        switch (status) {
+            case "Confirmé":
+            case "Confirmed":
+                h.tvStatus.setText("✅ Confirmé");
+                h.tvStatus.setTextColor(Color.parseColor("#059669"));
+                h.tvStatus.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#D1FAE5")));
+                break;
+            case "Annulé":
+            case "Cancelled":
+                h.tvStatus.setText("❌ Annulé");
+                h.tvStatus.setTextColor(Color.parseColor("#DC2626"));
+                h.tvStatus.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FEE2E2")));
+                break;
+            case "Terminé":
+            case "Completed":
+                h.tvStatus.setText("🏁 Terminé");
+                h.tvStatus.setTextColor(Color.parseColor("#6B7280"));
+                h.tvStatus.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#E5E7EB")));
+                break;
+            default:
+                h.tvStatus.setText("⏳ En attente");
+                h.tvStatus.setTextColor(Color.parseColor("#D97706"));
+                h.tvStatus.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FEF3C7")));
+                break;
+        }
     }
 
     @Override

@@ -63,16 +63,36 @@
                     android:fontFamily="sans-serif-medium" />
             </LinearLayout>
 
-            <!-- Bouton Notification -->
-            <ImageView
-                android:id="@+id/btnNotifications"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="8dp"
-                android:background="@drawable/bg_icon_button"
-                android:padding="10dp"
-                android:src="@android:drawable/ic_popup_reminder"
-                app:tint="#FFFFFF" />
+            <!-- Conteneur pour Notification avec Badge -->
+            <FrameLayout
+                android:id="@+id/notifContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp">
+
+                <ImageView
+                    android:id="@+id/btnNotifications"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="10dp"
+                    android:src="@android:drawable/ic_popup_reminder"
+                    app:tint="#FFFFFF" />
+
+                <!-- Point rouge (Badge) -->
+                <View
+                    android:id="@+id/notificationBadge"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="6dp"
+                    android:background="@drawable/circle_background"
+                    android:backgroundTint="#FF0000"
+                    android:visibility="gone" />
+            </FrameLayout>
 
             <!-- Bouton Settings -->
             <ImageView
@@ -150,8 +170,8 @@
                     android:padding="16dp">
 
                     <TextView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:text="💊"
                         android:textSize="28sp" />
 
@@ -345,7 +365,6 @@
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
-                <!-- ← android:id ajouté ici -->
                 <TextView
                     android:id="@+id/tvVoirTout"
                     android:layout_width="wrap_content"

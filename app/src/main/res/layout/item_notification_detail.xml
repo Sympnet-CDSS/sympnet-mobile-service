@@ -1,58 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="16dp"
-    android:background="?attr/selectableItemBackground"
-    android:clickable="true"
-    android:focusable="true"
-    android:padding="8dp">
-
-    <ImageView
-        android:id="@+id/ivNotifIcon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="@drawable/circle_background"
-        android:backgroundTint="#F0F9F9"
-        android:padding="10dp"
-        android:src="@android:drawable/ic_menu_today"
-        app:tint="#009688" />
+    android:layout_marginBottom="10dp"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="1dp"
+    app:cardBackgroundColor="#FFFFFF">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_toEndOf="@id/ivNotifIcon"
-        android:layout_toStartOf="@+id/tvNotifTime"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:padding="14dp">
 
+        <!-- Icône -->
         <TextView
-            android:id="@+id/tvNotifTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Scheduled Appointment"
-            android:textColor="#333333"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/circle_background"
+            android:backgroundTint="#E0F2F1"
+            android:gravity="center"
+            android:text="📅"
+            android:textSize="20sp" />
 
-        <TextView
-            android:id="@+id/tvNotifDesc"
-            android:layout_width="wrap_content"
+        <!-- Contenu -->
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor..."
-            android:textColor="#757575"
-            android:textSize="12sp" />
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvNotifTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Rendez-vous confirmé"
+                android:textColor="#1A2A3A"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvNotifMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Votre rendez-vous a été confirmé"
+                android:textColor="#5A6A7A"
+                android:textSize="13sp"
+                android:lineSpacingExtra="2dp" />
+
+            <TextView
+                android:id="@+id/tvNotifTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="10/05/2026 09:30"
+                android:textColor="#9E9E9E"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <!-- Point non lu -->
+        <View
+            android:id="@+id/unreadDot"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/circle_background"
+            android:backgroundTint="#009688" />
+
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tvNotifTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:text="2 M"
-        android:textColor="#9E9E9E"
-        android:textSize="12sp" />
-
-</RelativeLayout>
+</androidx.cardview.widget.CardView>
