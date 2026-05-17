@@ -26,6 +26,22 @@ android {
         }
     }
 
+    sourceSets {
+        main {
+            res.srcDirs = [
+                'src/main/res/layouts/auth',
+                'src/main/res/layouts/doctor',
+                'src/main/res/layouts/appointment',
+                'src/main/res/layouts/chat',
+                'src/main/res/layouts/profile',
+                'src/main/res/layouts/notification',
+                'src/main/res/layouts/chatbot',
+                'src/main/res/layouts/common',
+                'src/main/res'
+            ]
+        }
+    }
+
     compileOptions {
         coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_17

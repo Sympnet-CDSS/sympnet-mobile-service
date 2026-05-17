@@ -39,33 +39,33 @@
         </activity>
 
         <activity
-            android:name=".activities.OnboardingActivity"
+            android:name=".activities.auth.OnboardingActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.SympNetMobile" />
 
-        <activity android:name=".activities.LoginActivity" />
-        <activity android:name=".activities.RegisterActivity" />
-        <activity android:name=".activities.ForgotPasswordActivity" />
+        <activity android:name=".activities.auth.LoginActivity" />
+        <activity android:name=".activities.auth.RegisterActivity" />
+        <activity android:name=".activities.auth.ForgotPasswordActivity" />
         <activity android:name=".activities.MainActivity" />
-        <activity android:name=".activities.SettingsActivity" />
-        <activity android:name=".activities.EditProfileActivity" />
-        <activity android:name=".activities.PasswordManagerActivity" />
-        <activity android:name=".activities.NotificationSettingsActivity" />
+        <activity android:name=".activities.profile.SettingsActivity" />
+        <activity android:name=".activities.profile.EditProfileActivity" />
+        <activity android:name=".activities.profile.PasswordManagerActivity" />
+        <activity android:name=".activities.profile.NotificationSettingsActivity" />
         <activity android:name=".home.ActivityHome"/>
-        <activity android:name=".activities.DoctorDetailsActivity" />
-        <activity android:name=".activities.AllDoctorsActivity" />
-        <activity android:name=".activities.BookAppointmentActivity" />
-        <activity android:name=".activities.AppointmentDetailActivity" />
-        <activity android:name=".activities.FavoriteDoctorsActivity" />
-        <activity android:name=".activities.HelpActivity" />
-        <activity android:name=".activities.PrivacyPolicyActivity" />
-        <activity android:name=".activities.LanguageActivity" />
-        <activity android:name=".activities.NotificationDetailsActivity" />
+        <activity android:name=".activities.doctor.DoctorDetailsActivity" />
+        <activity android:name=".activities.doctor.AllDoctorsActivity" />
+        <activity android:name=".activities.appointment.BookAppointmentActivity" />
+        <activity android:name=".activities.appointment.AppointmentDetailActivity" />
+        <activity android:name=".activities.doctor.FavoriteDoctorsActivity" />
+        <activity android:name=".activities.profile.HelpActivity" />
+        <activity android:name=".activities.profile.PrivacyPolicyActivity" />
+        <activity android:name=".activities.profile.LanguageActivity" />
+        <activity android:name=".activities.notification.NotificationDetailsActivity" />
 
         <!-- Chat & Video Call -->
-        <activity android:name=".activities.ChatListActivity" />
-        <activity android:name=".activities.ChatDetailActivity" />
+        <activity android:name=".activities.chat.ChatListActivity" />
+        <activity android:name=".activities.chat.ChatDetailActivity" />
 
 
     </application>

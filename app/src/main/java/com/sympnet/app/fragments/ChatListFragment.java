@@ -1,5 +1,7 @@
 package com.sympnet.app.fragments;
+import com.sympnet.app.activities.chat.ChatDetailActivity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -18,7 +20,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sympnet.app.R;
-import com.sympnet.app.activities.ChatDetailActivity;
 import com.sympnet.app.adapters.ConversationAdapter;
 import com.sympnet.app.model.Conversation;
 import com.sympnet.app.model.Message;
@@ -70,8 +71,10 @@ public class ChatListFragment extends Fragment implements WebSocketManager.ChatL
         refreshRunnable = new Runnable() {
             @Override
             public void run() {
-                loadConversations();
-                refreshHandler.postDelayed(this, 15000); // Rafraîchir toutes les 15s
+                if (isAdded()) {
+                    loadConversations();
+                    refreshHandler.postDelayed(this, 15000); // Rafraîchir toutes les 15s
+                }
             }
         };
         refreshHandler.postDelayed(refreshRunnable, 15000);
@@ -96,13 +99,16 @@ public class ChatListFragment extends Fragment implements WebSocketManager.ChatL
     }
 
     private void loadConversations() {
+        if (!isAdded() || getContext() == null) return;
         if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
         
-        String token = SessionManager.getInstance(requireContext()).getUserToken();
+        Context context = getContext();
+        String token = SessionManager.getInstance(context).getUserToken();
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
         apiService.getConversations("Bearer " + token).enqueue(new Callback<List<Conversation>>() {
             @Override
             public void onResponse(@NonNull Call<List<Conversation>> call, @NonNull Response<List<Conversation>> response) {
+                if (!isAdded()) return;
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
                 
                 if (response.isSuccessful() && response.body() != null) {
@@ -115,21 +121,32 @@ public class ChatListFragment extends Fragment implements WebSocketManager.ChatL
                     }
                 } else {
                     Log.e(TAG, "Error loading conversations: " + response.code());
-                    if (isAdded()) {
-                        Toast.makeText(requireContext(), "Erreur lors du chargement des conversations", Toast.LENGTH_SHORT).show();
+                    Context ctx = getContext();
+                    if (ctx != null) {
+                        Toast.makeText(ctx, "Erreur lors du chargement des conversations", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<List<Conversation>> call, @NonNull Throwable t) {
+                if (!isAdded()) return;
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
                 Log.e(TAG, "Failure loading conversations", t);
-                if (isAdded()) {
-                    Toast.makeText(requireContext(), "Erreur réseau", Toast.LENGTH_SHORT).show();
+                Context ctx = getContext();
+                if (ctx != null) {
+                    Toast.makeText(ctx, "Erreur réseau", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (refreshHandler != null && refreshRunnable != null) {
+            refreshHandler.removeCallbacks(refreshRunnable);
+        }
     }
 
     @Override
@@ -153,8 +170,8 @@ public class ChatListFragment extends Fragment implements WebSocketManager.ChatL
 
     @Override
     public void onNewMessage(Message message) {
-        if (isAdded()) {
-            requireActivity().runOnUiThread(() -> {
+        if (isAdded() && getActivity() != null) {
+            getActivity().runOnUiThread(() -> {
                 boolean found = false;
                 for (Conversation conv : conversations) {
                     if (conv.getOtherUserId().equals(message.getSenderId()) || conv.getOtherUserId().equals(message.getReceiverId())) {
@@ -182,15 +199,15 @@ public class ChatListFragment extends Fragment implements WebSocketManager.ChatL
 
     @Override
     public void onUpdateConversationList() {
-        if (isAdded()) {
-            requireActivity().runOnUiThread(this::loadConversations);
+        if (isAdded() && getActivity() != null) {
+            getActivity().runOnUiThread(this::loadConversations);
         }
     }
 
     @Override
     public void onConversationCreated(String doctorName, String appointmentDate) {
-        if (isAdded()) {
-            requireActivity().runOnUiThread(this::loadConversations);
+        if (isAdded() && getActivity() != null) {
+            getActivity().runOnUiThread(this::loadConversations);
         }
     }
 }

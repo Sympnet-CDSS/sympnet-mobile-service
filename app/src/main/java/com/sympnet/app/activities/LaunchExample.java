@@ -1,4 +1,5 @@
 package com.sympnet.app.activities;
+import com.sympnet.app.activities.doctor.DoctorDetailsActivity;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // HOW TO LAUNCH DoctorDetailsActivity

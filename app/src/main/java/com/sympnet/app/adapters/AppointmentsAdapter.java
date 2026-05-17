@@ -1,4 +1,6 @@
 package com.sympnet.app.adapters;
+import com.sympnet.app.activities.appointment.AppointmentDetailActivity;
+import com.sympnet.app.activities.appointment.BookAppointmentActivity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,8 +19,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sympnet.app.R;
-import com.sympnet.app.activities.AppointmentDetailActivity;
-import com.sympnet.app.activities.BookAppointmentActivity;
 import com.sympnet.app.api.AppointmentService;
 import com.sympnet.app.model.AppointmentDto;
 import com.sympnet.app.network.ApiClient;
@@ -106,6 +107,17 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
         if (a.type != null) {
             boolean inPerson = "InPerson".equalsIgnoreCase(a.type);
             holder.tvType.setText(inPerson ? "Cabinet" : "Téléconsultation");
+            if (inPerson) {
+                holder.ivTypeIcon.setImageResource(R.drawable.ic_home);
+                holder.ivTypeIcon.setImageTintList(ColorStateList.valueOf(Color.parseColor("#009688")));
+                holder.tvType.setTextColor(Color.parseColor("#009688"));
+                holder.layoutType.setBackgroundResource(R.drawable.bg_label_light_teal);
+            } else {
+                holder.ivTypeIcon.setImageResource(R.drawable.ic_videocam);
+                holder.ivTypeIcon.setImageTintList(ColorStateList.valueOf(Color.parseColor("#9C27B0")));
+                holder.tvType.setTextColor(Color.parseColor("#9C27B0"));
+                holder.layoutType.setBackgroundResource(R.drawable.bg_label_purple);
+            }
         }
 
         // Reason
@@ -161,6 +173,9 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
         holder.btnReschedule.setOnClickListener(v -> {
             Intent intent = new Intent(ctx, BookAppointmentActivity.class);
             intent.putExtra("doctorId", a.doctorId);
+            intent.putExtra("doctorName", a.doctorName);
+            intent.putExtra("doctorSpecialty", a.doctorSpeciality != null ? a.doctorSpeciality : "Généraliste");
+            intent.putExtra("doctorAddress", a.doctorAddress != null ? a.doctorAddress : "Cabinet médical");
             intent.putExtra("rescheduleId", a.id);
             ctx.startActivity(intent);
         });
@@ -171,24 +186,24 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
         switch (status) {
             case "Confirmé":
             case "Confirmed":
-                h.tvStatus.setText("✅ Confirmé");
+                h.tvStatus.setText("Confirmé");
                 h.tvStatus.setTextColor(Color.parseColor("#059669"));
                 h.tvStatus.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#D1FAE5")));
                 break;
             case "Annulé":
             case "Cancelled":
-                h.tvStatus.setText("❌ Annulé");
+                h.tvStatus.setText("Annulé");
                 h.tvStatus.setTextColor(Color.parseColor("#DC2626"));
                 h.tvStatus.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FEE2E2")));
                 break;
             case "Terminé":
             case "Completed":
-                h.tvStatus.setText("🏁 Terminé");
+                h.tvStatus.setText("Terminé");
                 h.tvStatus.setTextColor(Color.parseColor("#6B7280"));
                 h.tvStatus.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#E5E7EB")));
                 break;
             default:
-                h.tvStatus.setText("⏳ En attente");
+                h.tvStatus.setText("En attente");
                 h.tvStatus.setTextColor(Color.parseColor("#D97706"));
                 h.tvStatus.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FEF3C7")));
                 break;
@@ -203,6 +218,8 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvDoctorName, tvDoctorSpecialty, tvDate, tvTime, tvStatus, tvType, tvReason, tvInitials;
         TextView btnCancel, btnReschedule, btnDetails;
+        View layoutType;
+        ImageView ivTypeIcon;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -217,6 +234,8 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
             btnCancel         = itemView.findViewById(R.id.btnCancel);
             btnReschedule     = itemView.findViewById(R.id.btnReschedule);
             btnDetails        = itemView.findViewById(R.id.btnDetails);
+            layoutType        = itemView.findViewById(R.id.layoutType);
+            ivTypeIcon        = itemView.findViewById(R.id.ivTypeIcon);
         }
     }
 }

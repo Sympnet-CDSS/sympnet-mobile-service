@@ -24,6 +24,11 @@ public interface AppointmentService {
             @Body CreateAppointmentRequest request);
 
 
+    @GET("api/appointments/doctor/{doctorId}/booked-slots")
+    Call<List<String>> getDoctorBookedSlots(
+            @Header("Authorization") String token,
+            @Path("doctorId") int doctorId);
+
     @GET("api/appointments")
     Call<List<AppointmentDto>> getMyAppointments(
             @Header("Authorization") String token);

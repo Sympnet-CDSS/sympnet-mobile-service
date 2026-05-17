@@ -56,6 +56,12 @@ public class Patient {
     @SerializedName("userId")
     private String userId;
 
+    @SerializedName("email")
+    private String email;
+
+    @SerializedName("photoUrl")
+    private String photoUrl;
+
     // ── Getters ───────────────────────────────────────────────────────────
 
     public int    getId()                { return id; }
@@ -70,6 +76,8 @@ public class Patient {
     public String getMedicalHistory()    { return medicalHistory != null ? medicalHistory : ""; }
     public int    getConsultationCount() { return consultationCount; }
     public String getUserId()            { return userId         != null ? userId         : ""; }
+    public String getEmail()             { return email          != null ? email          : ""; }
+    public String getPhotoUrl()          { return photoUrl       != null ? photoUrl       : ""; }
 
     /** Combined display name used in ActivityHome and ProfileFragment */
     public String getFullName() {

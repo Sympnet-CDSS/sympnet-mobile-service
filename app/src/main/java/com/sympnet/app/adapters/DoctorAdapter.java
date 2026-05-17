@@ -1,4 +1,6 @@
 package com.sympnet.app.adapters;
+import com.sympnet.app.activities.chat.ChatDetailActivity;
+import com.sympnet.app.activities.doctor.DoctorDetailsActivity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,8 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sympnet.app.R;
-import com.sympnet.app.activities.ChatDetailActivity;
-import com.sympnet.app.activities.DoctorDetailsActivity;
 import com.sympnet.app.model.Doctor;
 
 import java.util.List;

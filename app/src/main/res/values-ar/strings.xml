@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">SympNet</string>
+    <string name="settings">الإعدادات</string>
+    <string name="language">اللغة</string>
+    <string name="account">الحساب</string>
+    <string name="support">الدعم</string>
+    <string name="notification_setting">إعدادات الإشعارات</string>
+    <string name="password_manager">إدارة كلمة المرور</string>
+    <string name="delete_account">حذف الحساب</string>
+    <string name="help_support">المساعدة والدعم</string>
+    <string name="privacy_policy">سياسة الخصوصية</string>
+    <string name="my_schedules">مواعيدي</string>
+    <string name="book_appointment">حجز موعد</string>
+    <string name="confirm_appointment">تأكيد الموعد</string>
+    <string name="select_date">اختر التاريخ</string>
+    <string name="available_time">الأوقات المتاحة</string>
+    <string name="urgent_appointment">موعد عاجل</string>
+    <string name="reason_hint">سبب الموعد…</string>
+    <string name="notes_hint">ملاحظات إضافية (اختياري)…</string>
+    <string name="appointment_type">نوع الموعد</string>
+    <string name="in_person">حضوري</string>
+    <string name="teleconsult">استشارة عن بُعد</string>
+    <string name="back_to_home">العودة للرئيسية</string>
+    <string name="logout">تسجيل الخروج</string>
+    <string name="edit_profile">تعديل الملف الشخصي</string>
+    <string name="favorite_doctors">الأطباء المفضلون</string>
+    <string name="payment_method">طريقة الدفع</string>
+    <string name="profile">الملف الشخصي</string>
+    <string name="general">عام</string>
+</resources>

@@ -1,4 +1,6 @@
 package com.sympnet.app.fragments;
+import com.sympnet.app.activities.notification.NotificationDetailsActivity;
+import com.sympnet.app.activities.doctor.AllDoctorsActivity;
 
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
@@ -61,7 +63,7 @@ public class AppointmentsFragment extends Fragment {
         View btnNotifications = view.findViewById(R.id.btnNotifications);
         if (btnNotifications != null) {
             btnNotifications.setOnClickListener(v -> {
-                android.content.Intent intent = new android.content.Intent(getContext(), com.sympnet.app.activities.NotificationDetailsActivity.class);
+                android.content.Intent intent = new android.content.Intent(getContext(), com.sympnet.app.activities.notification.NotificationDetailsActivity.class);
                 startActivity(intent);
             });
         }
@@ -166,7 +168,7 @@ public class AppointmentsFragment extends Fragment {
     private void setupFab() {
         if (fabAddAppointment != null) {
             fabAddAppointment.setOnClickListener(v -> {
-                android.content.Intent intent = new android.content.Intent(getContext(), com.sympnet.app.activities.AllDoctorsActivity.class);
+                android.content.Intent intent = new android.content.Intent(getContext(), com.sympnet.app.activities.doctor.AllDoctorsActivity.class);
                 startActivity(intent);
             });
         }

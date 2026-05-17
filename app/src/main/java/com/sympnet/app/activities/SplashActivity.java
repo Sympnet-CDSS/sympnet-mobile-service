@@ -1,4 +1,5 @@
 package com.sympnet.app.activities;
+import com.sympnet.app.activities.auth.OnboardingActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.sympnet.app.R;
+import com.sympnet.app.activities.auth.LoginActivity;
 
 /**
  * Splash screen — always the launcher activity.
@@ -21,7 +23,7 @@ import com.sympnet.app.R;
  *
  * In AndroidManifest.xml, set this as the MAIN / LAUNCHER activity.
  */
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends BaseActivity {
 
     private static final String PREFS_NAME = "sympnet_prefs";
     private static final String KEY_FIRST  = "onboarding_completed";
@@ -32,14 +34,14 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        // Fade-in logo
-        ImageView logo  = findViewById(R.id.splash_logo);
+        // Fade-in logo card (containing the new official SympNet logo)
+        android.view.View logoCard = findViewById(R.id.splash_logo_card);
         TextView  title = findViewById(R.id.splash_title);
 
         AlphaAnimation fadeIn = new AlphaAnimation(0f, 1f);
         fadeIn.setDuration(700);
         fadeIn.setFillAfter(true);
-        logo.startAnimation(fadeIn);
+        logoCard.startAnimation(fadeIn);
 
         AlphaAnimation fadeInDelayed = new AlphaAnimation(0f, 1f);
         fadeInDelayed.setDuration(700);

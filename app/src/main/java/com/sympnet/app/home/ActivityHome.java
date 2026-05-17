@@ -1,4 +1,8 @@
 package com.sympnet.app.home;
+import com.sympnet.app.activities.notification.NotificationDetailsActivity;
+import com.sympnet.app.activities.profile.SettingsActivity;
+import com.sympnet.app.activities.doctor.FavoriteDoctorsActivity;
+import com.sympnet.app.activities.doctor.AllDoctorsActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -36,12 +40,9 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.sympnet.app.R;
-import com.sympnet.app.activities.AllDoctorsActivity;
 import com.sympnet.app.activities.BaseActivity;
-import com.sympnet.app.activities.LoginActivity;
+import com.sympnet.app.activities.auth.LoginActivity;
 import com.sympnet.app.activities.MainActivity;
-import com.sympnet.app.activities.NotificationDetailsActivity;
-import com.sympnet.app.activities.SettingsActivity;
 import com.sympnet.app.adapters.DoctorAdapter;
 import com.sympnet.app.api.AppointmentService;
 import com.sympnet.app.model.Doctor;

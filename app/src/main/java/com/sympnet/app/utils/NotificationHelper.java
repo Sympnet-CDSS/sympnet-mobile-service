@@ -1,4 +1,5 @@
 package com.sympnet.app.utils;
+import com.sympnet.app.activities.notification.NotificationDetailsActivity;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -8,7 +9,6 @@ import android.content.Intent;
 import android.os.Build;
 import androidx.core.app.NotificationCompat;
 import com.sympnet.app.R;
-import com.sympnet.app.activities.NotificationDetailsActivity;
 
 public class NotificationHelper {
     private static final String CHANNEL_ID = "sympnet_notif_channel";

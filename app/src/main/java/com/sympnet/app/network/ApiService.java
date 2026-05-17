@@ -19,6 +19,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -48,6 +49,12 @@ public interface ApiService {
     Call<Patient> getPatientByUserId(
             @Header("Authorization") String bearerToken,
             @Path("id") String userId);
+
+    @PUT("api/patients/{id}")
+    Call<Void> updatePatient(
+            @Header("Authorization") String bearerToken,
+            @Path("id") String userId,
+            @Body Map<String, Object> body);
 
     // ── Doctors ───────────────────────────────────────────────────────────────
     @GET("api/doctors")
@@ -105,4 +112,4 @@ public interface ApiService {
     Call<java.util.Map<String, Object>> symptomToDoctor(
             @Header("Authorization") String bearerToken,
             @Body java.util.Map<String, Object> body);
-}
+}

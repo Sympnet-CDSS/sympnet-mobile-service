@@ -1,4 +1,5 @@
 package com.sympnet.app.fragments;
+import com.sympnet.app.activities.doctor.DoctorDetailsActivity;
 
 import android.Manifest;
 import android.content.Intent;
@@ -26,7 +27,6 @@ import androidx.fragment.app.Fragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.sympnet.app.R;
-import com.sympnet.app.activities.DoctorDetailsActivity;
 import com.sympnet.app.network.ApiClient;
 import com.sympnet.app.network.ApiService;
 import com.sympnet.app.utils.SessionManager;
