@@ -25,9 +25,7 @@ public class NotificationSettingsActivity extends AppCompatActivity {
         setupSwitch(R.id.settingGeneral,      "🔔 General Notification", "general",      prefs, true);
         setupSwitch(R.id.settingSound,        "🔊 Sound",                "sound",        prefs, true);
         setupSwitch(R.id.settingVibrate,      "📳 Vibrate",              "vibrate",      prefs, false);
-        setupSwitch(R.id.settingSpecialOffers,"🎁 Special Offers",       "specialOffers",prefs, true);
-        setupSwitch(R.id.settingPayments,     "💳 Payments",             "payments",     prefs, false);
-        setupSwitch(R.id.settingCashback,     "💰 Cashback",             "cashback",     prefs, true);
+
     }
 
     private void setupSwitch(int containerId, String title, String key,

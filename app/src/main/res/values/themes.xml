@@ -7,6 +7,16 @@
         <item name="colorSecondaryVariant">@color/primary</item>
         <item name="android:statusBarColor">@color/primary_dark</item>
         <item name="android:windowBackground">@color/background</item>
+        
+        <!-- Global EditText Style -->
+        <item name="editTextStyle">@style/GlobalEditTextStyle</item>
+        <item name="android:editTextColor">#000000</item>
+    </style>
+
+    <style name="GlobalEditTextStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:background">#FFFFFF</item>
+        <item name="android:textColor">#000000</item>
+        <item name="android:padding">12dp</item>
     </style>
 
     <style name="TimeSlotStyle">
@@ -34,5 +44,9 @@
         <item name="android:textColor">#FFFFFF</item>
         <item name="android:textSize">12sp</item>
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.App.Circle" parent="">
+        <item name="cornerSize">50%</item>
     </style>
 </resources>

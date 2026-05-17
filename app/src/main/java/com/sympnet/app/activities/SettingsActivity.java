@@ -19,12 +19,12 @@ public class SettingsActivity extends AppCompatActivity {
         ImageView btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> finish());
 
-        setupMenuItem(findViewById(R.id.menuNotification), "Notification Setting", android.R.drawable.ic_lock_idle_alarm);
-        setupMenuItem(findViewById(R.id.menuPasswordManager), "Password Manager", android.R.drawable.ic_lock_idle_lock);
-        setupMenuItem(findViewById(R.id.menuDeleteAccount), "Delete Account", android.R.drawable.ic_menu_delete);
+        setupMenuItem(findViewById(R.id.menuNotification), "Paramètres de notifications", R.drawable.ic_notifications);
+        setupMenuItem(findViewById(R.id.menuPasswordManager), "Gestionnaire de mot de passe", android.R.drawable.ic_lock_idle_lock);
+        setupMenuItem(findViewById(R.id.menuDeleteAccount), "Supprimer le compte", android.R.drawable.ic_menu_delete);
         setupMenuItem(
                 findViewById(R.id.menuLanguage),
-                "Language",
+                "Langue",
                 android.R.drawable.ic_menu_compass
         );
 
@@ -41,6 +41,17 @@ public class SettingsActivity extends AppCompatActivity {
 
         findViewById(R.id.menuDeleteAccount).setOnClickListener(v -> {
             Toast.makeText(this, "Delete Account functionality", Toast.LENGTH_SHORT).show();
+        });
+
+        setupMenuItem(findViewById(R.id.menuHelp), "Aide & Support", R.drawable.ic_help);
+        setupMenuItem(findViewById(R.id.menuPrivacy), "Politique de confidentialité", R.drawable.ic_security);
+
+        findViewById(R.id.menuHelp).setOnClickListener(v -> {
+            startActivity(new Intent(this, HelpActivity.class));
+        });
+
+        findViewById(R.id.menuPrivacy).setOnClickListener(v -> {
+            startActivity(new Intent(this, PrivacyPolicyActivity.class));
         });
     }
 

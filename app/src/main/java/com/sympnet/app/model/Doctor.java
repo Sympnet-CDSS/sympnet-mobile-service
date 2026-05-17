@@ -22,7 +22,13 @@ public class Doctor {
     @SerializedName("address")
     private String address;
 
+    @SerializedName("userId")
+    private String userId;
+
     // ── Getters ──────────────────────────────────────────────────────────────
+
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
 
     public int getId() { return id; }
 

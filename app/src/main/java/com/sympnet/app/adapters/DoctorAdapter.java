@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sympnet.app.R;
+import com.sympnet.app.activities.ChatDetailActivity;
 import com.sympnet.app.activities.DoctorDetailsActivity;
 import com.sympnet.app.model.Doctor;
 
@@ -51,6 +53,20 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.ViewHolder
         // ── Helper pour créer l'intent avec toutes les infos ──────────────
         // (évite la répétition)
 
+        // Initials
+        if (doctor.getName() != null && !doctor.getName().trim().isEmpty()) {
+            String[] parts = doctor.getName().trim().split("\\s+");
+            String initials = "";
+            if (parts.length > 0 && !parts[0].isEmpty()) initials += parts[0].charAt(0);
+            if (parts.length > 1 && !parts[1].isEmpty()) initials += parts[1].charAt(0);
+            holder.initials.setText(initials.toUpperCase());
+        } else {
+            holder.initials.setText("D");
+        }
+
+        // Rating
+        holder.rating.setText(String.valueOf(doctor.getRating()));
+
         // ── Bouton Info → ouvre DoctorDetailsActivity ────────────────────
         holder.btnInfo.setOnClickListener(v -> {
             Intent intent = new Intent(context, DoctorDetailsActivity.class);
@@ -78,8 +94,10 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.ViewHolder
             context.startActivity(intent);
         });
 
-        // ── Bouton ? → affiche les infos du médecin ───────────────────────
-        holder.btnQuestion.setOnClickListener(v -> {
+        // Message button removed
+
+        // ── Bouton Info (Circle) → affiche les infos du médecin ────────────
+        holder.btnInfoCircle.setOnClickListener(v -> {
             String info = "👨‍⚕️ Dr. " + doctor.getName() + "\n"
                     + "🏥 Spécialité : " + doctor.getSpecialty() + "\n"
                     + "📍 Adresse : " + (doctor.getAddress() != null ? doctor.getAddress() : "N/A");
@@ -95,20 +113,24 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.ViewHolder
         SharedPreferences prefs = context.getSharedPreferences(PREFS_FAVORITES, Context.MODE_PRIVATE);
         String key = "fav_" + doctor.getId();
         boolean isFav = prefs.getBoolean(key, false);
-        holder.btnFavorite.setText(isFav ? "♥" : "♡");
-        holder.btnFavorite.setTextColor(isFav
-                ? context.getResources().getColor(android.R.color.holo_red_light)
-                : 0xFF0D6E6A);
+        
+        holder.btnFavorite.setImageResource(isFav 
+                ? android.R.drawable.btn_star_big_on 
+                : android.R.drawable.btn_star_big_off);
+        holder.btnFavorite.setColorFilter(android.graphics.Color.parseColor(isFav ? "#FFC107" : "#1A2A3A"));
 
         holder.btnFavorite.setOnClickListener(v -> {
             boolean currentFav = prefs.getBoolean(key, false);
-            prefs.edit().putBoolean(key, !currentFav).apply();
-            holder.btnFavorite.setText(!currentFav ? "♥" : "♡");
-            holder.btnFavorite.setTextColor(!currentFav
-                    ? context.getResources().getColor(android.R.color.holo_red_light)
-                    : 0xFF0D6E6A);
+            boolean newFav = !currentFav;
+            prefs.edit().putBoolean(key, newFav).apply();
+            
+            holder.btnFavorite.setImageResource(newFav 
+                    ? android.R.drawable.btn_star_big_on 
+                    : android.R.drawable.btn_star_big_off);
+            holder.btnFavorite.setColorFilter(android.graphics.Color.parseColor(newFav ? "#FFC107" : "#1A2A3A"));
+            
             Toast.makeText(context,
-                    !currentFav ? "Ajouté aux favoris" : "Retiré des favoris",
+                    newFav ? "Ajouté aux favoris" : "Retiré des favoris",
                     Toast.LENGTH_SHORT).show();
         });
     }
@@ -117,16 +139,19 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.ViewHolder
     public int getItemCount() { return doctors.size(); }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView name, specialty, btnInfo, btnCalendar, btnQuestion, btnFavorite;
+        TextView name, specialty, btnInfo, initials, rating;
+        ImageView btnCalendar, btnInfoCircle, btnFavorite;
 
         ViewHolder(View itemView) {
             super(itemView);
-            name        = itemView.findViewById(R.id.docName);
-            specialty   = itemView.findViewById(R.id.docSpecialty);
-            btnInfo     = itemView.findViewById(R.id.btnInfo);
-            btnCalendar = itemView.findViewById(R.id.btnCalendar);
-            btnQuestion = itemView.findViewById(R.id.btnQuestion);
-            btnFavorite = itemView.findViewById(R.id.btnFavorite);
+            name          = itemView.findViewById(R.id.docName);
+            specialty     = itemView.findViewById(R.id.docSpecialty);
+            btnInfo       = itemView.findViewById(R.id.btnInfo);
+            initials      = itemView.findViewById(R.id.tvDocInitials);
+            rating        = itemView.findViewById(R.id.tvDocRating);
+            btnCalendar   = itemView.findViewById(R.id.btnCalendar);
+            btnInfoCircle = itemView.findViewById(R.id.btnInfoCircle);
+            btnFavorite   = itemView.findViewById(R.id.btnFavorite);
         }
     }
 }

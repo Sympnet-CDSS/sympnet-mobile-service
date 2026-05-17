@@ -27,4 +27,15 @@
     <string name="payment_method">Payment Method</string>
     <string name="profile">Profile</string>
     <string name="general">General</string>
+
+    <!-- Chat strings -->
+
+    <string name="feature_coming_soon">Fonctionnalité d\'appel en cours de développement</string>
+    <string name="cancel">Annuler</string>
+    <string name="photo">Photo</string>
+    <string name="gallery">Galerie</string>
+    <string name="audio">Audio</string>
+    <string name="attach_file">Joindre un fichier</string>
+    <string name="user_typing">%1$s écrit…</string>
+
 </resources>

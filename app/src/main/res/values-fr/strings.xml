@@ -27,4 +27,14 @@
     <string name="payment_method">Méthode de paiement</string>
     <string name="profile">Profil</string>
     <string name="general">Général</string>
-</resources>
+
+
+
+        <string name="cancel">Annuler</string>
+        <string name="photo">Photo</string>
+        <string name="gallery">Galerie</string>
+        <string name="audio">Audio</string>
+        <string name="attach_file">Joindre un fichier</string>
+
+        <string name="user_typing">%s est en train d\'écrire...</string>
+    </resources>

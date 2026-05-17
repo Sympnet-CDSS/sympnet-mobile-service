@@ -10,7 +10,7 @@ import okhttp3.Request;
 
 public class RetrofitClient {
 
-    private static final String BASE_URL = " https://faster-say-trimmer.ngrok-free.dev/";
+    private static final String BASE_URL = "https://faster-say-trimmer.ngrok-free.dev/";
     private static Context appContext;
 
     public static void init(Context context) {

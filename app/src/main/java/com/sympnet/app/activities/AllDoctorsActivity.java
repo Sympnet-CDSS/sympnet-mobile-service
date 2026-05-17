@@ -26,7 +26,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class AllDoctorsActivity extends AppCompatActivity {
+public class AllDoctorsActivity extends BaseActivity {
 
     private static final String TAG = "AllDoctorsActivity";
 

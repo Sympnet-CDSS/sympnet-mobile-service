@@ -1,7 +1,13 @@
 package com.sympnet.app.network;
 
+import com.sympnet.app.api.AppointmentService;
+import com.sympnet.app.model.AudioRequest;
+import com.sympnet.app.model.Conversation;
 import com.sympnet.app.model.Doctor;
+import com.sympnet.app.model.Message;
 import com.sympnet.app.model.Patient;
+import com.sympnet.app.model.PatientNotificationDto;
+import com.sympnet.app.model.TranscriptionResult;
 import com.sympnet.app.model.User;
 
 import java.util.List;
@@ -11,22 +17,19 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface ApiService {
 
-    // ── Auth ──────────────────────────────────────────────────────────────
-
+    // ── Auth ──────────────────────────────────────────────────────────────────
     @POST("api/auth/login")
     Call<User> login(@Body Map<String, String> credentials);
 
     @POST("api/auth/register-mobile")
     Call<User> register(@Body Map<String, String> body);
-
-    // ── Password reset (3-step flow) ──────────────────────────────────────
-
-    // ── Password reset (3-step flow) ──────────────────────────────────────
 
     @POST("api/auth/forgot-password")
     Call<Void> forgotPassword(@Body Map<String, String> body);
@@ -36,26 +39,70 @@ public interface ApiService {
 
     @POST("api/auth/reset-password")
     Call<Void> resetPassword(@Body Map<String, String> body);
-    /** Step 2 — POST /api/auth/verify-code  { "email": "...", "code": "..." } */
+
     @POST("api/auth/verify-code")
     Call<Void> verifyCode(@Body Map<String, String> body);
 
-
-    // ── Patient ───────────────────────────────────────────────────────────
-
-    /**
-     * GET /api/patients/{id}
-     * {id} = UserId (Guid) from AuthResponseDto.
-     * Requires Bearer token.
-     */
+    // ── Patient ───────────────────────────────────────────────────────────────
     @GET("api/patients/{id}")
     Call<Patient> getPatientByUserId(
             @Header("Authorization") String bearerToken,
-            @Path("id") String userId
-    );
+            @Path("id") String userId);
 
-    // ── Doctors ───────────────────────────────────────────────────────────
-
+    // ── Doctors ───────────────────────────────────────────────────────────────
     @GET("api/doctors")
     Call<List<Doctor>> getDoctors();
-}
+
+    // ── Speech ────────────────────────────────────────────────────────────────
+    @POST("api/Speech/transcribe")
+    Call<TranscriptionResult> transcribeAudio(@Body AudioRequest request);
+
+    // ── Chat ──────────────────────────────────────────────────────────────────
+    @GET("api/chat/conversations")
+    Call<List<Conversation>> getConversations(
+            @Header("Authorization") String bearerToken);
+
+    @POST("api/chat/conversations")
+    Call<Conversation> createConversation(
+            @Header("Authorization") String bearerToken,
+            @Body Map<String, String> body);
+
+
+    @GET("api/chat/conversations/{conversationId}/messages")
+    Call<List<Message>> getConversationMessages(
+            @Header("Authorization") String bearerToken,
+            @Path("conversationId") String conversationId);
+
+    @POST("api/chat/messages")
+    Call<Message> sendMessage(
+            @Header("Authorization") String bearerToken,
+            @Body Map<String, Object> body);
+
+    // ── Notifications patient ─────────────────────────────────────────────────
+    @GET("api/patient-notifications")
+    Call<List<PatientNotificationDto>> getMyNotifications(
+            @Header("Authorization") String bearerToken);
+
+    @PATCH("api/patient-notifications/read-all")
+    Call<Void> markAllRead(
+            @Header("Authorization") String bearerToken);
+
+    @GET("api/appointments/confirmed")
+    Call<List<Object>> getConfirmedAppointments(
+            @Header("Authorization") String bearerToken,
+            @Query("patientId") String patientId,
+            @Query("doctorId") String doctorId
+    );
+
+
+    // ── AI ────────────────────────────────────────────────────────────────────
+    @POST("api/ai/diagnostic")
+    Call<java.util.Map<String, Object>> getDiagnostic(
+            @Header("Authorization") String bearerToken,
+            @Body java.util.Map<String, Object> body);
+
+    @POST("api/ai/symptom-to-doctor")
+    Call<java.util.Map<String, Object>> symptomToDoctor(
+            @Header("Authorization") String bearerToken,
+            @Body java.util.Map<String, Object> body);
+}

@@ -47,23 +47,30 @@ public class ProfileFragment extends Fragment {
         setupMenuClicks(view);
     }
 
-    /**
-     * Fills the header with real data from SharedPreferences.
-     * Keys written by LoginActivity.saveAuthData() + savePatientData():
-     *   "userName"   → firstName + lastName (or email fallback)
-     *   "userEmail"  → email from AuthResponseDto
-     */
     private void loadUserInfo(View view) {
         TextView tvName    = view.findViewById(R.id.tvUserName);
         TextView tvEmail   = view.findViewById(R.id.tvUserEmail);
         ImageView ivAvatar = view.findViewById(R.id.ivProfileAvatar);
 
+        TextView tvInfoEmail    = view.findViewById(R.id.tvInfoEmail);
+        TextView tvInfoPhone    = view.findViewById(R.id.tvInfoPhone);
+        TextView tvInfoAddress  = view.findViewById(R.id.tvInfoAddress);
+        TextView tvInfoBirthday = view.findViewById(R.id.tvInfoBirthday);
+
         String name     = prefs.getString("userName",       "");
         String email    = prefs.getString("userEmail",      "");
+        String phone    = prefs.getString("userPhone",      "+216 20 123 456");
+        String address  = prefs.getString("userAddress",    "Tunis, Tunisie");
+        String birthday = prefs.getString("userBirthday",   "15 Mars 1995");
         String base64   = prefs.getString("userPhotoBase64", null);
 
         tvName.setText(name.isEmpty()  ? "Patient" : name);
         tvEmail.setText(email.isEmpty() ? "" : email);
+        
+        if (tvInfoEmail != null) tvInfoEmail.setText(email);
+        if (tvInfoPhone != null) tvInfoPhone.setText(phone);
+        if (tvInfoAddress != null) tvInfoAddress.setText(address);
+        if (tvInfoBirthday != null) tvInfoBirthday.setText(birthday);
 
         if (base64 != null) {
             byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
@@ -71,50 +78,123 @@ public class ProfileFragment extends Fragment {
             if (bmp != null) {
                 Glide.with(this)
                         .load(bmp)
-                        .transform(new CircleCrop())
                         .placeholder(R.drawable.ic_profile_avatar)
                         .into(ivAvatar);
             }
         } else {
             Glide.with(this)
                     .load(R.drawable.ic_profile_avatar)
-                    .transform(new CircleCrop())
                     .into(ivAvatar);
         }
+
+        // Stats: Favoris
+        SharedPreferences favPrefs = requireContext().getSharedPreferences("doctor_favorites", Context.MODE_PRIVATE);
+        int favCount = favPrefs.getAll().size();
+        TextView tvCountFav = view.findViewById(R.id.tvCountFav);
+        TextView tvMenuFavBadge = view.findViewById(R.id.tvMenuFavCountBadge);
+        TextView tvMenuFavText = view.findViewById(R.id.tvMenuFavCountText);
+        
+        if (tvCountFav != null) tvCountFav.setText(String.valueOf(favCount));
+        if (tvMenuFavBadge != null) tvMenuFavBadge.setText(String.valueOf(favCount));
+        if (tvMenuFavText != null) tvMenuFavText.setText(favCount + " médecins enregistrés");
+
+        // Stats: Rendez-vous
+        TextView tvCountApp = view.findViewById(R.id.tvCountApp);
+        String token = "Bearer " + prefs.getString("userToken", "");
+        com.sympnet.app.network.ApiClient.getClient().create(com.sympnet.app.api.AppointmentService.class)
+                .getMyAppointments(token).enqueue(new retrofit2.Callback<java.util.List<com.sympnet.app.model.AppointmentDto>>() {
+            @Override
+            public void onResponse(@NonNull retrofit2.Call<java.util.List<com.sympnet.app.model.AppointmentDto>> call,
+                                   @NonNull retrofit2.Response<java.util.List<com.sympnet.app.model.AppointmentDto>> response) {
+                if (response.isSuccessful() && response.body() != null && tvCountApp != null) {
+                    if (getActivity() != null) {
+                        getActivity().runOnUiThread(() -> tvCountApp.setText(String.valueOf(response.body().size())));
+                    }
+                }
+            }
+            @Override
+            public void onFailure(@NonNull retrofit2.Call<java.util.List<com.sympnet.app.model.AppointmentDto>> call, @NonNull Throwable t) {
+                if (tvCountApp != null) tvCountApp.setText("0");
+            }
+        });
     }
 
     private void setupMenuClicks(View view) {
-        // Edit Profile — opens EditProfileActivity pre-filled with all patient data
-        view.findViewById(R.id.menuProfile).setOnClickListener(v ->
-                startActivity(new Intent(requireActivity(), EditProfileActivity.class)));
+        View.OnClickListener editProfileListener = v -> {
+            if (getActivity() != null) {
+                startActivity(new Intent(requireActivity(), EditProfileActivity.class));
+            }
+        };
 
-        // Favorite Doctors
-        view.findViewById(R.id.menuFavorite).setOnClickListener(v ->
-                startActivity(new Intent(requireActivity(), FavoriteDoctorsActivity.class)));
+        View btnEdit = view.findViewById(R.id.btnEditProfile);
+        if (btnEdit != null) btnEdit.setOnClickListener(editProfileListener);
 
-        // Payment
-        view.findViewById(R.id.menuPayment).setOnClickListener(v ->
-                Toast.makeText(getActivity(), "Payment coming soon", Toast.LENGTH_SHORT).show());
+        View ivEdit = view.findViewById(R.id.ivEditAvatar);
+        if (ivEdit != null) ivEdit.setOnClickListener(editProfileListener);
 
-        // Privacy Policy
-        view.findViewById(R.id.menuPrivacy).setOnClickListener(v ->
-                startActivity(new Intent(requireActivity(), PrivacyPolicyActivity.class)));
+        View.OnClickListener favListener = v -> {
+            if (getActivity() != null) {
+                startActivity(new Intent(requireActivity(), FavoriteDoctorsActivity.class));
+            }
+        };
+        View btnFav = view.findViewById(R.id.btnGoFavorites);
+        if (btnFav != null) btnFav.setOnClickListener(favListener);
 
-        // Settings
-        view.findViewById(R.id.menuSettings).setOnClickListener(v ->
-                startActivity(new Intent(requireActivity(), SettingsActivity.class)));
+        View btnPrivacy = view.findViewById(R.id.btnPrivacy);
+        if (btnPrivacy != null) btnPrivacy.setOnClickListener(v -> {
+            if (getActivity() != null) {
+                startActivity(new Intent(requireActivity(), PrivacyPolicyActivity.class));
+            }
+        });
 
-        // Help
-        view.findViewById(R.id.menuHelp).setOnClickListener(v ->
-                startActivity(new Intent(requireActivity(), HelpActivity.class)));
+        View btnNotifSettings = view.findViewById(R.id.btnNotificationsSettings);
+        com.google.android.material.switchmaterial.SwitchMaterial switchNotifs = view.findViewById(R.id.switchNotifications);
+        
+        if (switchNotifs != null && prefs != null) {
+            boolean isNotifEnabled = prefs.getBoolean("notifications_enabled", true);
+            switchNotifs.setChecked(isNotifEnabled);
+            
+            switchNotifs.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                prefs.edit().putBoolean("notifications_enabled", isChecked).apply();
+                if (getActivity() != null) {
+                    Toast.makeText(getActivity(), "Notifications " + (isChecked ? "activées" : "désactivées"), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        
+        if (btnNotifSettings != null && switchNotifs != null) {
+            btnNotifSettings.setOnClickListener(v -> {
+                switchNotifs.setChecked(!switchNotifs.isChecked());
+            });
+        }
 
-        // Logout — clears all session data
-        view.findViewById(R.id.menuLogout).setOnClickListener(v -> {
-            prefs.edit().clear().apply();
-            Toast.makeText(getActivity(), "Logged out", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(requireActivity(), LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
+        View.OnClickListener settingsListener = v -> {
+            if (getActivity() != null) {
+                startActivity(new Intent(requireActivity(), SettingsActivity.class));
+            }
+        };
+        View btnSet = view.findViewById(R.id.btnSettings);
+        if (btnSet != null) btnSet.setOnClickListener(settingsListener);
+        
+        View btnSetTop = view.findViewById(R.id.btnSettingsTop);
+        if (btnSetTop != null) btnSetTop.setOnClickListener(settingsListener);
+
+        View btnHelp = view.findViewById(R.id.btnHelp);
+        if (btnHelp != null) btnHelp.setOnClickListener(v -> {
+            if (getActivity() != null) {
+                startActivity(new Intent(requireActivity(), HelpActivity.class));
+            }
+        });
+
+        View btnLogout = view.findViewById(R.id.menuLogout);
+        if (btnLogout != null) btnLogout.setOnClickListener(v -> {
+            if (prefs != null) prefs.edit().clear().apply();
+            if (getActivity() != null) {
+                Toast.makeText(getActivity(), "Déconnecté", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(requireActivity(), LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            }
         });
     }
 

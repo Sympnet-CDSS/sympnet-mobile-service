@@ -1,57 +1,76 @@
 package com.sympnet.app.fragments;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Typeface;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.sympnet.app.R;
+import com.sympnet.app.activities.DoctorDetailsActivity;
+import com.sympnet.app.network.ApiClient;
+import com.sympnet.app.network.ApiService;
+import com.sympnet.app.utils.SessionManager;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ChatbotFragment extends Fragment {
 
+    private static final String TAG = "ChatbotAI";
     private LinearLayout chatContainer;
     private ScrollView scrollView;
     private EditText etMessage;
     private ImageButton btnSend;
-    private List<String> symptomsList = new ArrayList<>();
 
-    private static final String AI_URL = "http://192.168.100.8:8000";
-    private static final String TAG = "ChatbotAI";
+    private double userLat = 36.8065; // Tunis par défaut
+    private double userLng = 10.1815;
+    private FusedLocationProviderClient fusedLocationClient;
+
+    // Couleurs & Style
+    private static final int COLOR_BOT_TEXT = 0xFF1A2A3A;
+    private static final int COLOR_ACCENT = 0xFF0D9488;
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chatbot, container, false);
 
         chatContainer = view.findViewById(R.id.chatContainer);
-        scrollView    = view.findViewById(R.id.scrollView);
-        etMessage     = view.findViewById(R.id.etMessage);
-        btnSend       = view.findViewById(R.id.btnSend);
+        scrollView = view.findViewById(R.id.scrollView);
+        etMessage = view.findViewById(R.id.etMessage);
+        btnSend = view.findViewById(R.id.btnSend);
+        ImageButton btnMic = view.findViewById(R.id.btnMic);
 
-        addBotMessage("👋 Bonjour ! Je suis SympNet AI.\n\nDécrivez vos symptômes et je vais vous aider à identifier votre maladie.");
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+        requestLocation();
+
+        addBotMessage("Bonjour ! Je suis SympNet AI.\n\nDécrivez vos symptômes et je vais analyser votre état et trouver des médecins spécialisés proches de vous.");
 
         btnSend.setOnClickListener(v -> {
             String message = etMessage.getText().toString().trim();
@@ -62,194 +81,319 @@ public class ChatbotFragment extends Fragment {
             }
         });
 
+        if (btnMic != null) {
+            btnMic.setOnClickListener(v -> {
+                addBotMessage("L'enregistrement vocal sera bientôt disponible.");
+            });
+        }
+
         return view;
     }
 
-    private void sendToDiagnose(String text) {
-        addBotMessage("⏳ Analyse en cours...");
-
-        new Thread(() -> {
-            try {
-                Log.d(TAG, "Sending to analyze-symptoms: " + text);
-
-                URL url = new URL(AI_URL + "/analyze-symptoms");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "application/json");
-                conn.setDoOutput(true);
-                conn.setConnectTimeout(10000);
-                conn.setReadTimeout(30000);
-
-                JSONObject requestBody = new JSONObject();
-                requestBody.put("text", text);
-                requestBody.put("language", "fr");
-
-                OutputStream os = conn.getOutputStream();
-                os.write(requestBody.toString().getBytes());
-                os.close();
-
-                int responseCode = conn.getResponseCode();
-                Log.d(TAG, "analyze-symptoms HTTP code: " + responseCode);
-
-                BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(conn.getInputStream()));
-                StringBuilder response = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) response.append(line);
-                reader.close();
-
-                Log.d(TAG, "analyze-symptoms response: " + response.toString());
-
-                JSONObject analysisResult = new JSONObject(response.toString());
-                JSONArray symptoms = analysisResult.getJSONArray("symptoms");
-
-                if (symptoms.length() == 0) {
-                    requireActivity().runOnUiThread(() ->
-                            updateLastBotMessage("❓ Je n'ai pas détecté de symptômes clairs. Pouvez-vous décrire plus précisément ce que vous ressentez ?"));
-                    return;
+    private void requestLocation() {
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
+                if (location != null) {
+                    userLat = location.getLatitude();
+                    userLng = location.getLongitude();
+                    Log.d(TAG, "Location obtained: " + userLat + ", " + userLng);
                 }
-
-                symptomsList.clear();
-                StringBuilder symptomsText = new StringBuilder("✅ Symptômes détectés :\n");
-                for (int i = 0; i < symptoms.length(); i++) {
-                    String symptom = symptoms.getJSONObject(i).getString("symptom");
-                    symptomsList.add(symptom);
-                    symptomsText.append("• ").append(symptom).append("\n");
-                }
-
-                Log.d(TAG, "Symptoms list: " + symptomsList.toString());
-
-                requireActivity().runOnUiThread(() ->
-                        updateLastBotMessage(symptomsText.toString()));
-
-                diagnoseSympoms();
-
-            } catch (Exception e) {
-                Log.e(TAG, "Error in sendToDiagnose: " + e.getMessage(), e);
-                requireActivity().runOnUiThread(() ->
-                        updateLastBotMessage("❌ Erreur de connexion au service AI : " + e.getMessage()));
-            }
-        }).start();
+            });
+        } else {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1001);
+        }
     }
 
-    private void diagnoseSympoms() {
-        new Thread(() -> {
-            try {
-                Log.d(TAG, "Sending to diagnose: " + symptomsList.toString());
+    private void sendToDiagnose(String text) {
+        addBotMessage("⏳ Analyse médicale en cours...");
 
-                URL url = new URL(AI_URL + "/diagnose");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "application/json");
-                conn.setDoOutput(true);
-                conn.setConnectTimeout(10000);
-                conn.setReadTimeout(60000); // 60s car le diagnostic peut prendre du temps
+        String token = SessionManager.getInstance(requireContext()).getUserToken();
+        String userId = SessionManager.getInstance(requireContext()).getCurrentUserId();
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
-                JSONObject requestBody = new JSONObject();
-                JSONArray symptomsArray = new JSONArray(symptomsList);
-                requestBody.put("symptoms", symptomsArray);
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("patient_id", userId != null ? userId : "guest");
+        payload.put("text", text);
+        payload.put("patient_history", new HashMap<String, Object>());
+        payload.put("allergies", new ArrayList<String>());
 
-                Log.d(TAG, "Diagnose request body: " + requestBody.toString());
-
-                OutputStream os = conn.getOutputStream();
-                os.write(requestBody.toString().getBytes());
-                os.close();
-
-                int responseCode = conn.getResponseCode();
-                Log.d(TAG, "diagnose HTTP code: " + responseCode);
-
-                BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(conn.getInputStream()));
-                StringBuilder response = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) response.append(line);
-                reader.close();
-
-                Log.d(TAG, "Diagnose response: " + response.toString());
-
-                JSONObject diagnosisResult = new JSONObject(response.toString());
-                JSONArray hypotheses = diagnosisResult.getJSONArray("hypotheses");
-                JSONArray recommendations = diagnosisResult.getJSONArray("recommendations");
-
-                Log.d(TAG, "Hypotheses count: " + hypotheses.length());
-                Log.d(TAG, "Recommendations count: " + recommendations.length());
-
-                StringBuilder resultText = new StringBuilder("🩺 Diagnostic :\n\n");
-
-                int count = Math.min(3, hypotheses.length());
-                for (int i = 0; i < count; i++) {
-                    JSONObject h = hypotheses.getJSONObject(i);
-                    String diagnosis = h.getString("diagnosis");
-                    double confidence = h.getDouble("confidence") * 100;
-                    resultText.append(String.format("• %s (%.0f%%)\n", diagnosis, confidence));
+        apiService.getDiagnostic("Bearer " + token, payload).enqueue(new Callback<Map<String, Object>>() {
+            @Override
+            public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    processDiagnosticResult(response.body(), text);
+                } else {
+                    updateLastBotMessage("❌ Erreur de l'IA (Code " + response.code() + "). Réessayez.");
                 }
+            }
 
-                if (recommendations.length() > 0) {
-                    resultText.append("\n💊 Recommandations :\n");
-                    for (int i = 0; i < Math.min(3, recommendations.length()); i++) {
-                        resultText.append("• ").append(recommendations.getString(i)).append("\n");
+            @Override
+            public void onFailure(Call<Map<String, Object>> call, Throwable t) {
+                updateLastBotMessage("❌ Erreur réseau : " + t.getMessage());
+            }
+        });
+    }
+
+    private void processDiagnosticResult(Map<String, Object> result, String originalText) {
+        try {
+            Map<String, Object> confidenceMap = (Map<String, Object>) result.get("confidence");
+            Map<String, Object> explanationMap = (Map<String, Object>) result.get("explanations");
+            Map<String, Object> symptomMap = (Map<String, Object>) result.get("symptom_analysis");
+
+            String diagnosis = confidenceMap != null ? (String) confidenceMap.get("top_diagnosis") : "Indéterminé";
+            double score = 0.0;
+            if (confidenceMap != null && confidenceMap.get("final_score") instanceof Number) {
+                score = ((Number) confidenceMap.get("final_score")).doubleValue();
+            }
+
+            String explanation = explanationMap != null ? (String) explanationMap.get("doctor_summary") : "";
+            String recommendation = confidenceMap != null ? (String) confidenceMap.get("recommendation") : "";
+            List<Map<String, Object>> alternatives = confidenceMap != null ? (List<Map<String, Object>>) confidenceMap.get("alternative_diagnoses") : null;
+
+            String aiSpecialty = (symptomMap != null) ? (String) symptomMap.get("specialty") : "medecine_generale";
+            String friendlySpecialty = getFriendlySpecialtyName(aiSpecialty);
+            
+            // On affiche la carte diagnostic au lieu du texte brut
+            View diagnosticCard = addDiagnosticCard(diagnosis, score, friendlySpecialty);
+
+            // Chercher les médecins
+            loadNearbyDoctors(aiSpecialty, diagnosticCard);
+
+        } catch (Exception e) {
+            Log.e(TAG, "Error parsing diagnostic", e);
+            updateLastBotMessage("❌ Erreur lors de l'analyse des résultats.");
+        }
+    }
+
+    private void loadNearbyDoctors(String aiSpecialty, View diagnosticCard) {
+        String token = SessionManager.getInstance(requireContext()).getUserToken();
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+        apiService.getDoctors().enqueue(new Callback<List<com.sympnet.app.model.Doctor>>() {
+            @Override
+            public void onResponse(Call<List<com.sympnet.app.model.Doctor>> call, Response<List<com.sympnet.app.model.Doctor>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<com.sympnet.app.model.Doctor> allDocs = response.body();
+                    List<com.sympnet.app.model.Doctor> filteredDocs = new ArrayList<>();
+
+                    // Filtrage par spécialité (comparaison flexible et intelligente)
+                    String search = aiSpecialty.toLowerCase();
+                    for (com.sympnet.app.model.Doctor d : allDocs) {
+                        String docSpec = d.getSpecialty().toLowerCase();
+                        
+                        boolean match = docSpec.contains(search.substring(0, Math.min(search.length(), 5))) || 
+                                        search.contains(docSpec.substring(0, Math.min(docSpec.length(), 5)));
+                        
+                        if (!match && search.contains("generale") && (docSpec.contains("génér") || docSpec.contains("gener"))) {
+                            match = true;
+                        }
+
+                        if (match) {
+                            filteredDocs.add(d);
+                        }
+                    }
+
+                    if (!filteredDocs.isEmpty()) {
+                        renderRealDoctorResults(filteredDocs, aiSpecialty, diagnosticCard);
+                    } else {
+                        LinearLayout container = diagnosticCard.findViewById(R.id.doctorListContainer);
+                        if (container != null) {
+                            addInfoTextToContainer(container, "ℹ️ Aucun spécialiste en '" + getFriendlySpecialtyName(aiSpecialty) + "' n'est disponible.");
+                        }
                     }
                 }
-
-                resultText.append("\n⚠️ Ceci est une aide au diagnostic. Consultez un médecin pour confirmation.");
-
-                String finalText = resultText.toString();
-                requireActivity().runOnUiThread(() -> addBotMessage(finalText));
-
-            } catch (Exception e) {
-                Log.e(TAG, "Error in diagnoseSympoms: " + e.getMessage(), e);
-                requireActivity().runOnUiThread(() ->
-                        addBotMessage("❌ Erreur lors du diagnostic : " + e.getMessage()));
             }
-        }).start();
+            @Override public void onFailure(Call<List<com.sympnet.app.model.Doctor>> call, Throwable t) {
+                Log.e(TAG, "Failed to load real doctors", t);
+            }
+        });
+    }
+
+    private void renderRealDoctorResults(List<com.sympnet.app.model.Doctor> doctors, String specialty, View diagnosticCard) {
+        LinearLayout container = diagnosticCard.findViewById(R.id.doctorListContainer);
+        if (container == null) return;
+
+        // Filtrer par distance (ex: max 100 km)
+        List<com.sympnet.app.model.Doctor> nearbyDocs = new ArrayList<>();
+        for (com.sympnet.app.model.Doctor d : doctors) {
+            double dist = calculateHaversine(userLat, userLng, d.getLatitude(), d.getLongitude());
+            if (dist <= 100.0) { // On ne garde que ceux à moins de 100km
+                nearbyDocs.add(d);
+            }
+        }
+
+        if (nearbyDocs.isEmpty()) {
+            addInfoTextToContainer(container, "ℹ️ Aucun spécialiste trouvé dans un rayon de 100 km.");
+            return;
+        }
+
+        // Trier par distance
+        java.util.Collections.sort(nearbyDocs, (d1, d2) -> {
+            double dist1 = calculateHaversine(userLat, userLng, d1.getLatitude(), d1.getLongitude());
+            double dist2 = calculateHaversine(userLat, userLng, d2.getLatitude(), d2.getLongitude());
+            return Double.compare(dist1, dist2);
+        });
+
+        // Prendre uniquement les 3 plus proches
+        int limit = Math.min(nearbyDocs.size(), 3);
+        List<com.sympnet.app.model.Doctor> closestDoctors = nearbyDocs.subList(0, limit);
+
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+
+        for (com.sympnet.app.model.Doctor doc : closestDoctors) {
+            View docView = inflater.inflate(R.layout.item_doctor, container, false);
+
+            TextView tvName = docView.findViewById(R.id.docName);
+            TextView tvSpec = docView.findViewById(R.id.docSpecialty);
+            double dist = calculateHaversine(userLat, userLng, doc.getLatitude(), doc.getLongitude());
+            
+            tvName.setText("Dr. " + doc.getFirstName() + " " + doc.getLastName());
+            tvSpec.setText(doc.getSpecialty() + " • " + String.format("%.1f km", dist));
+
+            TextView btnInfo = docView.findViewById(R.id.btnInfo);
+            if (btnInfo != null) btnInfo.setText("Voir ce médecin");
+
+            docView.setOnClickListener(v -> {
+                Intent intent = new Intent(getContext(), DoctorDetailsActivity.class);
+                intent.putExtra(DoctorDetailsActivity.EXTRA_DOCTOR_ID, String.valueOf(doc.getId()));
+                intent.putExtra(DoctorDetailsActivity.EXTRA_DOCTOR_NAME, "Dr. " + doc.getFirstName() + " " + doc.getLastName());
+                intent.putExtra(DoctorDetailsActivity.EXTRA_DOCTOR_SPECIALTY, doc.getSpecialty());
+                intent.putExtra(DoctorDetailsActivity.EXTRA_DOCTOR_RATING, (float) doc.getRating());
+                intent.putExtra(DoctorDetailsActivity.EXTRA_DOCTOR_LAT, doc.getLatitude());
+                intent.putExtra(DoctorDetailsActivity.EXTRA_DOCTOR_LNG, doc.getLongitude());
+                intent.putExtra(DoctorDetailsActivity.EXTRA_DOCTOR_ADDRESS, doc.getAddress());
+                startActivity(intent);
+            });
+
+            if (btnInfo != null) btnInfo.setOnClickListener(v -> docView.performClick());
+
+            // Marges pour les sous-cartes
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(0, 4, 0, 4);
+            docView.setLayoutParams(params);
+
+            container.addView(docView);
+        }
+        scrollToBottom();
+    }
+
+    private double calculateHaversine(double lat1, double lon1, double lat2, double lon2) {
+        final int R = 6371; // Rayon de la terre
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                   Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                   Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
     }
 
     private void addUserMessage(String message) {
-        TextView tv = new TextView(getContext());
-        tv.setText(message);
-        tv.setTextColor(0xFFFFFFFF);
-        tv.setBackgroundResource(R.drawable.bg_btn_green);
-        tv.setPadding(24, 16, 24, 16);
-
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.gravity = android.view.Gravity.END;
-        params.setMargins(80, 8, 8, 8);
-        tv.setLayoutParams(params);
-
-        chatContainer.addView(tv);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.item_chat_user, chatContainer, false);
+        TextView tvMessage = view.findViewById(R.id.tvMessage);
+        TextView tvTime = view.findViewById(R.id.tvTime);
+        
+        tvMessage.setText(message);
+        tvTime.setText(getCurrentTime());
+        
+        chatContainer.addView(view);
         scrollToBottom();
     }
 
     private void addBotMessage(String message) {
-        TextView tv = new TextView(getContext());
-        tv.setText(message);
-        tv.setTextColor(0xFF1A2A3A);
-        tv.setBackgroundResource(R.drawable.card_background);
-        tv.setPadding(24, 16, 24, 16);
-
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.gravity = android.view.Gravity.START;
-        params.setMargins(8, 8, 80, 8);
-        tv.setLayoutParams(params);
-        tv.setTag("bot_message");
-
-        chatContainer.addView(tv);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.item_chat_bot, chatContainer, false);
+        TextView tvMessage = view.findViewById(R.id.tvMessage);
+        TextView tvTime = view.findViewById(R.id.tvTime);
+        
+        tvMessage.setText(message);
+        tvTime.setText(getCurrentTime());
+        view.setTag("bot_message");
+        
+        chatContainer.addView(view);
         scrollToBottom();
+    }
+
+    private View addDiagnosticCard(String diagnosis, double score, String specialty) {
+        // Retirer le message "Analyse en cours"
+        updateLastBotMessage(null); 
+
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.item_ai_diagnostic_card, chatContainer, false);
+        TextView tvDiagnosis = view.findViewById(R.id.tvDiagnosis);
+        TextView tvConfidencePercent = view.findViewById(R.id.tvConfidencePercent);
+        ProgressBar pbConfidence = view.findViewById(R.id.pbConfidence);
+        TextView tvRecommendation = view.findViewById(R.id.tvRecommendation);
+        TextView tvTime = view.findViewById(R.id.tvTime);
+
+        tvDiagnosis.setText(diagnosis);
+        int percent = (int) (score * 100);
+        tvConfidencePercent.setText(percent + "%");
+        pbConfidence.setProgress(percent);
+
+        // Couleurs dynamiques selon le score (Premium Design)
+        int color;
+        if (percent < 40) {
+            color = 0xFFEF4444; // Rouge (Faible)
+        } else if (percent < 75) {
+            color = 0xFFD97706; // Orange/Ocre chaud (Exactement comme le screenshot)
+        } else {
+            color = 0xFF10B981; // Vert (Élevé)
+        }
+        pbConfidence.getProgressDrawable().setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN);
+        tvConfidencePercent.setTextColor(color);
+
+        tvRecommendation.setText("Cartes de spécialistes en " + specialty.replace("un ", ""));
+        tvTime.setText(getCurrentTime());
+
+        chatContainer.addView(view);
+        scrollToBottom();
+        return view;
+    }
+
+    private void addInfoTextToContainer(LinearLayout container, String text) {
+        TextView tv = new TextView(getContext());
+        tv.setText(text);
+        tv.setTextSize(12);
+        tv.setTextColor(0xFF78909C);
+        tv.setPadding(0, 16, 0, 0);
+        container.addView(tv);
+    }
+
+    private String getCurrentTime() {
+        return new java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()).format(new java.util.Date());
     }
 
     private void updateLastBotMessage(String message) {
         for (int i = chatContainer.getChildCount() - 1; i >= 0; i--) {
             View child = chatContainer.getChildAt(i);
-            if (child instanceof TextView && "bot_message".equals(child.getTag())) {
-                ((TextView) child).setText(message);
+            if ("bot_message".equals(child.getTag())) {
+                if (message == null) {
+                    chatContainer.removeView(child);
+                } else {
+                    TextView tv = child.findViewById(R.id.tvMessage);
+                    if (tv != null) tv.setText(message);
+                }
                 break;
             }
         }
         scrollToBottom();
+    }
+
+    private String getFriendlySpecialtyName(String key) {
+        if (key == null) return "un médecin généraliste";
+        switch (key.toLowerCase()) {
+            case "cardiologie": return "un cardiologue";
+            case "dermatologie": return "un dermatologue";
+            case "psychiatrie": return "un psychiatre";
+            case "neurologie": return "un neurologue";
+            case "gastroenterologie": return "un gastro-entérologue";
+            case "pneumologie": return "un pneumologue";
+            case "medecine_generale": return "un médecin généraliste";
+            case "maladies_rares": return "un spécialiste des maladies rares";
+            default: return "un spécialiste (" + key + ")";
+        }
     }
 
     private void scrollToBottom() {

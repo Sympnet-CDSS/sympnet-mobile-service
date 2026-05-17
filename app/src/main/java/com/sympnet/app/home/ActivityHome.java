@@ -37,6 +37,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.sympnet.app.R;
 import com.sympnet.app.activities.AllDoctorsActivity;
+import com.sympnet.app.activities.BaseActivity;
 import com.sympnet.app.activities.LoginActivity;
 import com.sympnet.app.activities.MainActivity;
 import com.sympnet.app.activities.NotificationDetailsActivity;
@@ -63,7 +64,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ActivityHome extends AppCompatActivity {
+public class ActivityHome extends BaseActivity {
 
     private static final String TAG = "ActivityHome";
     private static final int LOCATION_PERMISSION_REQUEST = 2001;
@@ -78,6 +79,7 @@ public class ActivityHome extends AppCompatActivity {
     private TextView tvPatientName, tvCurrentDate, tvVoirTout;
     private EditText etSearch;
     private ImageView navHome, navChat, navAi, navProfile, navCalendar;
+    private View cardDoctors, cardRdv;
 
     private FusedLocationProviderClient fusedLocationClient;
     private Location userLocation;
@@ -146,6 +148,8 @@ public class ActivityHome extends AppCompatActivity {
         navAi            = findViewById(R.id.nav_ai_icon);
         navProfile       = findViewById(R.id.nav_profile_icon);
         navCalendar      = findViewById(R.id.nav_calendar_icon);
+        cardDoctors      = findViewById(R.id.cardDoctors);
+        cardRdv          = findViewById(R.id.cardRdv);
     }
 
     private void requestNotificationPermission() {
@@ -407,7 +411,8 @@ public class ActivityHome extends AppCompatActivity {
         }
     }
 
-    private void setupBottomNav() {
+    @Override
+    protected void setupBottomNav() {
         navHome.setOnClickListener(v -> {
             updateNavIcons(navHome);
             requestLocationAndLoadDoctors();
@@ -442,16 +447,28 @@ public class ActivityHome extends AppCompatActivity {
 
         btnSettings.setOnClickListener(v ->
                 startActivity(new Intent(this, SettingsActivity.class)));
+
+        if (cardDoctors != null) {
+            cardDoctors.setOnClickListener(v ->
+                    startActivity(new Intent(this, AllDoctorsActivity.class)));
+        }
+
+        if (cardRdv != null) {
+            cardRdv.setOnClickListener(v ->
+                    startActivity(new Intent(this, MainActivity.class)
+                            .putExtra("TARGET_FRAGMENT", "SCHEDULE")));
+        }
     }
 
     private void updateNavIcons(ImageView selected) {
+        if (selected == null) return;
         int active   = ContextCompat.getColor(this, R.color.white);
         int inactive = Color.parseColor("#B2DFDB");
-        navHome.setColorFilter(inactive);
-        navChat.setColorFilter(inactive);
-        navAi.setColorFilter(inactive);
-        navProfile.setColorFilter(inactive);
-        navCalendar.setColorFilter(inactive);
+        if (navHome != null) navHome.setColorFilter(inactive);
+        if (navChat != null) navChat.setColorFilter(inactive);
+        if (navAi != null) navAi.setColorFilter(inactive);
+        if (navProfile != null) navProfile.setColorFilter(inactive);
+        if (navCalendar != null) navCalendar.setColorFilter(inactive);
         selected.setColorFilter(active);
     }
 

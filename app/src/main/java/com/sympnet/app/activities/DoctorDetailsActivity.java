@@ -8,6 +8,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -36,13 +37,24 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import com.sympnet.app.R;
+import com.sympnet.app.model.Conversation;
+import com.sympnet.app.model.Doctor;
+import com.sympnet.app.network.ApiClient;
+import com.sympnet.app.network.ApiService;
+import com.sympnet.app.utils.SessionManager;
 import com.sympnet.app.views.Calendarview;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
-public class DoctorDetailsActivity extends AppCompatActivity implements OnMapReadyCallback {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class DoctorDetailsActivity extends BaseActivity implements OnMapReadyCallback {
 
     private static final String TAG = "DoctorDetails";
 
@@ -54,22 +66,26 @@ public class DoctorDetailsActivity extends AppCompatActivity implements OnMapRea
     public static final String EXTRA_DOCTOR_ID        = "doctor_id";
     public static final String EXTRA_DOCTOR_ADDRESS   = "doctor_address";
 
-    private static final String PREFS_RATINGS = "doctor_ratings";
-    private static final int LOCATION_PERMISSION_REQUEST = 1001;
-    private static final String DISTANCE_MATRIX_KEY = "GW1LsWPQ2nGMUEWT9KI8QbHgT6S3tmeLqztbVzYX5Yp4X3tkc3mDki7USn36NUwo";
+    private static final String PREFS_RATINGS         = "doctor_ratings";
+    private static final int    LOCATION_PERMISSION_REQUEST = 1001;
+    private static final String DISTANCE_MATRIX_KEY   = "GW1LsWPQ2nGMUEWT9KI8QbHgT6S3tmeLqztbVzYX5Yp4X3tkc3mDki7USn36NUwo";
 
-    private TextView tvDoctorName, tvDoctorSpecialty, tvDistance;
+    private TextView  tvDoctorName, tvDoctorSpecialty, tvDistance, tvNoContact;
     private RatingBar ratingBar;
     private Calendarview calendarView;
+    private View      btnContact;
+    private Doctor    currentDoctor;
 
-    private String doctorId;
-    private double doctorLat, doctorLng;
-    private String doctorAddress;
+    // Tabs
+    private TextView tabProfil, tabAvis, tabLocalisation, tabRendezVous;
+    private View sectionProfil, sectionAvis, sectionLocalisation, sectionRendezVous;
+
+    private String   doctorId;
+    private double   doctorLat, doctorLng;
+    private String   doctorAddress;
     private GoogleMap googleMap;
     private FusedLocationProviderClient fusedLocationClient;
     private Location userLocation;
-
-    // ── Utilisé pour le fallback si getLastLocation() retourne null ──────────
     private LocationCallback locationCallback;
 
     @Override
@@ -80,7 +96,7 @@ public class DoctorDetailsActivity extends AppCompatActivity implements OnMapRea
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         bindViews();
-
+        setupTabs();
         loadIntentData();
         setupBackButton();
         setupMap();
@@ -95,6 +111,55 @@ public class DoctorDetailsActivity extends AppCompatActivity implements OnMapRea
         tvDistance        = findViewById(R.id.tvDistance);
         ratingBar         = findViewById(R.id.doctorRating);
         calendarView      = findViewById(R.id.calendarView);
+        btnContact        = findViewById(R.id.btnContact);
+        tvNoContact       = findViewById(R.id.tvNoContact);
+
+        tabProfil         = findViewById(R.id.tabProfil);
+        tabAvis           = findViewById(R.id.tabAvis);
+        tabLocalisation   = findViewById(R.id.tabLocalisation);
+        tabRendezVous     = findViewById(R.id.tabRendezVous);
+
+        sectionProfil       = findViewById(R.id.sectionProfil);
+        sectionAvis         = findViewById(R.id.sectionAvis);
+        sectionLocalisation = findViewById(R.id.sectionLocalisation);
+        sectionRendezVous   = findViewById(R.id.sectionRendezVous);
+    }
+
+    private void setupTabs() {
+        tabProfil.setOnClickListener(v -> selectTab(0));
+        tabAvis.setOnClickListener(v -> selectTab(1));
+        tabLocalisation.setOnClickListener(v -> selectTab(2));
+        tabRendezVous.setOnClickListener(v -> selectTab(3));
+        
+        // Set default active tab
+        selectTab(0);
+    }
+
+    private void selectTab(int index) {
+        // Reset all tabs
+        TextView[] tabs = {tabProfil, tabAvis, tabLocalisation, tabRendezVous};
+        for (TextView tab : tabs) {
+            tab.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#FFFFFF")));
+            tab.setTextColor(android.graphics.Color.parseColor("#666666"));
+            tab.setTypeface(null, android.graphics.Typeface.NORMAL);
+        }
+
+        // Set active tab
+        tabs[index].setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#009688")));
+        tabs[index].setTextColor(android.graphics.Color.parseColor("#FFFFFF"));
+        tabs[index].setTypeface(null, android.graphics.Typeface.BOLD);
+
+        // Reset sections
+        sectionProfil.setVisibility(View.GONE);
+        sectionAvis.setVisibility(View.GONE);
+        sectionLocalisation.setVisibility(View.GONE);
+        sectionRendezVous.setVisibility(View.GONE);
+
+        // Show active section
+        if (index == 0) sectionProfil.setVisibility(View.VISIBLE);
+        else if (index == 1) sectionAvis.setVisibility(View.VISIBLE);
+        else if (index == 2) sectionLocalisation.setVisibility(View.VISIBLE);
+        else if (index == 3) sectionRendezVous.setVisibility(View.VISIBLE);
     }
 
     private void loadIntentData() {
@@ -109,9 +174,6 @@ public class DoctorDetailsActivity extends AppCompatActivity implements OnMapRea
         String specialty = intent.getStringExtra(EXTRA_DOCTOR_SPECIALTY);
         float  rating    = intent.getFloatExtra(EXTRA_DOCTOR_RATING, 0f);
 
-        Log.d(TAG, "Doctor: " + name + " | lat=" + doctorLat + " lng=" + doctorLng
-                + " | address=" + doctorAddress);
-
         if (name      != null) tvDoctorName.setText(name);
         if (specialty != null) tvDoctorSpecialty.setText(specialty);
 
@@ -121,6 +183,18 @@ public class DoctorDetailsActivity extends AppCompatActivity implements OnMapRea
         } else {
             ratingBar.setRating(rating);
         }
+
+        currentDoctor = new Doctor();
+        currentDoctor.setId(doctorId != null ? Integer.parseInt(doctorId) : -1);
+        if (name != null) {
+            String[] parts = name.split(" ", 2);
+            currentDoctor.setFirstName(parts.length > 0 ? parts[0] : "");
+            currentDoctor.setLastName(parts.length > 1  ? parts[1] : "");
+        }
+        currentDoctor.setSpeciality(specialty);
+        currentDoctor.setAddress(doctorAddress);
+
+        if (doctorId != null) checkIfCanContact(doctorId);
     }
 
     private void setupBackButton() {
@@ -129,36 +203,26 @@ public class DoctorDetailsActivity extends AppCompatActivity implements OnMapRea
     }
 
     private void setupMap() {
-        SupportMapFragment mapFragment =
-                (SupportMapFragment) getSupportFragmentManager()
-                        .findFragmentById(R.id.mapFragment);
-        if (mapFragment != null) {
-            mapFragment.getMapAsync(this);
-        }
+        SupportMapFragment mapFragment = (SupportMapFragment)
+                getSupportFragmentManager().findFragmentById(R.id.mapFragment);
+        if (mapFragment != null) mapFragment.getMapAsync(this);
     }
 
     @Override
     public void onMapReady(GoogleMap map) {
         googleMap = map;
-
-        // Si lat/lng sont 0, on géocode l'adresse
         if (doctorLat == 0.0 && doctorLng == 0.0 && doctorAddress != null) {
-            Log.d(TAG, "Coordinates missing — geocoding address: " + doctorAddress);
             geocodeAddress(doctorAddress);
         } else {
-            Log.d(TAG, "Using coordinates directly: " + doctorLat + ", " + doctorLng);
             placeMarkerAndZoom(doctorLat, doctorLng,
                     doctorAddress != null ? doctorAddress : "Cabinet médical");
         }
-
         googleMap.getUiSettings().setScrollGesturesEnabled(false);
         googleMap.getUiSettings().setZoomControlsEnabled(true);
-
         CardView cardMap = findViewById(R.id.cardMap);
         cardMap.setOnClickListener(v -> openInMapsApp(doctorLat, doctorLng));
     }
 
-    // ── Géocodage adresse → coordonnées ──────────────────────────────────────
     private void geocodeAddress(String address) {
         new Thread(() -> {
             try {
@@ -168,47 +232,25 @@ public class DoctorDetailsActivity extends AppCompatActivity implements OnMapRea
                     Address result = results.get(0);
                     doctorLat = result.getLatitude();
                     doctorLng = result.getLongitude();
-                    Log.d(TAG, "Geocoded → lat=" + doctorLat + " lng=" + doctorLng);
-                    runOnUiThread(() ->
-                            placeMarkerAndZoom(doctorLat, doctorLng, address));
-                } else {
-                    Log.w(TAG, "Geocoding returned no results for: " + address);
-                    runOnUiThread(() ->
-                            Toast.makeText(this, "Adresse introuvable", Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() -> placeMarkerAndZoom(doctorLat, doctorLng, address));
                 }
             } catch (IOException e) {
                 Log.e(TAG, "Geocoding error", e);
-                runOnUiThread(() ->
-                        Toast.makeText(this, "Erreur géocodage", Toast.LENGTH_SHORT).show());
             }
         }).start();
     }
 
-    // ── Place le marker et zoome ──────────────────────────────────────────────
-    // CORRECTIF : on recalcule la distance ici si on a déjà userLocation
     private void placeMarkerAndZoom(double lat, double lng, String title) {
         LatLng clinicLocation = new LatLng(lat, lng);
-
         googleMap.clear();
         googleMap.addMarker(new MarkerOptions()
-                .position(clinicLocation)
-                .title(title)
+                .position(clinicLocation).title(title)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(clinicLocation, 15f));
-
-        // Si on a déjà la position GPS (ex: géocodage arrive après getUserLocation)
-        if (userLocation != null) {
-            Log.d(TAG, "userLocation already available — computing distance immediately");
-            showDistanceAndLine(clinicLocation);
-        } else {
-            // Sinon on relance la récupération GPS (cas géocodage)
-            Log.d(TAG, "userLocation null — requesting location again");
-            requestLocationPermission();
-        }
+        if (userLocation != null) showDistanceAndLine(clinicLocation);
+        else requestLocationPermission();
     }
 
-    // ── Demande la permission de localisation ────────────────────────────────
     private void requestLocationPermission() {
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -221,274 +263,194 @@ public class DoctorDetailsActivity extends AppCompatActivity implements OnMapRea
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LOCATION_PERMISSION_REQUEST
                 && grantResults.length > 0
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             getUserLocation();
-        } else {
-            Log.w(TAG, "Location permission denied");
-            if (tvDistance != null)
-                tvDistance.setText("Permission GPS refusée");
         }
     }
 
-    // ── Récupère la position GPS — avec fallback LocationRequest ─────────────
     @SuppressWarnings("MissingPermission")
     private void getUserLocation() {
         fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
-            if (location != null) {
-                Log.d(TAG, "getLastLocation OK: " + location.getLatitude()
-                        + ", " + location.getLongitude());
-                onUserLocationObtained(location);
-            } else {
-                // getLastLocation() peut retourner null sur émulateur ou GPS éteint
-                Log.w(TAG, "getLastLocation returned null — requesting fresh location");
-                requestFreshLocation();
-            }
-        }).addOnFailureListener(e -> {
-            Log.e(TAG, "getLastLocation failed", e);
-            if (tvDistance != null)
-                tvDistance.setText("Position GPS indisponible");
+            if (location != null) onUserLocationObtained(location);
+            else requestFreshLocation();
         });
     }
 
-    // ── Fallback : demande une position fraîche si getLastLocation = null ────
     @SuppressWarnings("MissingPermission")
     private void requestFreshLocation() {
-        LocationRequest locationRequest = LocationRequest.create()
+        LocationRequest req = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setNumUpdates(1)           // une seule mise à jour suffit
-                .setInterval(5000)
-                .setFastestInterval(2000);
-
+                .setNumUpdates(1).setInterval(5000).setFastestInterval(2000);
         locationCallback = new LocationCallback() {
             @Override
-            public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null || locationResult.getLocations().isEmpty()) {
-                    Log.w(TAG, "Fresh location result empty");
-                    return;
-                }
-                Location loc = locationResult.getLocations().get(0);
-                Log.d(TAG, "Fresh location OK: " + loc.getLatitude()
-                        + ", " + loc.getLongitude());
+            public void onLocationResult(LocationResult r) {
+                if (r == null || r.getLocations().isEmpty()) return;
                 fusedLocationClient.removeLocationUpdates(locationCallback);
-                onUserLocationObtained(loc);
+                onUserLocationObtained(r.getLocations().get(0));
             }
         };
-
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+        fusedLocationClient.requestLocationUpdates(req, locationCallback, null);
     }
 
-    // ── Appelé une fois qu'on a la position de l'utilisateur ─────────────────
     private void onUserLocationObtained(Location location) {
         userLocation = location;
-
         if (googleMap != null) {
             LatLng userLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-            googleMap.addMarker(new MarkerOptions()
-                    .position(userLatLng)
-                    .title("Vous êtes ici")
-                    .icon(BitmapDescriptorFactory.defaultMarker(
-                            BitmapDescriptorFactory.HUE_GREEN)));
-
-            // Calcule la distance si les coordonnées du docteur sont disponibles
-            if (doctorLat != 0.0 && doctorLng != 0.0) {
+            googleMap.addMarker(new MarkerOptions().position(userLatLng).title("Vous êtes ici")
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+            if (doctorLat != 0.0 && doctorLng != 0.0)
                 showDistanceAndLine(new LatLng(doctorLat, doctorLng));
-            } else {
-                Log.w(TAG, "Doctor coordinates not yet available — distance will be computed after geocoding");
-            }
         }
     }
 
-    // ── Calcule et affiche la distance + ligne ───────────────────────────────
     private void showDistanceAndLine(LatLng clinicLatLng) {
-        if (userLocation == null) {
-            Log.w(TAG, "showDistanceAndLine called but userLocation is null");
-            return;
-        }
-
-        Log.d(TAG, "Computing distance to (" + clinicLatLng.latitude
-                + ", " + clinicLatLng.longitude + ")");
-
-        // Ligne droite sur la carte
-        LatLng userLatLng = new LatLng(
-                userLocation.getLatitude(), userLocation.getLongitude());
-
+        if (userLocation == null) return;
+        LatLng userLatLng = new LatLng(userLocation.getLatitude(), userLocation.getLongitude());
         googleMap.addPolyline(new PolylineOptions()
-                .add(userLatLng, clinicLatLng)
-                .width(4f)
-                .color(0xFF009688));
+                .add(userLatLng, clinicLatLng).width(4f).color(0xFF009688));
 
-        // ── Appel distancematrix.ai (même format JSON que Google) ────────────
         String origins      = userLocation.getLatitude() + "," + userLocation.getLongitude();
         String destinations = clinicLatLng.latitude + "," + clinicLatLng.longitude;
-
-        // URL distancematrix.ai — remplace juste le domaine vs Google
         String url = "https://api.distancematrix.ai/maps/api/distancematrix/json"
-                + "?origins=" + origins
-                + "&destinations=" + destinations
-                + "&mode=driving"
-                + "&key=" + DISTANCE_MATRIX_KEY;
-
-        Log.d(TAG, "distancematrix.ai URL: " + url);
+                + "?origins=" + origins + "&destinations=" + destinations
+                + "&mode=driving&key=" + DISTANCE_MATRIX_KEY;
 
         new Thread(() -> {
             try {
                 java.net.URL requestUrl = new java.net.URL(url);
-                java.net.HttpURLConnection connection =
+                java.net.HttpURLConnection conn =
                         (java.net.HttpURLConnection) requestUrl.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setConnectTimeout(10000);
-                connection.setReadTimeout(10000);
-
-                int responseCode = connection.getResponseCode();
-                Log.d(TAG, "HTTP response code: " + responseCode);
-
+                conn.setRequestMethod("GET");
                 java.io.BufferedReader reader = new java.io.BufferedReader(
-                        new java.io.InputStreamReader(connection.getInputStream()));
-                StringBuilder response = new StringBuilder();
+                        new java.io.InputStreamReader(conn.getInputStream()));
+                StringBuilder sb = new StringBuilder();
                 String line;
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
+                while ((line = reader.readLine()) != null) sb.append(line);
                 reader.close();
 
-                String jsonString = response.toString();
-                Log.d(TAG, "Raw response: " + jsonString);
-
-                // ── Parse JSON — format identique à Google Distance Matrix ──
-                org.json.JSONObject json = new org.json.JSONObject(jsonString);
-
-                String globalStatus = json.optString("status", "UNKNOWN");
-                Log.d(TAG, "Global status: " + globalStatus);
-
-                if (!globalStatus.equals("OK")) {
-                    String errorMsg = json.optString("error_message", "Erreur inconnue");
-                    Log.e(TAG, "API error: " + globalStatus + " | " + errorMsg);
-                    runOnUiThread(() -> {
-                        if (tvDistance != null)
-                            tvDistance.setText("Erreur API: " + globalStatus);
-                    });
-                    return;
+                org.json.JSONObject json = new org.json.JSONObject(sb.toString());
+                if (json.optString("status").equals("OK")) {
+                    org.json.JSONObject el = json.getJSONArray("rows")
+                            .getJSONObject(0).getJSONArray("elements").getJSONObject(0);
+                    if (el.getString("status").equals("OK")) {
+                        String dist = el.getJSONObject("distance").getString("text");
+                        String dur  = el.getJSONObject("duration").getString("text");
+                        runOnUiThread(() -> {
+                            if (tvDistance != null)
+                                tvDistance.setText("🚗 " + dist + " · ⏱ " + dur);
+                        });
+                    }
                 }
-
-                org.json.JSONObject element = json
-                        .getJSONArray("rows").getJSONObject(0)
-                        .getJSONArray("elements").getJSONObject(0);
-
-                String elementStatus = element.getString("status");
-                Log.d(TAG, "Element status: " + elementStatus);
-
-                if (elementStatus.equals("OK")) {
-                    String distanceText = element.getJSONObject("distance").getString("text");
-                    String durationText = element.getJSONObject("duration").getString("text");
-                    Log.d(TAG, "Distance: " + distanceText + " | Duration: " + durationText);
-
-                    runOnUiThread(() -> {
-                        if (tvDistance != null) {
-                            tvDistance.setText("🚗 " + distanceText + " · ⏱ " + durationText);
-                        }
-                    });
-                } else {
-                    Log.e(TAG, "Element status not OK: " + elementStatus);
-                    // Fallback Haversine si distancematrix.ai échoue
-                    showHaversineDistance(clinicLatLng);
-                }
-
             } catch (Exception e) {
-                Log.e(TAG, "distancematrix.ai call failed: " + e.getMessage(), e);
-                // Fallback Haversine en cas d'erreur réseau
-                runOnUiThread(() -> showHaversineDistance(clinicLatLng));
+                Log.e(TAG, "distancematrix failed", e);
             }
         }).start();
     }
-    // ── Fallback Haversine si distancematrix.ai échoue ───────────────────────
-    private void showHaversineDistance(LatLng clinicLatLng) {
-        if (userLocation == null) return;
-
-        double distanceKm = calculateHaversineDistance(
-                userLocation.getLatitude(), userLocation.getLongitude(),
-                clinicLatLng.latitude, clinicLatLng.longitude);
-
-        int estimatedMinutes = (int) (distanceKm / 40.0 * 60);
-
-        String distanceText = distanceKm < 1.0
-                ? (int)(distanceKm * 1000) + " m"
-                : String.format(Locale.getDefault(), "%.1f km", distanceKm);
-
-        String durationText = estimatedMinutes < 60
-                ? estimatedMinutes + " min"
-                : (estimatedMinutes / 60) + "h" + (estimatedMinutes % 60) + "min";
-
-        if (tvDistance != null) {
-            tvDistance.setText("📍 " + distanceText + " · ⏱ ~" + durationText);
-        }
-    }
-
-    // Formule Haversine — calcule la distance entre 2 coordonnées GPS
-    private double calculateHaversineDistance(double lat1, double lon1,
-                                              double lat2, double lon2) {
-        final int R = 6371; // Rayon de la Terre en km
-        double dLat = Math.toRadians(lat2 - lat1);
-        double dLon = Math.toRadians(lon2 - lon1);
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-                + Math.cos(Math.toRadians(lat1))
-                * Math.cos(Math.toRadians(lat2))
-                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return R * c;
-    }
 
     private void openInMapsApp(double lat, double lng) {
-        Uri gmmIntentUri = Uri.parse("geo:" + lat + "," + lng + "?q=" + lat + "," + lng);
-        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-        mapIntent.setPackage("com.google.android.apps.maps");
-        if (mapIntent.resolveActivity(getPackageManager()) != null) {
-            startActivity(mapIntent);
-        }
+        Uri uri = Uri.parse("geo:" + lat + "," + lng + "?q=" + lat + "," + lng);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        intent.setPackage("com.google.android.apps.maps");
+        if (intent.resolveActivity(getPackageManager()) != null) startActivity(intent);
     }
 
     private void setupRatingBar() {
         ratingBar.setOnRatingBarChangeListener((bar, rating, fromUser) -> {
             if (!fromUser || doctorId == null) return;
-            SharedPreferences prefs = getSharedPreferences(PREFS_RATINGS, MODE_PRIVATE);
-            prefs.edit().putFloat(doctorId, rating).apply();
-            String[] labels = {"", "Poor", "Fair", "Good", "Very good", "Excellent"};
-            int idx = Math.min((int) rating, 5);
-            Toast.makeText(this,
-                    "You rated " + labels[idx] + " (" + (int) rating + "/5)",
-                    Toast.LENGTH_SHORT).show();
+            getSharedPreferences(PREFS_RATINGS, MODE_PRIVATE)
+                    .edit().putFloat(doctorId, rating).apply();
         });
     }
 
-
-
     private void setupBookButton() {
-        Button btnBook = findViewById(R.id.btnBookAppointment);
-        btnBook.setOnClickListener(v -> {
+        findViewById(R.id.btnBookAppointment).setOnClickListener(v -> {
             Intent intent = new Intent(this, BookAppointmentActivity.class);
-            if (doctorId != null) {
-                try {
-                    intent.putExtra("doctorId", Integer.parseInt(doctorId));
-                } catch (NumberFormatException e) {
-                    intent.putExtra("doctorId", -1);
-                }
-            } else {
-                intent.putExtra("doctorId", -1);
-            }
+            intent.putExtra("doctorId", doctorId != null ? Integer.parseInt(doctorId) : -1);
             startActivity(intent);
         });
+    }
 
+    // ── Contact ───────────────────────────────────────────────────────────────
+
+    private void checkIfCanContact(String doctorId) {
+        String patientId = SessionManager.getInstance(this).getCurrentUserId();
+        String token     = "Bearer " + SessionManager.getInstance(this).getUserToken();
+
+        ApiClient.getClient().create(ApiService.class)
+                .getConfirmedAppointments(token, patientId, doctorId)
+                .enqueue(new Callback<List<Object>>() {
+                    @Override
+                    public void onResponse(Call<List<Object>> call,
+                                           Response<List<Object>> response) {
+                        boolean hasConfirmed = response.isSuccessful()
+                                && response.body() != null
+                                && !response.body().isEmpty();
+
+                        if (btnContact != null)
+                            btnContact.setVisibility(hasConfirmed ? View.VISIBLE : View.GONE);
+                        
+                        if (tvNoContact != null) {
+                            tvNoContact.setVisibility(hasConfirmed ? View.GONE : View.VISIBLE);
+                            if (!hasConfirmed)
+                                tvNoContact.setText(
+                                        "Prenez un rendez-vous pour contacter ce médecin");
+                        }
+
+                        if (hasConfirmed) {
+                            if (btnContact != null)
+                                btnContact.setOnClickListener(v -> openChat(currentDoctor));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<Object>> call, Throwable t) {
+                        Log.e(TAG, "checkIfCanContact failed", t);
+                    }
+                });
+    }
+
+    private void openChat(Doctor doctor) {
+        String token     = "Bearer " + SessionManager.getInstance(this).getUserToken();
+        String patientId = SessionManager.getInstance(this).getCurrentUserId();
+
+        Map<String, String> body = new HashMap<>();
+        body.put("doctorId",  String.valueOf(doctor.getId()));
+        body.put("patientId", patientId);
+
+        ApiClient.getClient().create(ApiService.class)
+                .createConversation(token, body)
+                .enqueue(new Callback<Conversation>() {
+                    @Override
+                    public void onResponse(Call<Conversation> call,
+                                           Response<Conversation> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            Conversation conv = response.body();
+                            conv.setOtherUserName(doctor.getFullName());
+                            conv.setOtherUserRole(doctor.getSpecialty());
+                            ChatDetailActivity.start(DoctorDetailsActivity.this, conv);
+                        } else {
+                            Toast.makeText(DoctorDetailsActivity.this,
+                                    "Erreur " + response.code(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Conversation> call, Throwable t) {
+                        Toast.makeText(DoctorDetailsActivity.this,
+                                "Erreur connexion", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Nettoyage du callback de localisation pour éviter les fuites mémoire
-        if (locationCallback != null) {
+        if (locationCallback != null)
             fusedLocationClient.removeLocationUpdates(locationCallback);
-        }
     }
 }

@@ -1,12 +1,43 @@
 package com.sympnet.app.activities;
 
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.sympnet.app.R;
 import com.sympnet.app.home.ActivityHome;
+import com.sympnet.app.model.Message;
 
-public abstract class BaseActivity extends AppCompatActivity {
+import com.sympnet.app.network.WebSocketManager;
+
+public abstract class BaseActivity extends AppCompatActivity implements WebSocketManager.ChatListener {
+
+    protected WebSocketManager webSocketManager;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        webSocketManager = WebSocketManager.getInstance();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (webSocketManager != null) {
+            webSocketManager.addChatListener(this);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (webSocketManager != null) {
+            webSocketManager.removeChatListener(this);
+        }
+    }
 
     protected void setupBottomNav() {
         ImageView navHome     = findViewById(R.id.nav_home_icon);
@@ -49,4 +80,18 @@ public abstract class BaseActivity extends AppCompatActivity {
             });
         }
     }
+
+    // ── ChatListener ──────────────────────────────────────────────────────
+
+    @Override public void onConnected() {}
+    @Override public void onDisconnected() {}
+    @Override public void onNewMessage(Message message) {}
+    @Override public void onMessageDelivered(String messageId) {}
+    @Override public void onMessageRead(String messageId) {}
+    @Override public void onTyping(String userId, String userName, boolean isTyping) {}
+
+
+    @Override public void onUpdateConversationList() {}
+    @Override public void onConversationCreated(String doctorName, String appointmentDate) {}
 }
+

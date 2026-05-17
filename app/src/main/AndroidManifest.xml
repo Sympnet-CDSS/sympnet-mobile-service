@@ -7,7 +7,13 @@
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
 
     <application
         android:name=".MyApp"
@@ -21,7 +27,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCUPDh57AstBm2EU1H0Raf2g6wUWqwgTHY" />
 
-        <!-- ① SPLASH — seul launcher -->
         <activity
             android:name=".activities.SplashActivity"
             android:exported="true"
@@ -33,7 +38,6 @@
             </intent-filter>
         </activity>
 
-        <!-- ② ONBOARDING — premier lancement uniquement -->
         <activity
             android:name=".activities.OnboardingActivity"
             android:exported="false"
@@ -58,6 +62,11 @@
         <activity android:name=".activities.PrivacyPolicyActivity" />
         <activity android:name=".activities.LanguageActivity" />
         <activity android:name=".activities.NotificationDetailsActivity" />
+
+        <!-- Chat & Video Call -->
+        <activity android:name=".activities.ChatListActivity" />
+        <activity android:name=".activities.ChatDetailActivity" />
+
 
     </application>
 

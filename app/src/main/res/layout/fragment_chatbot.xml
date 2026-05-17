@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -8,29 +9,62 @@
     <!-- Header -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="@drawable/bg_header_gradient"
+        android:layout_height="70dp"
+        android:background="#0D9488"
         android:gravity="center_vertical"
         android:paddingHorizontal="16dp">
 
-        <TextView
+        <com.google.android.material.imageview.ShapeableImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="#33FFFFFF"
+            android:padding="8dp"
+            android:src="@drawable/ic_brain"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Circle"
+            app:tint="@color/white" />
+
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="🤖 SympNet AI"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:layout_marginStart="12dp"
+            android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_btn_green_outline"
-            android:paddingHorizontal="10dp"
-            android:paddingVertical="4dp"
-            android:text="● En ligne"
-            android:textColor="#0D6E6A"
-            android:textSize="11sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SympNet AI"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                
+                <View
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@drawable/dot_active" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="En ligne"
+                    android:textColor="#E0F2F1"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_search"
+            app:tint="@color/white"
+            android:rotation="90" />
     </LinearLayout>
 
     <!-- Chat messages -->
@@ -49,36 +83,48 @@
             android:paddingBottom="8dp" />
     </ScrollView>
 
-    <!-- Input -->
+    <!-- Input Area (Premium Design) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
-        android:elevation="4dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="8dp">
+        android:padding="16dp">
 
-        <EditText
-            android:id="@+id/etMessage"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/bg_search_bar"
-            android:hint="Décrivez vos symptômes..."
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="10dp"
-            android:textSize="14sp" />
+            android:background="@drawable/card_background"
+            android:elevation="4dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="6dp">
 
-        <ImageButton
-            android:id="@+id/btnSend"
-            android:layout_width="46dp"
-            android:layout_height="46dp"
-            android:layout_marginStart="8dp"
-            android:background="@drawable/bg_btn_green"
-            android:padding="10dp"
-            android:src="@android:drawable/ic_menu_send"
-            android:tint="#FFFFFF" />
+            <EditText
+                android:id="@+id/etMessage"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:hint="Décrivez vos symptômes..."
+                android:paddingHorizontal="16dp"
+                android:textSize="15sp" />
+
+            <ImageButton
+                android:id="@+id/btnMic"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_icon_button"
+                android:src="@drawable/ic_mic"
+                app:tint="#4B5563" />
+
+            <ImageButton
+                android:id="@+id/btnSend"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_icon_button"
+                android:src="@drawable/ic_send"
+                app:tint="#9CA3AF" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

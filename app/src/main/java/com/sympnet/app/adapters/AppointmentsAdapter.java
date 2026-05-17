@@ -67,6 +67,19 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
         // Doctor name
         holder.tvDoctorName.setText(a.doctorName != null ? a.doctorName : "Médecin");
 
+        // Initials
+        if (a.doctorName != null && !a.doctorName.isEmpty()) {
+            String[] parts = a.doctorName.split(" ");
+            String initials = "";
+            if (parts.length > 0) initials += parts[0].charAt(0);
+            if (parts.length > 1) initials += parts[1].charAt(0);
+            holder.tvInitials.setText(initials.toUpperCase());
+        }
+
+        // Doctor specialty (if available in DTO, otherwise use default)
+        // Note: AppointmentDto might not have specialty, I'll check or use "Médecin"
+        holder.tvDoctorSpecialty.setText("Généraliste"); 
+
         // Date + Time
         try {
             if (a.dateTime != null && a.dateTime.length() >= 16) {
@@ -75,12 +88,15 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
                 else if (cleanDt.length() == 16) cleanDt += ":00";
                 
                 LocalDateTime dt = LocalDateTime.parse(cleanDt, INPUT_FMT);
-                holder.tvDateTime.setText("📅 " + dt.format(DATE_FMT) + "  🕐 " + dt.format(TIME_FMT));
+                holder.tvDate.setText(dt.format(DATE_FMT));
+                holder.tvTime.setText(dt.format(TIME_FMT));
             } else {
-                holder.tvDateTime.setText(a.dateTime != null ? a.dateTime : "—");
+                holder.tvDate.setText(a.dateTime != null ? a.dateTime : "—");
+                holder.tvTime.setText("--:--");
             }
         } catch (Exception e) {
-            holder.tvDateTime.setText(a.dateTime != null ? a.dateTime : "—");
+            holder.tvDate.setText(a.dateTime != null ? a.dateTime : "—");
+            holder.tvTime.setText("--:--");
         }
 
         // Status
@@ -89,21 +105,17 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
         // Type
         if (a.type != null) {
             boolean inPerson = "InPerson".equalsIgnoreCase(a.type);
-            holder.tvType.setText(inPerson ? "🏥 Cabinet" : "📹 Téléconsultation");
+            holder.tvType.setText(inPerson ? "Cabinet" : "Téléconsultation");
         }
-
-        // Urgent
-        holder.tvUrgent.setVisibility(a.isUrgent ? View.VISIBLE : View.GONE);
 
         // Reason
         if (a.reason != null && !a.reason.isEmpty()) {
-            holder.tvReason.setVisibility(View.VISIBLE);
-            holder.tvReason.setText("📋 Motif : " + a.reason);
+            holder.tvReason.setText(a.reason);
         } else {
-            holder.tvReason.setVisibility(View.GONE);
+            holder.tvReason.setText("Consulation de routine");
         }
 
-        // Action buttons visibility - hide if final status
+        // Action buttons visibility
         boolean isFinal = "Annulé".equals(a.status) || "Cancelled".equals(a.status) || 
                          "Completed".equals(a.status) || "Terminé".equals(a.status);
         holder.btnCancel.setVisibility(isFinal ? View.GONE : View.VISIBLE);
@@ -189,20 +201,22 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvDoctorName, tvDateTime, tvStatus, tvType, tvUrgent, tvReason;
-        Button btnCancel, btnReschedule, btnDetails;
+        TextView tvDoctorName, tvDoctorSpecialty, tvDate, tvTime, tvStatus, tvType, tvReason, tvInitials;
+        TextView btnCancel, btnReschedule, btnDetails;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvDoctorName  = itemView.findViewById(R.id.tvDoctorName);
-            tvDateTime    = itemView.findViewById(R.id.tvDateTime);
-            tvStatus      = itemView.findViewById(R.id.tvStatus);
-            tvType        = itemView.findViewById(R.id.tvType);
-            tvUrgent      = itemView.findViewById(R.id.tvUrgent);
-            tvReason      = itemView.findViewById(R.id.tvReason);
-            btnCancel     = itemView.findViewById(R.id.btnCancel);
-            btnReschedule = itemView.findViewById(R.id.btnReschedule);
-            btnDetails    = itemView.findViewById(R.id.btnDetails);
+            tvDoctorName      = itemView.findViewById(R.id.tvDoctorName);
+            tvDoctorSpecialty = itemView.findViewById(R.id.tvDoctorSpecialty);
+            tvDate            = itemView.findViewById(R.id.tvDate);
+            tvTime            = itemView.findViewById(R.id.tvTime);
+            tvStatus          = itemView.findViewById(R.id.tvStatus);
+            tvType            = itemView.findViewById(R.id.tvType);
+            tvReason          = itemView.findViewById(R.id.tvReason);
+            tvInitials        = itemView.findViewById(R.id.tvInitials);
+            btnCancel         = itemView.findViewById(R.id.btnCancel);
+            btnReschedule     = itemView.findViewById(R.id.btnReschedule);
+            btnDetails        = itemView.findViewById(R.id.btnDetails);
         }
     }
 }

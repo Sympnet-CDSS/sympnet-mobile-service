@@ -10,11 +10,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import com.sympnet.app.R;
 import com.sympnet.app.fragments.AppointmentsFragment;
+import com.sympnet.app.fragments.ChatListFragment;
 import com.sympnet.app.fragments.ChatbotFragment;
 import com.sympnet.app.fragments.ProfileFragment;
 import com.sympnet.app.home.ActivityHome;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private ImageView navHome, navChat, navAi, navProfile, navCalendar;
 
@@ -33,28 +34,42 @@ public class MainActivity extends AppCompatActivity {
         handleIntentExtras();
     }
 
-    private void setupBottomNav() {
-        navHome.setOnClickListener(v -> {
-            startActivity(new Intent(this, ActivityHome.class));
-            finish();
-        });
+    @Override
+    protected void setupBottomNav() {
+        if (navHome != null) {
+            navHome.setOnClickListener(v -> {
+                startActivity(new Intent(this, ActivityHome.class));
+                finish();
+            });
+        }
 
+        if (navChat != null) {
+            navChat.setOnClickListener(v -> {
+                loadFragment(new ChatListFragment());
+                updateNavIcons(navChat);
+            });
+        }
 
+        if (navAi != null) {
+            navAi.setOnClickListener(v -> {
+                loadFragment(new ChatbotFragment());
+                updateNavIcons(navAi);
+            });
+        }
 
-        navAi.setOnClickListener(v -> {
-            loadFragment(new ChatbotFragment());
-            updateNavIcons(navAi);
-        });
+        if (navCalendar != null) {
+            navCalendar.setOnClickListener(v -> {
+                loadFragment(new AppointmentsFragment());
+                updateNavIcons(navCalendar);
+            });
+        }
 
-        navCalendar.setOnClickListener(v -> {
-            loadFragment(new AppointmentsFragment());
-            updateNavIcons(navCalendar);
-        });
-
-        navProfile.setOnClickListener(v -> {
-            loadFragment(new ProfileFragment());
-            updateNavIcons(navProfile);
-        });
+        if (navProfile != null) {
+            navProfile.setOnClickListener(v -> {
+                loadFragment(new ProfileFragment());
+                updateNavIcons(navProfile);
+            });
+        }
     }
 
     private void updateNavIcons(ImageView selectedIcon) {
@@ -74,7 +89,10 @@ public class MainActivity extends AppCompatActivity {
         String target = getIntent().getStringExtra("TARGET_FRAGMENT");
         if (target != null) {
             switch (target) {
-
+                case "CHAT":
+                    loadFragment(new ChatListFragment());
+                    updateNavIcons(navChat);
+                    break;
                 case "CHATBOT":
                     loadFragment(new ChatbotFragment());
                     updateNavIcons(navAi);
@@ -87,7 +105,9 @@ public class MainActivity extends AppCompatActivity {
                     loadFragment(new ProfileFragment());
                     updateNavIcons(navProfile);
                     break;
-
+                default:
+                    // Default to Home or previous state if unknown
+                    break;
             }
         }
     }

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="bottom"
+    android:orientation="horizontal"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="4dp">
+
+    <!-- Petit Avatar du Docteur -->
+    <FrameLayout
+        android:id="@+id/docAvatarSmall"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/circle_background"
+        android:backgroundTint="#B2EBF2">
+        <TextView
+            android:id="@+id/tvReceivedInitials"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="DA"
+            android:textColor="#00796B"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="60dp"
+        android:background="@drawable/bg_chat_bubble_received"
+        android:elevation="1dp"
+        android:orientation="vertical"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="10dp">
+
+        <TextView
+            android:id="@+id/tvMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bonjour Yasmine, je viens de consulter votre dossier. Pouvez-vous m'en dire plus sur vos symptômes ?"
+            android:textColor="#333333"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="10:07"
+            android:textColor="#999999"
+            android:textSize="11sp" />
+    </LinearLayout>
+</LinearLayout>

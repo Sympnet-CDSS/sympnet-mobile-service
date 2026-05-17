@@ -34,9 +34,11 @@ import static android.content.Context.MODE_PRIVATE;
 public class AppointmentsFragment extends Fragment {
 
     private RecyclerView rvAppointments;
-    private TextView filterAll, filterPending, filterConfirmed, filterCancelled, filterCompleted;
+    private TextView filterAll, filterPending, filterConfirmed, filterCompleted;
+    private TextView tvCountPending, tvCountConfirmed, tvCountTotal;
     private List<AppointmentDto> allAppointments = new ArrayList<>();
     private AppointmentsAdapter adapter;
+    private com.google.android.material.floatingactionbutton.FloatingActionButton fabAddAppointment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,12 +49,25 @@ public class AppointmentsFragment extends Fragment {
         filterAll       = view.findViewById(R.id.filterAll);
         filterPending   = view.findViewById(R.id.filterPending);
         filterConfirmed = view.findViewById(R.id.filterConfirmed);
-        filterCancelled = view.findViewById(R.id.filterCancelled);
         filterCompleted = view.findViewById(R.id.filterCompleted);
+
+        tvCountPending   = view.findViewById(R.id.tvCountPending);
+        tvCountConfirmed = view.findViewById(R.id.tvCountConfirmed);
+        tvCountTotal     = view.findViewById(R.id.tvCountTotal);
+        fabAddAppointment = view.findViewById(R.id.fabAddAppointment);
 
         rvAppointments.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        View btnNotifications = view.findViewById(R.id.btnNotifications);
+        if (btnNotifications != null) {
+            btnNotifications.setOnClickListener(v -> {
+                android.content.Intent intent = new android.content.Intent(getContext(), com.sympnet.app.activities.NotificationDetailsActivity.class);
+                startActivity(intent);
+            });
+        }
+
         setupFilters();
+        setupFab();
         loadAppointments();
 
         return view;
@@ -87,6 +102,22 @@ public class AppointmentsFragment extends Fragment {
     private void showAppointments(List<AppointmentDto> list) {
         adapter = new AppointmentsAdapter(list);
         rvAppointments.setAdapter(adapter);
+        updateStatistics();
+    }
+
+    private void updateStatistics() {
+        int pending = 0, confirmed = 0;
+        for (AppointmentDto a : allAppointments) {
+            String s = a.status != null ? a.status : "";
+            if (s.isEmpty() || s.equalsIgnoreCase("Pending") || s.equalsIgnoreCase("En attente")) {
+                pending++;
+            } else if (s.equalsIgnoreCase("Confirmed") || s.equalsIgnoreCase("Confirmé")) {
+                confirmed++;
+            }
+        }
+        tvCountPending.setText(String.valueOf(pending));
+        tvCountConfirmed.setText(String.valueOf(confirmed));
+        tvCountTotal.setText(String.valueOf(allAppointments.size()));
     }
 
     private void setupFilters() {
@@ -109,11 +140,6 @@ public class AppointmentsFragment extends Fragment {
             setActiveFilter(filterCompleted);
             filterByStatus("Completed");
         });
-
-        filterCancelled.setOnClickListener(v -> {
-            setActiveFilter(filterCancelled);
-            filterByStatus("Cancelled");
-        });
     }
 
     private void filterByStatus(String targetStatus) {
@@ -128,10 +154,6 @@ public class AppointmentsFragment extends Fragment {
                 if (s.equalsIgnoreCase("Confirmed") || s.equalsIgnoreCase("Confirmé")) {
                     filtered.add(a);
                 }
-            } else if ("Cancelled".equals(targetStatus)) {
-                if (s.equalsIgnoreCase("Cancelled") || s.equalsIgnoreCase("Annulé")) {
-                    filtered.add(a);
-                }
             } else if ("Completed".equals(targetStatus)) {
                 if (s.equalsIgnoreCase("Completed") || s.equalsIgnoreCase("Terminé")) {
                     filtered.add(a);
@@ -141,13 +163,22 @@ public class AppointmentsFragment extends Fragment {
         showAppointments(filtered);
     }
 
-    private void setActiveFilter(TextView selected) {
-        TextView[] filters = {filterAll, filterPending, filterConfirmed, filterCancelled, filterCompleted};
-        for (TextView f : filters) {
-            f.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#F5F5F5")));
-            f.setTextColor(Color.parseColor("#9E9E9E"));
+    private void setupFab() {
+        if (fabAddAppointment != null) {
+            fabAddAppointment.setOnClickListener(v -> {
+                android.content.Intent intent = new android.content.Intent(getContext(), com.sympnet.app.activities.AllDoctorsActivity.class);
+                startActivity(intent);
+            });
         }
-        selected.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#009688")));
+    }
+
+    private void setActiveFilter(TextView selected) {
+        TextView[] filters = {filterAll, filterPending, filterConfirmed, filterCompleted};
+        for (TextView f : filters) {
+            f.setBackgroundResource(0);
+            f.setTextColor(Color.parseColor("#333333"));
+        }
+        selected.setBackgroundResource(R.drawable.bg_btn_teal);
         selected.setTextColor(Color.WHITE);
     }
 }

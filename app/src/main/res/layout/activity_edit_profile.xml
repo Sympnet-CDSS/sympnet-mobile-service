@@ -204,16 +204,16 @@
                                     android:src="@android:drawable/ic_menu_myplaces" app:tint="#009688"/>
                                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                                     android:layout_marginStart="5dp" android:text="Prénom"
-                                    android:textColor="#7A8A9A" android:textSize="11sp"/>
+                                    android:textColor="#009688" android:textSize="13sp" android:textStyle="bold"/>
                             </LinearLayout>
 
                             <com.google.android.material.textfield.TextInputLayout
                                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                                 android:layout_width="match_parent" android:layout_height="wrap_content"
-                                app:boxBackgroundColor="#FFFFFF" app:boxCornerRadiusBottomEnd="9dp"
-                                app:boxCornerRadiusBottomStart="9dp" app:boxCornerRadiusTopEnd="9dp"
-                                app:boxCornerRadiusTopStart="9dp" app:boxStrokeColor="#E0EAF5"
-                                app:boxStrokeWidth="1.5dp"
+                                app:boxBackgroundColor="#F5F6F8" app:boxCornerRadiusBottomEnd="12dp"
+                                app:boxCornerRadiusBottomStart="12dp" app:boxCornerRadiusTopEnd="12dp"
+                                app:boxCornerRadiusTopStart="12dp" app:boxStrokeColor="#D1D9E6"
+                                app:boxStrokeWidth="1dp" app:hintEnabled="false"
                                 app:hintTextColor="#009688">
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/etFirstName"
@@ -241,16 +241,16 @@
                                     android:src="@android:drawable/ic_menu_myplaces" app:tint="#009688"/>
                                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                                     android:layout_marginStart="5dp" android:text="Nom"
-                                    android:textColor="#7A8A9A" android:textSize="11sp"/>
+                                    android:textColor="#009688" android:textSize="13sp" android:textStyle="bold"/>
                             </LinearLayout>
 
                             <com.google.android.material.textfield.TextInputLayout
                                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                                 android:layout_width="match_parent" android:layout_height="wrap_content"
-                                app:boxBackgroundColor="#FFFFFF" app:boxCornerRadiusBottomEnd="9dp"
-                                app:boxCornerRadiusBottomStart="9dp" app:boxCornerRadiusTopEnd="9dp"
-                                app:boxCornerRadiusTopStart="9dp" app:boxStrokeColor="#E0EAF5"
-                                app:boxStrokeWidth="1.5dp"
+                                app:boxBackgroundColor="#F5F6F8" app:boxCornerRadiusBottomEnd="12dp"
+                                app:boxCornerRadiusBottomStart="12dp" app:boxCornerRadiusTopEnd="12dp"
+                                app:boxCornerRadiusTopStart="12dp" app:boxStrokeColor="#D1D9E6"
+                                app:boxStrokeWidth="1dp" app:hintEnabled="false"
                                 app:hintTextColor="#009688">
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/etLastName"
@@ -269,16 +269,16 @@
                             android:src="@android:drawable/ic_menu_call" app:tint="#009688"/>
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginStart="5dp" android:text="Téléphone"
-                            android:textColor="#7A8A9A" android:textSize="11sp"/>
+                            android:textColor="#009688" android:textSize="13sp" android:textStyle="bold"/>
                     </LinearLayout>
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                         android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:layout_marginBottom="14dp"
-                        app:boxBackgroundColor="#FFFFFF" app:boxCornerRadiusBottomEnd="9dp"
-                        app:boxCornerRadiusBottomStart="9dp" app:boxCornerRadiusTopEnd="9dp"
-                        app:boxCornerRadiusTopStart="9dp" app:boxStrokeColor="#E0EAF5"
-                        app:boxStrokeWidth="1.5dp"
+                        app:boxBackgroundColor="#F5F6F8" app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp" app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusTopStart="12dp" app:boxStrokeColor="#D1D9E6"
+                        app:boxStrokeWidth="1dp" app:hintEnabled="false"
                         app:hintTextColor="#009688" app:startIconDrawable="@android:drawable/ic_menu_call"
                         app:startIconTint="#009688">
                         <com.google.android.material.textfield.TextInputEditText
@@ -296,16 +296,16 @@
                             android:src="@android:drawable/ic_menu_my_calendar" app:tint="#009688"/>
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginStart="5dp" android:text="Date de naissance"
-                            android:textColor="#7A8A9A" android:textSize="11sp"/>
+                            android:textColor="#009688" android:textSize="13sp" android:textStyle="bold"/>
                     </LinearLayout>
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                         android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:layout_marginBottom="14dp"
-                        app:boxBackgroundColor="#FFFFFF" app:boxCornerRadiusBottomEnd="9dp"
-                        app:boxCornerRadiusBottomStart="9dp" app:boxCornerRadiusTopEnd="9dp"
-                        app:boxCornerRadiusTopStart="9dp" app:boxStrokeColor="#E0EAF5"
-                        app:boxStrokeWidth="1.5dp"
+                        app:boxBackgroundColor="#F5F6F8" app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp" app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusTopStart="12dp" app:boxStrokeColor="#D1D9E6"
+                        app:boxStrokeWidth="1dp" app:hintEnabled="false"
                         app:hintTextColor="#009688" app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
                         app:startIconTint="#009688">
                         <com.google.android.material.textfield.TextInputEditText
@@ -323,16 +323,16 @@
                             android:src="@android:drawable/ic_menu_myplaces" app:tint="#009688"/>
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginStart="5dp" android:text="Genre"
-                            android:textColor="#7A8A9A" android:textSize="11sp"/>
+                            android:textColor="#009688" android:textSize="13sp" android:textStyle="bold"/>
                     </LinearLayout>
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                         android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:layout_marginBottom="14dp"
-                        app:boxBackgroundColor="#FFFFFF" app:boxCornerRadiusBottomEnd="9dp"
-                        app:boxCornerRadiusBottomStart="9dp" app:boxCornerRadiusTopEnd="9dp"
-                        app:boxCornerRadiusTopStart="9dp" app:boxStrokeColor="#E0EAF5"
-                        app:boxStrokeWidth="1.5dp"
+                        app:boxBackgroundColor="#F5F6F8" app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp" app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusTopStart="12dp" app:boxStrokeColor="#D1D9E6"
+                        app:boxStrokeWidth="1dp" app:hintEnabled="false"
                         app:hintTextColor="#009688">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etGender"
@@ -349,15 +349,15 @@
                             android:src="@android:drawable/ic_menu_mapmode" app:tint="#009688"/>
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginStart="5dp" android:text="Adresse / Ville"
-                            android:textColor="#7A8A9A" android:textSize="11sp"/>
+                            android:textColor="#009688" android:textSize="13sp" android:textStyle="bold"/>
                     </LinearLayout>
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                         android:layout_width="match_parent" android:layout_height="wrap_content"
-                        app:boxBackgroundColor="#FFFFFF" app:boxCornerRadiusBottomEnd="9dp"
-                        app:boxCornerRadiusBottomStart="9dp" app:boxCornerRadiusTopEnd="9dp"
-                        app:boxCornerRadiusTopStart="9dp" app:boxStrokeColor="#E0EAF5"
-                        app:boxStrokeWidth="1.5dp"
+                        app:boxBackgroundColor="#F5F6F8" app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp" app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusTopStart="12dp" app:boxStrokeColor="#D1D9E6"
+                        app:boxStrokeWidth="1dp" app:hintEnabled="false"
                         app:hintTextColor="#009688" app:startIconDrawable="@android:drawable/ic_menu_mapmode"
                         app:startIconTint="#009688">
                         <com.google.android.material.textfield.TextInputEditText
@@ -396,16 +396,16 @@
                             android:src="@android:drawable/ic_dialog_email" app:tint="#009688"/>
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginStart="5dp" android:text="Email"
-                            android:textColor="#7A8A9A" android:textSize="11sp"/>
+                            android:textColor="#009688" android:textSize="13sp" android:textStyle="bold"/>
                     </LinearLayout>
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                         android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:layout_marginBottom="14dp"
-                        app:boxBackgroundColor="#F8FAFC" app:boxCornerRadiusBottomEnd="9dp"
-                        app:boxCornerRadiusBottomStart="9dp" app:boxCornerRadiusTopEnd="9dp"
-                        app:boxCornerRadiusTopStart="9dp" app:boxStrokeColor="#E8EFF5"
-                        app:boxStrokeWidth="1dp" app:startIconDrawable="@android:drawable/ic_dialog_email"
+                        app:boxBackgroundColor="#F5F6F8" app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp" app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusTopStart="12dp" app:boxStrokeColor="#D1D9E6"
+                        app:boxStrokeWidth="1dp" app:hintEnabled="false" app:startIconDrawable="@android:drawable/ic_dialog_email"
                         app:startIconTint="#AABBCC">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etEmail"
@@ -422,16 +422,16 @@
                             android:src="@android:drawable/ic_menu_info_details" app:tint="#009688"/>
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginStart="5dp" android:text="Consultations effectuées"
-                            android:textColor="#7A8A9A" android:textSize="11sp"/>
+                            android:textColor="#009688" android:textSize="13sp" android:textStyle="bold"/>
                     </LinearLayout>
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                         android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:layout_marginBottom="14dp"
-                        app:boxBackgroundColor="#F8FAFC" app:boxCornerRadiusBottomEnd="9dp"
-                        app:boxCornerRadiusBottomStart="9dp" app:boxCornerRadiusTopEnd="9dp"
-                        app:boxCornerRadiusTopStart="9dp" app:boxStrokeColor="#E8EFF5"
-                        app:boxStrokeWidth="1dp">
+                        app:boxBackgroundColor="#F5F6F8" app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp" app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusTopStart="12dp" app:boxStrokeColor="#D1D9E6"
+                        app:boxStrokeWidth="1dp" app:hintEnabled="false">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etConsultationCount"
                             android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -467,16 +467,16 @@
                             android:src="@android:drawable/ic_menu_info_details" app:tint="#E74C3C"/>
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginStart="5dp" android:text="Groupe sanguin"
-                            android:textColor="#7A8A9A" android:textSize="11sp"/>
+                            android:textColor="#009688" android:textSize="13sp" android:textStyle="bold"/>
                     </LinearLayout>
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                         android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:layout_marginBottom="14dp"
-                        app:boxBackgroundColor="#FFFFFF" app:boxCornerRadiusBottomEnd="9dp"
-                        app:boxCornerRadiusBottomStart="9dp" app:boxCornerRadiusTopEnd="9dp"
-                        app:boxCornerRadiusTopStart="9dp" app:boxStrokeColor="#E0EAF5"
-                        app:boxStrokeWidth="1.5dp"
+                        app:boxBackgroundColor="#F5F6F8" app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp" app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusTopStart="12dp" app:boxStrokeColor="#D1D9E6"
+                        app:boxStrokeWidth="1dp" app:hintEnabled="false"
                         app:hintTextColor="#009688">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etBloodType"
@@ -493,16 +493,16 @@
                             android:src="@android:drawable/ic_menu_info_details" app:tint="#E67E22"/>
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginStart="5dp" android:text="Allergies connues"
-                            android:textColor="#7A8A9A" android:textSize="11sp"/>
+                            android:textColor="#009688" android:textSize="13sp" android:textStyle="bold"/>
                     </LinearLayout>
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                         android:layout_width="match_parent" android:layout_height="wrap_content"
                         android:layout_marginBottom="14dp"
-                        app:boxBackgroundColor="#FFFFFF" app:boxCornerRadiusBottomEnd="9dp"
-                        app:boxCornerRadiusBottomStart="9dp" app:boxCornerRadiusTopEnd="9dp"
-                        app:boxCornerRadiusTopStart="9dp" app:boxStrokeColor="#E0EAF5"
-                        app:boxStrokeWidth="1.5dp"
+                        app:boxBackgroundColor="#F5F6F8" app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp" app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusTopStart="12dp" app:boxStrokeColor="#D1D9E6"
+                        app:boxStrokeWidth="1dp" app:hintEnabled="false"
                         app:hintTextColor="#009688">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etAllergies"
@@ -521,15 +521,15 @@
                             android:src="@android:drawable/ic_menu_info_details" app:tint="#3498DB"/>
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                             android:layout_marginStart="5dp" android:text="Antécédents médicaux"
-                            android:textColor="#7A8A9A" android:textSize="11sp"/>
+                            android:textColor="#009688" android:textSize="13sp" android:textStyle="bold"/>
                     </LinearLayout>
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                         android:layout_width="match_parent" android:layout_height="wrap_content"
-                        app:boxBackgroundColor="#FFFFFF" app:boxCornerRadiusBottomEnd="9dp"
-                        app:boxCornerRadiusBottomStart="9dp" app:boxCornerRadiusTopEnd="9dp"
-                        app:boxCornerRadiusTopStart="9dp" app:boxStrokeColor="#E0EAF5"
-                        app:boxStrokeWidth="1.5dp"
+                        app:boxBackgroundColor="#F5F6F8" app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp" app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusTopStart="12dp" app:boxStrokeColor="#D1D9E6"
+                        app:boxStrokeWidth="1dp" app:hintEnabled="false"
                         app:hintTextColor="#009688">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etMedicalHistory"

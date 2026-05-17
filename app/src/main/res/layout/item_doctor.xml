@@ -1,118 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="12dp"
-    android:background="@drawable/card_background"
-    android:orientation="horizontal"
-    android:padding="12dp">
+    android:layout_marginBottom="16dp"
+    android:background="@drawable/shape_doctor_card"
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <!-- Photo du médecin -->
-    <ImageView
-        android:id="@+id/docImage"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:background="@drawable/circle_background"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_doctor_avatar" />
+    <!-- Top Part: Avatar, Info, Status -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <!-- Infos + boutons -->
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        <!-- Avatar Initials / Image -->
+        <FrameLayout
+            android:id="@+id/docAvatarContainer"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/circle_background"
+            android:backgroundTint="#B2EBF2">
+            <ImageView
+                android:id="@+id/docImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:visibility="gone" />
+            <TextView
+                android:id="@+id/tvDocInitials"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="DA"
+                android:textColor="#00796B"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </FrameLayout>
 
-        <!-- Nom -->
-        <TextView
-            android:id="@+id/docName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Dr. Mohamed Ben Ali"
-            android:textColor="#0D6E6A"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-
-        <!-- Spécialité -->
-        <TextView
-            android:id="@+id/docSpecialty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:text="Cardiologie"
-            android:textColor="#444"
-            android:textSize="13sp" />
-
-        <!-- Boutons -->
+        <!-- Doctor Info -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_marginStart="16dp"
+            android:layout_toEndOf="@id/docAvatarContainer"
+            android:orientation="vertical">
 
-            <!-- Bouton Info -->
             <TextView
-                android:id="@+id/btnInfo"
+                android:id="@+id/docName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_btn_green"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="6dp"
-                android:text="Info"
-                android:textColor="#FFFFFF"
-                android:textSize="12sp"
+                android:text="Dr. Anis Bra"
+                android:textColor="#1A2A3A"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
-            <!-- Bouton Calendrier -->
             <TextView
-                android:id="@+id/btnCalendar"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/bg_btn_green_outline"
-                android:gravity="center"
-                android:text="📅"
+                android:id="@+id/docSpecialty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Gynécologie"
+                android:textColor="#757575"
                 android:textSize="14sp" />
 
-            <!-- Bouton Info (i) -->
-            <TextView
-                android:id="@+id/btnInfoCircle"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/bg_btn_green_outline"
-                android:gravity="center"
-                android:text="i"
-                android:textColor="#0D6E6A"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <!-- Bouton Question -->
-            <TextView
-                android:id="@+id/btnQuestion"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/bg_btn_green_outline"
-                android:gravity="center"
-                android:text="?"
-                android:textColor="#0D6E6A"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <!-- Bouton Favori -->
-            <TextView
-                android:id="@+id/btnFavorite"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/bg_btn_green_outline"
-                android:gravity="center"
-                android:text="♡"
-                android:textColor="#0D6E6A"
-                android:textSize="14sp" />
-
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@android:drawable/btn_star_big_on"
+                    app:tint="#F1C40F" />
+                <TextView
+                    android:id="@+id/tvDocRating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="4.8"
+                    android:textColor="#1A2A3A"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
         </LinearLayout>
+
+        <!-- Status Badge -->
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/bg_btn_green"
+            android:backgroundTint="#E8F5E9"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:text="Disponible"
+            android:textColor="#2ECC71"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <!-- Bottom Part: Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <!-- Info Button (Main Action) -->
+        <TextView
+            android:id="@+id/btnInfo"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_btn_teal"
+            android:gravity="center"
+            android:text="Info"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+
+
+        <!-- Calendar Button -->
+        <ImageView
+            android:id="@+id/btnCalendar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/shape_doctor_card"
+            android:padding="10dp"
+            android:src="@drawable/ic_calendar"
+            app:tint="#1A2A3A" />
+
+        <!-- Details Button -->
+        <ImageView
+            android:id="@+id/btnInfoCircle"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/shape_doctor_card"
+            android:padding="10dp"
+            android:src="@android:drawable/ic_dialog_info"
+            app:tint="#1A2A3A" />
+
+        <!-- Favorite Button -->
+        <ImageView
+            android:id="@+id/btnFavorite"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/shape_doctor_card"
+            android:padding="10dp"
+            android:src="@android:drawable/btn_star_big_off"
+            app:tint="#1A2A3A" />
+
     </LinearLayout>
 </LinearLayout>
