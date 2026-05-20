@@ -80,7 +80,7 @@ public class ActivityHome extends BaseActivity {
     private TextView tvPatientName, tvCurrentDate, tvVoirTout;
     private EditText etSearch;
     private ImageView navHome, navChat, navAi, navProfile, navCalendar;
-    private View cardDoctors, cardRdv;
+    private View cardDoctors, cardRdv, cardOrdonnances;
 
     private FusedLocationProviderClient fusedLocationClient;
     private Location userLocation;
@@ -151,6 +151,7 @@ public class ActivityHome extends BaseActivity {
         navCalendar      = findViewById(R.id.nav_calendar_icon);
         cardDoctors      = findViewById(R.id.cardDoctors);
         cardRdv          = findViewById(R.id.cardRdv);
+        cardOrdonnances  = findViewById(R.id.cardOrdonnances);
     }
 
     private void requestNotificationPermission() {
@@ -458,6 +459,11 @@ public class ActivityHome extends BaseActivity {
             cardRdv.setOnClickListener(v ->
                     startActivity(new Intent(this, MainActivity.class)
                             .putExtra("TARGET_FRAGMENT", "SCHEDULE")));
+        }
+
+        if (cardOrdonnances != null) {
+            cardOrdonnances.setOnClickListener(v ->
+                    startActivity(new Intent(this, com.sympnet.app.activities.prescription.PrescriptionsActivity.class)));
         }
     }
 

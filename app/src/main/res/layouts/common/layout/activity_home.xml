@@ -187,15 +187,15 @@
                             android:src="@drawable/ic_home"
                             app:tint="#3A86FF" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text="Médecins"
-                            android:textColor="#1A2A3A"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="Médecins"
+                                android:textColor="#1A2A3A"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
                 <!-- Card Rendez-vous -->
@@ -204,6 +204,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_marginEnd="10dp"
                     android:clickable="true"
                     android:focusable="true"
                     android:foreground="?attr/selectableItemBackground"
@@ -233,7 +234,47 @@
                             android:layout_marginTop="10dp"
                             android:text="Rendez-vous"
                             android:textColor="#1A2A3A"
-                            android:textSize="13sp"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Card Ordonnances -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardOrdonnances"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:paddingVertical="20dp">
+
+                        <ImageView
+                            android:layout_width="44dp"
+                            android:layout_height="44dp"
+                            android:background="@drawable/shape_rounded_icon_bg"
+                            android:backgroundTint="#EBF5DF"
+                            android:padding="10dp"
+                            android:src="@drawable/ic_file_document"
+                            app:tint="#4CAF50" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Ordonnances"
+                            android:textColor="#1A2A3A"
+                            android:textSize="12sp"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>

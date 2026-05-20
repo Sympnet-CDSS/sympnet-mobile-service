@@ -70,7 +70,7 @@ public class AppointmentDetailActivity extends BaseActivity {
         if (appointmentId != -1) loadAppointment(appointmentId);
     }
 
-    //  Bind 
+    // ── Bind
     private void bindViews() {
         tvDoctorName      = findViewById(R.id.tvDoctorName);//pour lier les vues XML au code Java
         tvDoctorSpecialty = findViewById(R.id.tvDoctorSpecialty);

@@ -102,6 +102,11 @@ public interface ApiService {
             @Query("doctorId") String doctorId
     );
 
+    // ── Ordonnances
+    @GET("api/ordonnances/my")
+    Call<List<com.sympnet.app.model.PrescriptionDto>> getMyOrdonnances(
+            @Header("Authorization") String bearerToken
+    );
 
     //  AI 
     @POST("api/ai/diagnostic")
