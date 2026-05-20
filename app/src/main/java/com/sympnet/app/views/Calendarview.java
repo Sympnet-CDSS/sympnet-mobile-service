@@ -17,15 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-/**
- * Custom month-grid calendar that:
- *  - Shows Mon–Sun headers
- *  - Navigates months with < / > arrows
- *  - Disables past days
- *  - Highlights today
- *  - Highlights the selected day in teal (#009688)
- *  - Reports selections via OnDaySelectedListener
- */
+
 public class Calendarview extends LinearLayout {
 
     public interface OnDaySelectedListener {
@@ -33,16 +25,16 @@ public class Calendarview extends LinearLayout {
         void onDaySelected(long dateMillis);
     }
 
-    // ─── State
+    // State
     private final Calendar displayedMonth = Calendar.getInstance();
     private final Calendar today          = Calendar.getInstance();
     private long selectedDateMillis = -1;
 
-    // ─── Views
+    // Views
     private TextView   tvMonth;
     private GridLayout grid;
 
-    // ─── Callback
+    // Callback
     private OnDaySelectedListener listener;
 
 
@@ -56,11 +48,12 @@ public class Calendarview extends LinearLayout {
         this.listener = l;
     }
 
-    // ── Build skeleton layout
+    // Build skeleton layout 
     private void init(Context ctx) {
         setOrientation(VERTICAL);
         setPadding(0, 8, 0, 8);
 
+        //  Header row: < MONTH YEAR > 
         LinearLayout header = new LinearLayout(ctx);
         header.setOrientation(HORIZONTAL);
         header.setGravity(Gravity.CENTER_VERTICAL);
@@ -83,7 +76,7 @@ public class Calendarview extends LinearLayout {
         btnPrev.setOnClickListener(v -> shiftMonth(-1));
         btnNext.setOnClickListener(v -> shiftMonth(+1));
 
-        // ── Weekday labels row ───────────────────────────────────────────────
+        //  Weekday labels row 
         String[] days = {"Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"};
         LinearLayout dayRow = new LinearLayout(ctx);
         dayRow.setOrientation(HORIZONTAL);
@@ -99,7 +92,7 @@ public class Calendarview extends LinearLayout {
         }
         addView(dayRow);
 
-        // ── Day grid ─────────────────────────────────────────────────────────
+        //  Day grid 
         grid = new GridLayout(ctx);
         grid.setColumnCount(7);
         grid.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
@@ -108,7 +101,7 @@ public class Calendarview extends LinearLayout {
         renderMonth();
     }
 
-    // ── Render the current displayed month ───────────────────────────────────
+    //  Render the current displayed month 
     private void renderMonth() {
         Context ctx = getContext();
         grid.removeAllViews();
@@ -121,8 +114,8 @@ public class Calendarview extends LinearLayout {
         Calendar cal = (Calendar) displayedMonth.clone();
         cal.set(Calendar.DAY_OF_MONTH, 1);
 
-        // Monday-based offset (Mon=0 … Sun=6)
-        int firstDow = cal.get(Calendar.DAY_OF_WEEK); // Sun=1, Mon=2 …
+        // Monday-based offset (Mon=0 --> Sun=6)
+        int firstDow = cal.get(Calendar.DAY_OF_WEEK); 
         int offset   = (firstDow == Calendar.SUNDAY) ? 6 : (firstDow - Calendar.MONDAY);
 
         int daysInMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -178,10 +171,9 @@ public class Calendarview extends LinearLayout {
         }
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
+    //  Helpers
     private void shiftMonth(int delta) {
         displayedMonth.add(Calendar.MONTH, delta);
-        // Don't allow navigating to past months
         if (displayedMonth.before(todayMonthStart())) {
             displayedMonth.add(Calendar.MONTH, -delta);
             return;

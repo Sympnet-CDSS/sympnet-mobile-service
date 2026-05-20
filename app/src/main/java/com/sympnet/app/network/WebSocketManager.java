@@ -15,10 +15,10 @@ public class WebSocketManager {
     private HubConnection hubConnection;
     private final java.util.List<ChatListener> listeners = new java.util.concurrent.CopyOnWriteArrayList<>();
 
-    // ✅ Correspond à app.MapHub<ChatHub>("/hubs/chat")
+    //  app.MapHub<ChatHub>("/hubs/chat")
     private static final String HUB_URL = "https://faster-say-trimmer.ngrok-free.dev/hubs/chat"; // ngrok
 
-    // ── Interface ─────────────────────────────────────────────────────────
+    // Interface 
 
     public interface ChatListener {
         void onConnected();
@@ -47,7 +47,7 @@ public class WebSocketManager {
         return instance;
     }
 
-    // ── Connect ───────────────────────────────────────────────────────────
+    //  Connect 
 
     public void connect(String token, ChatListener listener) {
         Log.d(TAG, "Attempting to connect with token: " + (token != null ? "present" : "NULL"));
@@ -76,14 +76,14 @@ public class WebSocketManager {
 
         hubConnection.start().subscribe(
                 () -> {
-                    Log.d(TAG, "✅ SignalR connected to " + HUB_URL);
+                    Log.d(TAG, " SignalR connected to " + HUB_URL);
                     for (ChatListener l : listeners) l.onConnected();
                 },
-                error -> Log.e(TAG, "❌ Connection failed to " + HUB_URL + " : " + error.getMessage())
+                error -> Log.e(TAG, " Connection failed to " + HUB_URL + " : " + error.getMessage())
         );
     }
 
-    // ── Register server→client handlers ───────────────────────────────────
+    //  Register server→client handlers 
 
     private void registerHandlers() {
 
@@ -125,7 +125,6 @@ public class WebSocketManager {
             for (ChatListener l : listeners) l.onConversationCreated(doctorName, appointmentDate);
         }, String.class, String.class);
     }
-    // ── Client→Server : correspond aux méthodes publiques du ChatHub ──────
 
     // ChatHub.SendMessage(string consultationId, string message, bool isVoice)
     public void sendMessage(String consultationId, String content, boolean isVoice) {
@@ -160,7 +159,7 @@ public class WebSocketManager {
         invoke("MarkAsRead", messageId, senderId);
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────
+    //  Helpers 
 
     private void invoke(String method, Object... args) {
         if (hubConnection != null &&

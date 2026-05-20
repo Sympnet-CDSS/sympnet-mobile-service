@@ -25,7 +25,7 @@ public class Doctor {
     @SerializedName("userId")
     private String userId;
 
-    // ── Getters
+    // Getters 
 
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
@@ -47,7 +47,7 @@ public class Doctor {
     public String getLastName()    { return lastName; }
     public String getAddress()     { return address != null ? address : ""; }
 
-    // ── Setters
+    //  Setters 
 
     public void setId(int id)                  { this.id = id; }
     public void setFirstName(String firstName) { this.firstName = firstName; }

@@ -85,10 +85,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             
             if (message.isRead()) {
                 tvStatus.setText("✓✓");
-                tvStatus.setTextColor(0xFF4FC3F7); // Blue
+                tvStatus.setTextColor(0xFF4FC3F7); 
             } else if (message.isDelivered()) {
                 tvStatus.setText("✓✓");
-                tvStatus.setTextColor(0xFFB2DFDB); // Gray-Teal
+                tvStatus.setTextColor(0xFFB2DFDB); 
             } else {
                 tvStatus.setText("✓");
                 tvStatus.setTextColor(0xFFB2DFDB);

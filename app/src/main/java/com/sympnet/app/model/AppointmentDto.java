@@ -12,10 +12,10 @@ public class AppointmentDto {
     @SerializedName("doctorAddress")    public String doctorAddress;
 
     // Le backend renvoie un seul champ DateTime ISO 8601 : "2025-06-15T10:30:00"
-    // On va le splitter dans l'Activity, pas ici
+    // On va le splitter dans l'Activity
     @SerializedName("dateTime")     public String dateTime;   // "yyyy-MM-ddTHH:mm:ss"
 
-    // Champs étendus (si vous les ajoutez au backend — voir section DTO .NET)
+    // Champs étendus 
     @SerializedName("duration")         public int     duration   = 30;
     @SerializedName("type")             public String  type       = "InPerson";
     @SerializedName("isUrgent")         public boolean isUrgent   = false;

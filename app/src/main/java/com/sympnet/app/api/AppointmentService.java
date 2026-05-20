@@ -42,7 +42,6 @@ public interface AppointmentService {
     Call<Void> cancelAppointment(
             @Header("Authorization") String token,
             @Path("id") int id);
-    // Ajouter dans AppointmentService.java
     @GET("api/patient-notifications")
     Call<List<PatientNotificationDto>> getMyNotifications(
             @Header("Authorization") String token

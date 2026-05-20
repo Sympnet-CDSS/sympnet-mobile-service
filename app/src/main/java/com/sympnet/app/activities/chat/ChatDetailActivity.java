@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-// import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -212,7 +211,7 @@ public class ChatDetailActivity extends BaseActivity {
             etMessage.setText("");
         });
 
-        // ✅ Envoi via API REST (plus fiable que SignalR par ngrok)
+        //  Envoi via API REST 
         String token = SessionManager.getInstance(this).getUserToken();
         Map<String, Object> body = new HashMap<>();
         body.put("ReceiverId", conversation.getOtherUserId());
@@ -222,11 +221,11 @@ public class ChatDetailActivity extends BaseActivity {
             @Override
             public void onResponse(@NonNull Call<Message> call, @NonNull Response<Message> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Log.d(TAG, "✅ Message envoyé via REST");
+                    Log.d(TAG, " Message envoyé via REST");
                     message.setDelivered(true);
                     // On peut mettre à jour l'ID réel ici si nécessaire
-                } else {
-                    Log.e(TAG, "❌ Erreur envoi REST: " + response.code());
+                } else 
+                    Log.e(TAG, " Erreur envoi REST: " + response.code());
                     // Fallback SignalR si l'API échoue
                     webSocketManager.sendMessage(convId, content, false);
                 }
@@ -234,7 +233,7 @@ public class ChatDetailActivity extends BaseActivity {
 
             @Override
             public void onFailure(@NonNull Call<Message> call, @NonNull Throwable t) {
-                Log.e(TAG, "❌ Échec réseau REST: " + t.getMessage());
+                Log.e(TAG, " Échec réseau REST: " + t.getMessage());
                 // Fallback SignalR
                 webSocketManager.sendMessage(convId, content, false);
             }
@@ -254,7 +253,7 @@ public class ChatDetailActivity extends BaseActivity {
         String token = SessionManager.getInstance(this).getUserToken();
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
-        apiService.getConversationMessages("Bearer " + token, convId) // ✅ token ajouté
+        apiService.getConversationMessages("Bearer " + token, convId) //  token ajouté
                 .enqueue(new Callback<List<Message>>() {
                     @Override
                     public void onResponse(@NonNull Call<List<Message>> call,

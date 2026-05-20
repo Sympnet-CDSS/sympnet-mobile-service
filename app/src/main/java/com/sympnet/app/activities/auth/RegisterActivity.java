@@ -119,7 +119,7 @@ public class RegisterActivity extends BaseActivity {
         });
     }
 
-    // ── API Register ──────────────────────────────────────────────────────
+    //  API Register 
 
     private void callRegisterApi() {
         String email    = etEmail.getText().toString().trim();
@@ -192,7 +192,7 @@ public class RegisterActivity extends BaseActivity {
         }
     }
 
-    // ── API Verify Code ───────────────────────────────────────────────────
+    //  API Verify Code 
 
     private void callVerifyCodeApi() {
         String email = etEmail.getText().toString().trim();
@@ -235,15 +235,15 @@ public class RegisterActivity extends BaseActivity {
                     runOnUiThread(() -> {
                         btnRegister.setEnabled(true);
                         if (response.isSuccessful()) {
-                            // ✅ Sauvegarde les données du formulaire dans SharedPreferences
+                            //  Sauvegarde les données du formulaire dans SharedPreferences
                             // pour que EditProfile les affiche après le premier login
                             saveFormDataLocally();
 
                             Toast.makeText(RegisterActivity.this,
-                                    "Account verified! Please sign in. ✅",
+                                    "Account verified! Please sign in. ",
                                     Toast.LENGTH_LONG).show();
 
-                            // ✅ Redirige vers Login (pas Home)
+                            //  Redirige vers Login 
                             Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
@@ -266,7 +266,7 @@ public class RegisterActivity extends BaseActivity {
         }
     }
 
-    // ── Sauvegarde locale des données du formulaire ───────────────────────
+    //  Sauvegarde locale des données du formulaire 
     // Ces données seront disponibles dans EditProfile dès le premier login
     private void saveFormDataLocally() {
         getSharedPreferences("SympNetPrefs", MODE_PRIVATE).edit()
@@ -281,7 +281,7 @@ public class RegisterActivity extends BaseActivity {
                 .apply();
     }
 
-    // ── Step navigation ───────────────────────────────────────────────────
+    //  Step navigation 
 
     private void showStep(int newStep) {
         step = newStep;
@@ -303,7 +303,7 @@ public class RegisterActivity extends BaseActivity {
         }
     }
 
-    // ── Validation ────────────────────────────────────────────────────────
+    //  Validation 
 
     private boolean validateStep1() {
         String firstName = etFirstName.getText().toString().trim();

@@ -71,12 +71,10 @@ public class ChatListActivity extends AppCompatActivity implements WebSocketMana
         tvEmpty = findViewById(R.id.tvEmpty);
         
         adapter = new ConversationAdapter(conversations, conversation -> {
-            // --- DIAGNOSTIC LOG ---
-            Log.d(TAG, "========================================");
+            // DIAGNOSTIC LOG 
             Log.d(TAG, "TENTATIVE D'OUVERTURE CHAT");
             Log.d(TAG, "ID CONVERSATION : " + conversation.getId());
             Log.d(TAG, "NOM PARTENAIRE  : " + conversation.getOtherUserName());
-            Log.d(TAG, "========================================");
 
             if (conversation.getId() == null || conversation.getId().isEmpty()) {
                 Log.e(TAG, "ERREUR CRITIQUE : L'ID est null !");
