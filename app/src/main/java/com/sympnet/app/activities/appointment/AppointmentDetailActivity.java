@@ -29,7 +29,7 @@ import java.util.Map;
 
 public class AppointmentDetailActivity extends BaseActivity {
 
-    // ── Views ──────────────────────────────────────────────────
+    // ── Views
     private TextView  tvDoctorName, tvDoctorSpecialty, tvLocation;
     private TextView  tvAppointmentDate, tvAppointmentTime;
     private TextView  tvAppointmentType, tvUrgent;
@@ -70,7 +70,7 @@ public class AppointmentDetailActivity extends BaseActivity {
         if (appointmentId != -1) loadAppointment(appointmentId);
     }
 
-    // ── Bind ───────────────────────────────────────────────────
+    // ── Bind
     private void bindViews() {
         tvDoctorName      = findViewById(R.id.tvDoctorName);
         tvDoctorSpecialty = findViewById(R.id.tvDoctorSpecialty);
@@ -91,7 +91,7 @@ public class AppointmentDetailActivity extends BaseActivity {
         btnCancel         = findViewById(R.id.btnCancel);
     }
 
-    // ── API ────────────────────────────────────────────────────
+    // ── API
     private void loadAppointment(int id) {
         SharedPreferences prefs = getSharedPreferences("SympNetPrefs", MODE_PRIVATE);
         String token = "Bearer " + prefs.getString("userToken", "");
@@ -110,7 +110,7 @@ public class AppointmentDetailActivity extends BaseActivity {
         });
     }
 
-    // ── Populate ───────────────────────────────────────────────
+    // ── Populate
     private void populate(AppointmentDto a) {
         tvDoctorName.setText(a.doctorName != null ? a.doctorName : "—");
         tvDoctorSpecialty.setText(a.doctorSpeciality != null ? a.doctorSpeciality : "—");
@@ -217,7 +217,7 @@ public class AppointmentDetailActivity extends BaseActivity {
                 });
     }
 
-    // ── Helpers ────────────────────────────────────────────────
+    // ── Helpers 
     private int statusColor(String status) {
         if (status == null) return getColor(R.color.status_pending);
         return switch (status) {

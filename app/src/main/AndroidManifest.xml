@@ -62,6 +62,7 @@
         <activity android:name=".activities.profile.PrivacyPolicyActivity" />
         <activity android:name=".activities.profile.LanguageActivity" />
         <activity android:name=".activities.notification.NotificationDetailsActivity" />
+        <activity android:name=".activities.prescription.PrescriptionsActivity" />
 
         <!-- Chat & Video Call -->
         <activity android:name=".activities.chat.ChatListActivity" />

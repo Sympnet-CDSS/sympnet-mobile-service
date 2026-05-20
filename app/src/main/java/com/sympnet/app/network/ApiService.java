@@ -25,7 +25,7 @@ import retrofit2.http.Query;
 
 public interface ApiService {
 
-    // ── Auth ──────────────────────────────────────────────────────────────────
+    // ── Auth
     @POST("api/auth/login")
     Call<User> login(@Body Map<String, String> credentials);
 
@@ -44,7 +44,7 @@ public interface ApiService {
     @POST("api/auth/verify-code")
     Call<Void> verifyCode(@Body Map<String, String> body);
 
-    // ── Patient ───────────────────────────────────────────────────────────────
+    // ── Patient
     @GET("api/patients/{id}")
     Call<Patient> getPatientByUserId(
             @Header("Authorization") String bearerToken,
@@ -56,15 +56,15 @@ public interface ApiService {
             @Path("id") String userId,
             @Body Map<String, Object> body);
 
-    // ── Doctors ───────────────────────────────────────────────────────────────
+    // ── Doctors
     @GET("api/doctors")
     Call<List<Doctor>> getDoctors();
 
-    // ── Speech ────────────────────────────────────────────────────────────────
+    // ── Speech
     @POST("api/Speech/transcribe")
     Call<TranscriptionResult> transcribeAudio(@Body AudioRequest request);
 
-    // ── Chat ──────────────────────────────────────────────────────────────────
+    // ── Chat
     @GET("api/chat/conversations")
     Call<List<Conversation>> getConversations(
             @Header("Authorization") String bearerToken);
@@ -85,7 +85,7 @@ public interface ApiService {
             @Header("Authorization") String bearerToken,
             @Body Map<String, Object> body);
 
-    // ── Notifications patient ─────────────────────────────────────────────────
+    // ── Notifications patient
     @GET("api/patient-notifications")
     Call<List<PatientNotificationDto>> getMyNotifications(
             @Header("Authorization") String bearerToken);
@@ -101,8 +101,13 @@ public interface ApiService {
             @Query("doctorId") String doctorId
     );
 
+    // ── Ordonnances
+    @GET("api/ordonnances/my")
+    Call<List<com.sympnet.app.model.PrescriptionDto>> getMyOrdonnances(
+            @Header("Authorization") String bearerToken
+    );
 
-    // ── AI ────────────────────────────────────────────────────────────────────
+    // ── AI
     @POST("api/ai/diagnostic")
     Call<java.util.Map<String, Object>> getDiagnostic(
             @Header("Authorization") String bearerToken,

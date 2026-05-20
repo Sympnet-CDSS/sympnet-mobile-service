@@ -67,7 +67,6 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.ViewHolder
         // Rating
         holder.rating.setText(String.valueOf(doctor.getRating()));
 
-        // ── Bouton Info → ouvre DoctorDetailsActivity ────────────────────
         holder.btnInfo.setOnClickListener(v -> {
             Intent intent = new Intent(context, DoctorDetailsActivity.class);
             intent.putExtra(DoctorDetailsActivity.EXTRA_DOCTOR_ID,        String.valueOf(doctor.getId()));

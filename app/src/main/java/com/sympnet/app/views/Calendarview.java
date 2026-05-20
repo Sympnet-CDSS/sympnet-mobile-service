@@ -33,19 +33,18 @@ public class Calendarview extends LinearLayout {
         void onDaySelected(long dateMillis);
     }
 
-    // ─── State ───────────────────────────────────────────────────────────────
+    // ─── State
     private final Calendar displayedMonth = Calendar.getInstance();
     private final Calendar today          = Calendar.getInstance();
     private long selectedDateMillis = -1;
 
-    // ─── Views ───────────────────────────────────────────────────────────────
+    // ─── Views
     private TextView   tvMonth;
     private GridLayout grid;
 
-    // ─── Callback ────────────────────────────────────────────────────────────
+    // ─── Callback
     private OnDaySelectedListener listener;
 
-    // ─────────────────────────────────────────────────────────────────────────
 
     public Calendarview(Context ctx) { this(ctx, null); }
     public Calendarview(Context ctx, @Nullable AttributeSet attrs) {
@@ -57,12 +56,11 @@ public class Calendarview extends LinearLayout {
         this.listener = l;
     }
 
-    // ── Build skeleton layout ─────────────────────────────────────────────────
+    // ── Build skeleton layout
     private void init(Context ctx) {
         setOrientation(VERTICAL);
         setPadding(0, 8, 0, 8);
 
-        // ── Header row: < MONTH YEAR > ───────────────────────────────────────
         LinearLayout header = new LinearLayout(ctx);
         header.setOrientation(HORIZONTAL);
         header.setGravity(Gravity.CENTER_VERTICAL);
