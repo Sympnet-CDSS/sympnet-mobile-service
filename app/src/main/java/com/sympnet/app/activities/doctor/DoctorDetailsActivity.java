@@ -381,7 +381,7 @@ public class DoctorDetailsActivity extends BaseActivity implements OnMapReadyCal
         });
     }
 
-    // ── Contact ───────────────────────────────────────────────────────────────
+    //  Contact 
 
     private void checkIfCanContact(String doctorId) {
         String patientId = SessionManager.getInstance(this).getCurrentUserId();

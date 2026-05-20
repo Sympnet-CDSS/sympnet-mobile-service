@@ -28,12 +28,12 @@ public class ApiClient {
 
         final String finalToken = token;
 
-        // Ajout du logger pour voir le JSON brut dans Logcat
+//le Singleton Retrofit +avec un HttpLoggingInterceptor pour afficher les logs JSON
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(logging) // <--- ICI : Affiche tout le contenu JSON
+                .addInterceptor(logging) //  Affiche tout le contenu JSON
                 .addInterceptor(chain -> {
                     Request.Builder builder = chain.request().newBuilder()
                             .header("ngrok-skip-browser-warning", "true")

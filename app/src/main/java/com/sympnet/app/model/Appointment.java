@@ -4,31 +4,31 @@ public class Appointment {
 
     public int id;
 
-    // --- Parties liées ---
-    public String patientId;         // Guid → String en Java
+    // Parties
+    public String patientId;        
     public int doctorId;
 
-    // --- Date / Heure ---
-    public String appointmentDate;   // "yyyy-MM-dd"
+    // Date / Heure 
+    public String appointmentDate;   
     public String appointmentTime;   // "HH:mm"
     public int duration;
 
-    // --- Type & Statut ---
-    public String status;            // "Pending", "Confirmed", "Cancelled", "Completed"
-    public String type;              // "InPerson", "Teleconsultation"
+    //  Type & Statut 
+    public String status;           
+    public String type;             
 
-    // --- Booking pour quelqu'un d'autre ---
+    //  Booking pour quelqu'un d'autre 
     public boolean isForOther;
     public String otherPatientName;
     public Integer otherPatientAge;
     public String otherPatientGender;
 
-    // --- Détails médicaux ---
+    //  Détails médicaux 
     public String reason;
     public String notes;
     public boolean isUrgent;
 
-    // --- Timestamps ---
+    //  Timestamps 
     public String createdAt;
     public String updatedAt;
     public String confirmedAt;

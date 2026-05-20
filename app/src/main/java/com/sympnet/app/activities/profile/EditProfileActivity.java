@@ -48,7 +48,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "EditProfileActivity";
 
-    // ── Views ────────────────────────────────────────────────────────────────
+    //  Views 
     private ImageView        ivProfileImage;
     private TextView         tvProfileName, tvProfileEmail;
     private EditText etFirstName, etLastName, etEmail, etPhone,
@@ -58,12 +58,12 @@ public class EditProfileActivity extends AppCompatActivity {
     private TextView         btnGenderMale, btnGenderFemale, btnGenderOther;
     private TextView         tvConsultationCount;
 
-    // ── State ────────────────────────────────────────────────────────────────
+    // State 
     private SharedPreferences prefs;
     private static final String PREFS_NAME   = "SympNetPrefs";
-    private static final String KEY_PHOTO    = "userPhotoBase64";  // stored as Base64 string
+    private static final String KEY_PHOTO    = "userPhotoBase64"; 
 
-    // ── Photo picker launcher ────────────────────────────────────────────────
+    //  Photo picker launcher 
     private final ActivityResultLauncher<Intent> imagePickerLauncher =
             registerForActivityResult(
                     new ActivityResultContracts.StartActivityForResult(),
@@ -74,7 +74,7 @@ public class EditProfileActivity extends AppCompatActivity {
                         }
                     });
 
-    // ── Permission launcher (Android 13+) ────────────────────────────────────
+    //  Permission launcher 
     private final ActivityResultLauncher<String> permissionLauncher =
             registerForActivityResult(
                     new ActivityResultContracts.RequestPermission(),

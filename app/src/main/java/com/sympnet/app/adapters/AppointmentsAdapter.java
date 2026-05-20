@@ -77,8 +77,7 @@ public class AppointmentsAdapter extends RecyclerView.Adapter<AppointmentsAdapte
             holder.tvInitials.setText(initials.toUpperCase());
         }
 
-        // Doctor specialty (if available in DTO, otherwise use default)
-        // Note: AppointmentDto might not have specialty, I'll check or use "Médecin"
+        // Doctor specialty 
         holder.tvDoctorSpecialty.setText("Généraliste"); 
 
         // Date + Time

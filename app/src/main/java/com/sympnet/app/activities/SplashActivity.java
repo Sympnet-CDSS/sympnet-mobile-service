@@ -21,7 +21,6 @@ import com.sympnet.app.activities.auth.LoginActivity;
  * Routes to OnboardingActivity on first launch,
  * or directly to LoginActivity on every subsequent launch.
  *
- * In AndroidManifest.xml, set this as the MAIN / LAUNCHER activity.
  */
 public class SplashActivity extends BaseActivity {
 
@@ -34,7 +33,6 @@ public class SplashActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        // Fade-in logo card (containing the new official SympNet logo)
         android.view.View logoCard = findViewById(R.id.splash_logo_card);
         TextView  title = findViewById(R.id.splash_title);
 

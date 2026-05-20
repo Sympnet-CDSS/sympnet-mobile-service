@@ -2,15 +2,6 @@ package com.sympnet.app.model;
 
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Maps exactly to C# AuthResponseDto:
- *
- *   public string  Token    { get; set; }
- *   public string  Email    { get; set; }
- *   public string  Role     { get; set; }
- *   public Guid    UserId   { get; set; }
- *   public string? FullName { get; set; }   ← nullable, may be null
- */
 public class User {
 
     @SerializedName("token")
@@ -22,11 +13,9 @@ public class User {
     @SerializedName("role")
     private String role;
 
-    // C# Guid serializes as a lowercase UUID string e.g. "3fa85f64-5717-..."
     @SerializedName("userId")
     private String userId;
 
-    // Nullable — null if User.FullName was never set on the backend
     @SerializedName("fullName")
     private String fullName;
 

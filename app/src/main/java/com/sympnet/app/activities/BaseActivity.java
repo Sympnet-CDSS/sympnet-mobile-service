@@ -122,7 +122,7 @@ public abstract class BaseActivity extends AppCompatActivity implements WebSocke
         });
     }
 
-    // ── ChatListener ──────────────────────────────────────────────────────
+    //  ChatListener
 
     @Override public void onConnected() {}
     @Override public void onDisconnected() {}

@@ -7,10 +7,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.sympnet.app.fragments.Onboardingfragment;
 
-/**
- * Drives the 4-page onboarding ViewPager2.
- * Each page is an Onboardingfragment configured via static factory args.
- */
 public class OnboardingPagerAdapter extends FragmentStateAdapter {
 
     public OnboardingPagerAdapter(@NonNull FragmentActivity activity) {

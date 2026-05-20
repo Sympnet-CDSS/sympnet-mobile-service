@@ -52,7 +52,6 @@ public class ChatbotFragment extends Fragment {
     private double userLng = 10.1815;
     private FusedLocationProviderClient fusedLocationClient;
 
-    // Couleurs & Style
     private static final int COLOR_BOT_TEXT = 0xFF1A2A3A;
     private static final int COLOR_ACCENT = 0xFF0D9488;
 
@@ -123,13 +122,13 @@ public class ChatbotFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     processDiagnosticResult(response.body(), text);
                 } else {
-                    updateLastBotMessage("❌ Erreur de l'IA (Code " + response.code() + "). Réessayez.");
+                    updateLastBotMessage(" Erreur de l'IA (Code " + response.code() + "). Réessayez.");
                 }
             }
 
             @Override
             public void onFailure(Call<Map<String, Object>> call, Throwable t) {
-                updateLastBotMessage("❌ Erreur réseau : " + t.getMessage());
+                updateLastBotMessage(" Erreur réseau : " + t.getMessage());
             }
         });
     }
@@ -161,7 +160,7 @@ public class ChatbotFragment extends Fragment {
 
         } catch (Exception e) {
             Log.e(TAG, "Error parsing diagnostic", e);
-            updateLastBotMessage("❌ Erreur lors de l'analyse des résultats.");
+            updateLastBotMessage(" Erreur lors de l'analyse des résultats.");
         }
     }
 
@@ -332,14 +331,14 @@ public class ChatbotFragment extends Fragment {
         tvConfidencePercent.setText(percent + "%");
         pbConfidence.setProgress(percent);
 
-        // Couleurs dynamiques selon le score (Premium Design)
+        // Couleurs dynamiques selon le score
         int color;
         if (percent < 40) {
-            color = 0xFFEF4444; // Rouge (Faible)
+            color = 0xFFEF4444; 
         } else if (percent < 75) {
-            color = 0xFFD97706; // Orange/Ocre chaud (Exactement comme le screenshot)
+            color = 0xFFD97706; 
         } else {
-            color = 0xFF10B981; // Vert (Élevé)
+            color = 0xFF10B981;     
         }
         pbConfidence.getProgressDrawable().setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN);
         tvConfidencePercent.setTextColor(color);

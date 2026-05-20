@@ -24,7 +24,7 @@ import java.time.format.DateTimeFormatter;
 
 public class BookAppointmentActivity extends BaseActivity {
 
-    // ── Views ──────────────────────────────────────────────────
+    // Views 
     private LinearLayout btnTypeInPerson, btnTypeTeleconsult;
     private LinearLayout calendarStrip;
     private GridLayout   timeSlotsGrid;
@@ -34,7 +34,7 @@ public class BookAppointmentActivity extends BaseActivity {
     private ImageView    btnBack;
     private TextView     tvDocName, tvDocSpec, tvDocAddress;
 
-    // ── State ──────────────────────────────────────────────────
+    // State 
     private int             doctorId;
     private AppointmentType selectedType = AppointmentType.InPerson;
     private LocalDate       selectedDate = LocalDate.now();
@@ -77,7 +77,7 @@ public class BookAppointmentActivity extends BaseActivity {
         btnBack.setOnClickListener(v -> finish());
     }
 
-    // ── Bind ───────────────────────────────────────────────────
+    // Bind ─
     private void bindViews() {
         btnTypeInPerson    = findViewById(R.id.btnTypeInPerson);
         btnTypeTeleconsult = findViewById(R.id.btnTypeTeleconsult);
@@ -93,7 +93,7 @@ public class BookAppointmentActivity extends BaseActivity {
         tvDocAddress       = findViewById(R.id.tvDocAddress);
     }
 
-    // ── Appointment Type ───────────────────────────────────────
+    // Appointment Type─
     private void setupTypeToggle() {
         btnTypeInPerson.setOnClickListener(v -> selectType(AppointmentType.InPerson));
         btnTypeTeleconsult.setOnClickListener(v -> selectType(AppointmentType.Teleconsultation));
@@ -113,7 +113,7 @@ public class BookAppointmentActivity extends BaseActivity {
                 getColorStateList(inPerson ? R.color.gray_100 : R.color.teal_500));
     }
 
-    // ── Calendar Strip ─────────────────────────────────────────
+    // Calendar Strip─
     private void setupCalendarStrip() {
         calendarStrip.removeAllViews();
         LocalDate today = LocalDate.now();
@@ -157,7 +157,7 @@ public class BookAppointmentActivity extends BaseActivity {
         }
     }
 
-    // ── Time Slots ─────────────────────────────────────────────
+    // Time Slots─
     private final String[] TIME_SLOTS = {
             "09:00","09:30","10:00","10:30",
             "11:00","11:30","12:00","12:30",
@@ -236,7 +236,7 @@ public class BookAppointmentActivity extends BaseActivity {
         }
     }
 
-    // ── Confirm ────────────────────────────────────────────────
+    // Confirm
     private void setupConfirmButton() {
         btnConfirmBooking.setOnClickListener(v -> submitAppointment());
     }

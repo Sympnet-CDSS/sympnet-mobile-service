@@ -3,7 +3,6 @@ package com.sympnet.app.model;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Maps exactly to C# Patient entity returned by GET /api/patients/{userId}
  *
  *   public int      Id                { get; set; }
  *   public string   FirstName         { get; set; }
@@ -62,7 +61,7 @@ public class Patient {
     @SerializedName("photoUrl")
     private String photoUrl;
 
-    // ── Getters ───────────────────────────────────────────────────────────
+    //  Getters 
 
     public int    getId()                { return id; }
     public String getFirstName()         { return firstName      != null ? firstName      : ""; }

@@ -36,7 +36,7 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.ViewHolder
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {// inflate le layout de chaque item item
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_doctor, parent, false);
         return new ViewHolder(view);
@@ -47,11 +47,10 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.ViewHolder
         Doctor doctor = doctors.get(position);
         Context context = holder.itemView.getContext();
 
-        holder.name.setText("Dr. " + doctor.getName());
+        holder.name.setText("Dr. " + doctor.getName());//remplit le texte
         holder.specialty.setText(doctor.getSpecialty());
 
-        // ── Helper pour créer l'intent avec toutes les infos ──────────────
-        // (évite la répétition)
+        //Helper pour créer l'intent avec toutes les infos 
 
         // Initials
         if (doctor.getName() != null && !doctor.getName().trim().isEmpty()) {
@@ -67,7 +66,7 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.ViewHolder
         // Rating
         holder.rating.setText(String.valueOf(doctor.getRating()));
 
-        // ── Bouton Info → ouvre DoctorDetailsActivity ────────────────────
+        // Bouton Info → ouvre DoctorDetailsActivity 
         holder.btnInfo.setOnClickListener(v -> {
             Intent intent = new Intent(context, DoctorDetailsActivity.class);
             intent.putExtra(DoctorDetailsActivity.EXTRA_DOCTOR_ID,        String.valueOf(doctor.getId()));
@@ -80,7 +79,7 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.ViewHolder
             context.startActivity(intent);
         });
 
-        // ── Bouton Calendrier → ouvre DoctorDetailsActivity section RDV ──
+        //Bouton Calendrier → ouvre DoctorDetailsActivity 
         holder.btnCalendar.setOnClickListener(v -> {
             Intent intent = new Intent(context, DoctorDetailsActivity.class);
             intent.putExtra(DoctorDetailsActivity.EXTRA_DOCTOR_ID,        String.valueOf(doctor.getId()));
@@ -96,7 +95,7 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.ViewHolder
 
         // Message button removed
 
-        // ── Bouton Info (Circle) → affiche les infos du médecin ────────────
+        // Bouton Info : affiche les infos du médecin 
         holder.btnInfoCircle.setOnClickListener(v -> {
             String info = "👨‍⚕️ Dr. " + doctor.getName() + "\n"
                     + "🏥 Spécialité : " + doctor.getSpecialty() + "\n"
@@ -109,7 +108,7 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.ViewHolder
                     .show();
         });
 
-        // ── Bouton Favori → ajoute/retire des favoris ─────────────────────
+        // Bouton Favori: ajoute/retire des favoris
         SharedPreferences prefs = context.getSharedPreferences(PREFS_FAVORITES, Context.MODE_PRIVATE);
         String key = "fav_" + doctor.getId();
         boolean isFav = prefs.getBoolean(key, false);
@@ -136,7 +135,7 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.ViewHolder
     }
 
     @Override
-    public int getItemCount() { return doctors.size(); }
+    public int getItemCount() { return doctors.size(); }// retourne la taille de la liste 
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView name, specialty, btnInfo, initials, rating;

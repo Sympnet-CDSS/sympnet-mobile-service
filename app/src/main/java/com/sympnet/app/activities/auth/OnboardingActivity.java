@@ -18,27 +18,27 @@ import com.google.android.material.button.MaterialButton;
 
 public class OnboardingActivity extends BaseActivity {
 
-    // ── SharedPreferences constants ──────────────────────────────────────────
+    // SharedPreferences constants 
     private static final String PREFS_NAME  = "sympnet_prefs";
     private static final String KEY_FIRST   = "onboarding_completed";
     private static final int    PAGE_COUNT  = 4;
 
-    // ── Views ────────────────────────────────────────────────────────────────
+    // Views 
     private ViewPager2        viewPager;
     private LinearLayout      dotsLayout;
     private MaterialButton    btnNext;
     private TextView          btnSkip;
     private View[]            dots;
 
-    // ── Active dot animator ──────────────────────────────────────────────────
+    // Active dot animator
     private ObjectAnimator    activeDotAnim;
 
-    // ════════════════════════════════════════════════════════════════════════
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // ── First-launch guard ───────────────────────────────────────────────
+        // First-launch guard
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         if (prefs.getBoolean(KEY_FIRST, false)) {
             // Not the first launch — skip directly to Login
@@ -53,7 +53,7 @@ public class OnboardingActivity extends BaseActivity {
         btnNext    = findViewById(R.id.btn_next);
         btnSkip    = findViewById(R.id.btn_skip);
 
-        // ── ViewPager setup ──────────────────────────────────────────────────
+        // ViewPager setup
         OnboardingPagerAdapter adapter = new OnboardingPagerAdapter(this);
         viewPager.setAdapter(adapter);
 
@@ -79,7 +79,7 @@ public class OnboardingActivity extends BaseActivity {
             }
         });
 
-        // ── Button listeners ─────────────────────────────────────────────────
+        // Button listeners 
         btnNext.setOnClickListener(v -> {
             int current = viewPager.getCurrentItem();
             if (current < PAGE_COUNT - 1) {
@@ -92,10 +92,9 @@ public class OnboardingActivity extends BaseActivity {
         btnSkip.setOnClickListener(v -> completeOnboarding());
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    //  Dots
-    // ════════════════════════════════════════════════════════════════════════
-
+   
+    // Dots
+   
     private void buildDots(int activePosition) {
         dotsLayout.removeAllViews();
         dots = new View[PAGE_COUNT];
@@ -125,7 +124,6 @@ public class OnboardingActivity extends BaseActivity {
         }
     }
 
-    /** Pulse the active dot once on selection */
     private void animateDot(int position) {
         if (activeDotAnim != null) activeDotAnim.cancel();
         View dot = dots[position];
@@ -135,12 +133,8 @@ public class OnboardingActivity extends BaseActivity {
         activeDotAnim.start();
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    //  Navigation helpers
-    // ════════════════════════════════════════════════════════════════════════
-
     private void completeOnboarding() {
-        // Mark onboarding as done — never show again
+        // Mark onboarding as done 
         getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
                 .edit()
                 .putBoolean(KEY_FIRST, true)
@@ -154,9 +148,7 @@ public class OnboardingActivity extends BaseActivity {
         finish();
     }
 
-    // ════════════════════════════════════════════════════════════════════════
     //  Utility
-    // ════════════════════════════════════════════════════════════════════════
 
     private int dp(int value) {
         float density = getResources().getDisplayMetrics().density;
