@@ -17,10 +17,12 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private List<Message> messages;
     private String currentUserId;
+    private String partnerPhoto;
 
-    public MessageAdapter(List<Message> messages, String currentUserId) {
+    public MessageAdapter(List<Message> messages, String currentUserId, String partnerPhoto) {
         this.messages = messages;
         this.currentUserId = currentUserId;
+        this.partnerPhoto = partnerPhoto;
     }
 
     @Override
@@ -62,12 +64,14 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     class SentMessageViewHolder extends RecyclerView.ViewHolder {
         TextView tvMessage, tvTime, tvStatus;
+        android.widget.ImageView ivUserPhoto;
 
         SentMessageViewHolder(View itemView) {
             super(itemView);
             tvMessage = itemView.findViewById(R.id.tvMessage);
             tvTime = itemView.findViewById(R.id.tvTime);
             tvStatus = itemView.findViewById(R.id.tvStatus);
+            ivUserPhoto = itemView.findViewById(R.id.ivUserPhoto);
         }
 
         void bind(Message message) {
@@ -93,12 +97,28 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 tvStatus.setText("✓");
                 tvStatus.setTextColor(0xFFB2DFDB);
             }
+            
+            if (ivUserPhoto != null) {
+                android.content.SharedPreferences prefs = itemView.getContext().getSharedPreferences("SympNetPrefs", android.content.Context.MODE_PRIVATE);
+                String base64 = prefs.getString("userPhotoBase64", null);
+                if (base64 != null && !base64.isEmpty()) {
+                    try {
+                        if (base64.contains(",")) base64 = base64.split(",")[1];
+                        byte[] bytes = android.util.Base64.decode(base64, android.util.Base64.DEFAULT);
+                        android.graphics.Bitmap bmp = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        if (bmp != null) {
+                            com.bumptech.glide.Glide.with(itemView.getContext()).load(bmp).transform(new com.bumptech.glide.load.resource.bitmap.CircleCrop()).into(ivUserPhoto);
+                        }
+                    } catch (Exception e) {}
+                }
+            }
         }
     }
 
     class ReceivedMessageViewHolder extends RecyclerView.ViewHolder {
         TextView tvMessage, tvTime, tvInitials;
         View avatarContainer;
+        android.widget.ImageView ivDocPhoto;
 
         ReceivedMessageViewHolder(View itemView) {
             super(itemView);
@@ -106,6 +126,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             tvTime = itemView.findViewById(R.id.tvTime);
             tvInitials = itemView.findViewById(R.id.tvReceivedInitials);
             avatarContainer = itemView.findViewById(R.id.docAvatarSmall);
+            ivDocPhoto = itemView.findViewById(R.id.ivDocPhoto);
         }
 
         void bind(Message message) {
@@ -130,6 +151,20 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 tvInitials.setText(initials.toUpperCase());
             } else {
                 tvInitials.setText("D");
+            }
+            
+            if (partnerPhoto != null && !partnerPhoto.isEmpty() && ivDocPhoto != null) {
+                try {
+                    String base64 = partnerPhoto;
+                    if (base64.contains(",")) base64 = base64.split(",")[1];
+                    byte[] bytes = android.util.Base64.decode(base64, android.util.Base64.DEFAULT);
+                    android.graphics.Bitmap bmp = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    if (bmp != null) {
+                        com.bumptech.glide.Glide.with(itemView.getContext()).load(bmp).into(ivDocPhoto);
+                        ivDocPhoto.setVisibility(View.VISIBLE);
+                        tvInitials.setVisibility(View.GONE);
+                    }
+                } catch (Exception e) {}
             }
         }
     }

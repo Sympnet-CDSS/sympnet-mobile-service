@@ -44,6 +44,7 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
 
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvRole, tvLastMessage, tvTime, tvUnread, tvInitials;
+        android.widget.ImageView ivAvatar;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -53,6 +54,7 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
             tvTime = itemView.findViewById(R.id.tvTime);
             tvUnread = itemView.findViewById(R.id.tvUnread);
             tvInitials = itemView.findViewById(R.id.tvInitials);
+            ivAvatar = itemView.findViewById(R.id.ivAvatar);
         }
 
         void bind(final Conversation conversation, final OnConversationClickListener listener) {
@@ -68,6 +70,31 @@ public class ConversationAdapter extends RecyclerView.Adapter<ConversationAdapte
                 if (parts.length > 0 && !parts[0].isEmpty()) initials += parts[0].charAt(0);
                 if (parts.length > 1 && !parts[1].isEmpty()) initials += parts[1].charAt(0);
                 tvInitials.setText(initials.toUpperCase());
+            }
+
+            if (ivAvatar != null) {
+                if (conversation.getOtherUserAvatar() != null && !conversation.getOtherUserAvatar().isEmpty()) {
+                    try {
+                        String base64 = conversation.getOtherUserAvatar();
+                        if (base64.contains(",")) base64 = base64.split(",")[1];
+                        byte[] bytes = android.util.Base64.decode(base64, android.util.Base64.DEFAULT);
+                        android.graphics.Bitmap bmp = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        if (bmp != null) {
+                            ivAvatar.setImageBitmap(bmp);
+                            ivAvatar.setVisibility(View.VISIBLE);
+                            if (tvInitials != null) tvInitials.setVisibility(View.GONE);
+                        } else {
+                            ivAvatar.setVisibility(View.GONE);
+                            if (tvInitials != null) tvInitials.setVisibility(View.VISIBLE);
+                        }
+                    } catch (Exception e) {
+                        ivAvatar.setVisibility(View.GONE);
+                        if (tvInitials != null) tvInitials.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    ivAvatar.setVisibility(View.GONE);
+                    if (tvInitials != null) tvInitials.setVisibility(View.VISIBLE);
+                }
             }
             
             if (conversation.getLastMessageAt() != null) {

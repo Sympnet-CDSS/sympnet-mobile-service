@@ -55,6 +55,10 @@ public class ChatbotFragment extends Fragment {
     private static final int COLOR_BOT_TEXT = 0xFF1A2A3A;
     private static final int COLOR_ACCENT = 0xFF0D9488;
 
+    private androidx.drawerlayout.widget.DrawerLayout drawerLayout;
+    private java.util.List<org.json.JSONObject> historyItems = new java.util.ArrayList<>();
+    private android.widget.ArrayAdapter<org.json.JSONObject> historyAdapter;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -65,9 +69,99 @@ public class ChatbotFragment extends Fragment {
         etMessage = view.findViewById(R.id.etMessage);
         btnSend = view.findViewById(R.id.btnSend);
         ImageButton btnMic = view.findViewById(R.id.btnMic);
+        drawerLayout = view.findViewById(R.id.drawerLayout);
+
+        android.widget.ImageView btnMenu = view.findViewById(R.id.btnMenu);
+        if (btnMenu != null) {
+            btnMenu.setOnClickListener(v -> drawerLayout.openDrawer(android.view.Gravity.LEFT));
+        }
+
+        android.widget.Button btnNewConvSidebar = view.findViewById(R.id.btnNewConvSidebar);
+        if (btnNewConvSidebar != null) {
+            btnNewConvSidebar.setOnClickListener(v -> {
+                clearChat();
+                drawerLayout.closeDrawer(android.view.Gravity.LEFT);
+            });
+        }
+        
+        android.widget.ImageButton btnCloseSidebar = view.findViewById(R.id.btnCloseSidebar);
+        if (btnCloseSidebar != null) {
+            btnCloseSidebar.setOnClickListener(v -> drawerLayout.closeDrawer(android.view.Gravity.LEFT));
+        }
+
+        android.widget.ListView lvHistory = view.findViewById(R.id.lvHistory);
+        if (lvHistory != null) {
+            loadHistory();
+            historyAdapter = new android.widget.ArrayAdapter<org.json.JSONObject>(requireContext(), R.layout.item_history, historyItems) {
+                @Override
+                public View getView(int position, View convertView, ViewGroup parent) {
+                    if (convertView == null) {
+                        convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_history, parent, false);
+                    }
+                    try {
+                        org.json.JSONObject item = getItem(position);
+                        String prompt = item.getString("prompt");
+                        TextView tvTitle = convertView.findViewById(R.id.tvHistoryTitle);
+                        TextView tvSub = convertView.findViewById(R.id.tvHistorySubtitle);
+                        android.widget.ImageView ivIcon = convertView.findViewById(R.id.ivHistoryIcon);
+                        
+                        tvTitle.setText(prompt.length() > 25 ? prompt.substring(0, 25) + "..." : prompt);
+                        
+                        if (position == 0) tvSub.setText("Aujourd'hui");
+                        else if (position == 1) tvSub.setText("Hier");
+                        else tvSub.setText("Précédent");
+
+                        String p = prompt.toLowerCase();
+                        int bgColor = 0xFFECFDF5;
+                        int tintColor = 0xFF10B981;
+                        if (p.contains("tête") || p.contains("head")) {
+                            bgColor = 0xFFF5F3FF; tintColor = 0xFF8B5CF6;
+                        } else if (p.contains("coeur") || p.contains("poitrine") || p.contains("heart") || p.contains("mal")) {
+                            bgColor = 0xFFFEF2F2; tintColor = 0xFFEF4444;
+                        } else if (p.contains("fièvre") || p.contains("fever")) {
+                            bgColor = 0xFFFFFBEB; tintColor = 0xFFF59E0B;
+                        } else if (p.contains("respir")) {
+                            bgColor = 0xFFEFF6FF; tintColor = 0xFF3B82F6;
+                        }
+                        
+                        ivIcon.setBackgroundColor(bgColor);
+                        ivIcon.setColorFilter(tintColor);
+                    } catch(Exception e) {}
+                    return convertView;
+                }
+            };
+            lvHistory.setAdapter(historyAdapter);
+            lvHistory.setOnItemClickListener((parent, view1, position, id) -> {
+                clearChat();
+                try {
+                    org.json.JSONObject item = historyItems.get(position);
+                    String prompt = item.getString("prompt");
+                    addUserMessage(prompt);
+                    
+                    // Convert JSONObject to Map<String, Object> for processDiagnosticResult
+                    Map<String, Object> resultMap = new com.google.gson.Gson().fromJson(item.getJSONObject("response").toString(), new com.google.gson.reflect.TypeToken<Map<String, Object>>(){}.getType());
+                    processDiagnosticResult(resultMap, prompt);
+                } catch (Exception e) {}
+                
+                drawerLayout.closeDrawer(android.view.Gravity.LEFT);
+            });
+        }
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
         requestLocation();
+
+        // Ajout d'un bouton "Nouvelle conversation" en haut
+        ImageButton btnNewChat = new ImageButton(getContext());
+        btnNewChat.setImageResource(android.R.drawable.ic_menu_add);
+        btnNewChat.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+        btnNewChat.setPadding(0, 0, 32, 0);
+        btnNewChat.setOnClickListener(v -> clearChat());
+        
+        ViewGroup parent = (ViewGroup) chatContainer.getParent().getParent();
+        if (parent instanceof LinearLayout && ((LinearLayout) parent).getChildAt(0) instanceof LinearLayout) {
+            LinearLayout header = (LinearLayout) ((LinearLayout) parent).getChildAt(0);
+            header.addView(btnNewChat);
+        }
 
         addBotMessage("Bonjour ! Je suis SympNet AI.\n\nDécrivez vos symptômes et je vais analyser votre état et trouver des médecins spécialisés proches de vous.");
 
@@ -82,11 +176,30 @@ public class ChatbotFragment extends Fragment {
 
         if (btnMic != null) {
             btnMic.setOnClickListener(v -> {
-                addBotMessage("L'enregistrement vocal sera bientôt disponible.");
+                Intent intent = new Intent(android.speech.RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                intent.putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE_MODEL, android.speech.RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                intent.putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE, java.util.Locale.getDefault());
+                intent.putExtra(android.speech.RecognizerIntent.EXTRA_PROMPT, "Parlez maintenant...");
+                try {
+                    startActivityForResult(intent, 1000);
+                } catch (Exception e) {
+                    android.widget.Toast.makeText(getContext(), "Votre appareil ne supporte pas la saisie vocale.", android.widget.Toast.LENGTH_SHORT).show();
+                }
             });
         }
 
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1000 && resultCode == android.app.Activity.RESULT_OK && data != null) {
+            ArrayList<String> result = data.getStringArrayListExtra(android.speech.RecognizerIntent.EXTRA_RESULTS);
+            if (result != null && !result.isEmpty()) {
+                etMessage.setText(result.get(0));
+            }
+        }
     }
 
     private void requestLocation() {
@@ -121,6 +234,7 @@ public class ChatbotFragment extends Fragment {
             public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     processDiagnosticResult(response.body(), text);
+                    saveToHistory(text, response.body());
                 } else {
                     updateLastBotMessage(" Erreur de l'IA (Code " + response.code() + "). Réessayez.");
                 }
@@ -222,8 +336,12 @@ public class ChatbotFragment extends Fragment {
         }
 
         if (nearbyDocs.isEmpty()) {
-            addInfoTextToContainer(container, "ℹ️ Aucun spécialiste trouvé dans un rayon de 100 km.");
-            return;
+            // Si aucun à moins de 100km, on prend tous les médecins de cette spécialité
+            nearbyDocs.addAll(doctors);
+            if (nearbyDocs.isEmpty()) {
+                addInfoTextToContainer(container, "ℹ️ Aucun spécialiste trouvé.");
+                return;
+            }
         }
 
         // Trier par distance
@@ -294,9 +412,35 @@ public class ChatbotFragment extends Fragment {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.item_chat_user, chatContainer, false);
         TextView tvMessage = view.findViewById(R.id.tvMessage);
         TextView tvTime = view.findViewById(R.id.tvTime);
+        android.widget.ImageView ivUserAvatar = view.findViewById(R.id.ivUserAvatar);
         
         tvMessage.setText(message);
         tvTime.setText(getCurrentTime());
+        
+        // Load User Photo
+        android.content.SharedPreferences prefs = requireActivity().getSharedPreferences("SympNetPrefs", android.content.Context.MODE_PRIVATE);
+        String base64 = prefs.getString("userPhotoBase64", null);
+        if (base64 != null && !base64.isEmpty() && ivUserAvatar != null) {
+            try {
+                if (base64.startsWith("http") || base64.startsWith("/uploads")) {
+                    String url = base64.startsWith("http") ? base64 : "https://faster-say-trimmer.ngrok-free.dev" + base64;
+                    ivUserAvatar.clearColorFilter();
+                    ivUserAvatar.setBackgroundResource(android.R.color.transparent);
+                    ivUserAvatar.setPadding(0, 0, 0, 0);
+                    com.bumptech.glide.Glide.with(this).load(url).transform(new com.bumptech.glide.load.resource.bitmap.CircleCrop()).into(ivUserAvatar);
+                } else {
+                    if (base64.contains(",")) base64 = base64.split(",")[1];
+                    byte[] bytes = android.util.Base64.decode(base64, android.util.Base64.DEFAULT);
+                    android.graphics.Bitmap bmp = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    if (bmp != null) {
+                        ivUserAvatar.clearColorFilter();
+                        ivUserAvatar.setBackgroundResource(android.R.color.transparent);
+                        ivUserAvatar.setPadding(0, 0, 0, 0);
+                        ivUserAvatar.setImageBitmap(bmp);
+                    }
+                }
+            } catch (Exception e) {}
+        }
         
         chatContainer.addView(view);
         scrollToBottom();
@@ -397,5 +541,44 @@ public class ChatbotFragment extends Fragment {
 
     private void scrollToBottom() {
         scrollView.post(() -> scrollView.fullScroll(ScrollView.FOCUS_DOWN));
+    }
+
+    private void clearChat() {
+        chatContainer.removeAllViews();
+        addBotMessage("Nouvelle conversation démarrée.\nComment puis-je vous aider ?");
+    }
+
+    private void saveToHistory(String prompt, Map<String, Object> responseMap) {
+        try {
+            org.json.JSONObject obj = new org.json.JSONObject();
+            obj.put("prompt", prompt);
+            
+            String jsonStr = new com.google.gson.Gson().toJson(responseMap);
+            obj.put("response", new org.json.JSONObject(jsonStr));
+            
+            historyItems.add(0, obj);
+            
+            if (historyItems.size() > 15) {
+                historyItems.remove(15);
+            }
+            if (historyAdapter != null) historyAdapter.notifyDataSetChanged();
+            
+            android.content.SharedPreferences prefs = requireActivity().getSharedPreferences("SympNetPrefs", android.content.Context.MODE_PRIVATE);
+            org.json.JSONArray arr = new org.json.JSONArray(historyItems);
+            prefs.edit().putString("ai_history_full", arr.toString()).apply();
+        } catch (Exception e) {}
+    }
+
+    private void loadHistory() {
+        android.content.SharedPreferences prefs = requireActivity().getSharedPreferences("SympNetPrefs", android.content.Context.MODE_PRIVATE);
+        String hist = prefs.getString("ai_history_full", "[]");
+        try {
+            org.json.JSONArray arr = new org.json.JSONArray(hist);
+            historyItems.clear();
+            for (int i = 0; i < arr.length(); i++) {
+                org.json.JSONObject obj = arr.getJSONObject(i);
+                historyItems.add(obj);
+            }
+        } catch (Exception e) {}
     }
 }

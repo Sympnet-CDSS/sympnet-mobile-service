@@ -68,12 +68,18 @@ public class DoctorDetailsActivity extends BaseActivity implements OnMapReadyCal
     public static final String EXTRA_DOCTOR_LNG       = "doctor_lng";
     public static final String EXTRA_DOCTOR_ID        = "doctor_id";
     public static final String EXTRA_DOCTOR_ADDRESS   = "doctor_address";
+    public static final String EXTRA_DOCTOR_PHOTO     = "doctor_photo";
+    public static final String EXTRA_DOCTOR_BIO       = "doctor_bio";
+    public static final String EXTRA_DOCTOR_GRAD_YEAR = "doctor_grad_year";
+    public static final String EXTRA_DOCTOR_USER_ID   = "doctor_user_id";
 
     private static final String PREFS_RATINGS         = "doctor_ratings";
     private static final int    LOCATION_PERMISSION_REQUEST = 1001;
     private static final String DISTANCE_MATRIX_KEY   = "GW1LsWPQ2nGMUEWT9KI8QbHgT6S3tmeLqztbVzYX5Yp4X3tkc3mDki7USn36NUwo";
 
     private TextView  tvDoctorName, tvDoctorSpecialty, tvDistance, tvNoContact;
+    private TextView  tvBio, tvExperience, tvHours;
+    private ImageView ivDoctorAvatar;
     private RatingBar ratingBar;
     private Calendarview calendarView;
     private View      btnContact;
@@ -84,6 +90,7 @@ public class DoctorDetailsActivity extends BaseActivity implements OnMapReadyCal
     private View sectionProfil, sectionAvis, sectionLocalisation, sectionRendezVous;
 
     private String   doctorId;
+    private String   doctorUserId;
     private double   doctorLat, doctorLng;
     private String   doctorAddress;
     private GoogleMap googleMap;
@@ -112,6 +119,10 @@ public class DoctorDetailsActivity extends BaseActivity implements OnMapReadyCal
         tvDoctorName      = findViewById(R.id.tvDoctorName);
         tvDoctorSpecialty = findViewById(R.id.tvDoctorSpecialty);
         tvDistance        = findViewById(R.id.tvDistance);
+        tvBio             = findViewById(R.id.tvBio);
+        tvExperience      = findViewById(R.id.tvExperience);
+        tvHours           = findViewById(R.id.tvHours);
+        ivDoctorAvatar    = findViewById(R.id.ivDoctorAvatar);
         ratingBar         = findViewById(R.id.doctorRating);
         calendarView      = findViewById(R.id.calendarView);
         btnContact        = findViewById(R.id.btnContact);
@@ -169,6 +180,7 @@ public class DoctorDetailsActivity extends BaseActivity implements OnMapReadyCal
         Intent intent = getIntent();
 
         doctorId      = intent.getStringExtra(EXTRA_DOCTOR_ID);
+        doctorUserId  = intent.getStringExtra(EXTRA_DOCTOR_USER_ID);
         doctorLat     = intent.getDoubleExtra(EXTRA_DOCTOR_LAT, 0.0);
         doctorLng     = intent.getDoubleExtra(EXTRA_DOCTOR_LNG, 0.0);
         doctorAddress = intent.getStringExtra(EXTRA_DOCTOR_ADDRESS);
@@ -187,6 +199,38 @@ public class DoctorDetailsActivity extends BaseActivity implements OnMapReadyCal
             ratingBar.setRating(rating);
         }
 
+        String bio = intent.getStringExtra(EXTRA_DOCTOR_BIO);
+        int gradYear = intent.getIntExtra(EXTRA_DOCTOR_GRAD_YEAR, 0);
+        String photoUrl = intent.getStringExtra(EXTRA_DOCTOR_PHOTO);
+
+        if (bio != null && !bio.trim().isEmpty() && tvBio != null) {
+            tvBio.setText(bio);
+        }
+        if (gradYear > 1900 && tvExperience != null) {
+            int currentYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
+            int exp = currentYear - gradYear;
+            tvExperience.setText("🎖️ " + (exp > 0 ? exp : 1) + " an(s) d'expérience");
+        }
+
+        if (photoUrl != null && !photoUrl.trim().isEmpty() && ivDoctorAvatar != null) {
+            try {
+                String base64String = photoUrl;
+                if (base64String.contains(",")) {
+                    base64String = base64String.split(",")[1];
+                }
+                byte[] bytes = android.util.Base64.decode(base64String, android.util.Base64.DEFAULT);
+                android.graphics.Bitmap bmp = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                if (bmp != null) {
+                    com.bumptech.glide.Glide.with(this)
+                            .load(bmp)
+                            .transform(new com.bumptech.glide.load.resource.bitmap.CircleCrop())
+                            .into(ivDoctorAvatar);
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error decoding image", e);
+            }
+        }
+
         currentDoctor = new Doctor();
         currentDoctor.setId(doctorId != null ? Integer.parseInt(doctorId) : -1);
         if (name != null) {
@@ -196,8 +240,52 @@ public class DoctorDetailsActivity extends BaseActivity implements OnMapReadyCal
         }
         currentDoctor.setSpeciality(specialty);
         currentDoctor.setAddress(doctorAddress);
+        currentDoctor.setUserId(doctorUserId);
+        currentDoctor.setPhotoUrl(photoUrl);
 
-        if (doctorId != null) checkIfCanContact(doctorId);
+        if (doctorId != null) {
+            checkIfCanContact(doctorId);
+            fetchWorkingHours(doctorId);
+        }
+    }
+
+    private void fetchWorkingHours(String docId) {
+        ApiClient.getClient().create(ApiService.class).getDoctorWorkingHours(docId)
+                .enqueue(new Callback<List<Map<String, Object>>>() {
+                    @Override
+                    public void onResponse(Call<List<Map<String, Object>>> call, Response<List<Map<String, Object>>> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            List<Map<String, Object>> hours = response.body();
+                            if (hours.isEmpty()) {
+                                if (tvHours != null) tvHours.setText("Non spécifié");
+                                return;
+                            }
+                            // Just get the first active day or summarize it
+                            StringBuilder sb = new StringBuilder();
+                            for (Map<String, Object> h : hours) {
+                                Boolean active = (Boolean) h.get("isActive");
+                                if (active != null && active) {
+                                    String dName = (String) h.get("dayName");
+                                    String sTime = (String) h.get("startTime");
+                                    String eTime = (String) h.get("endTime");
+                                    if (dName != null && dName.length() >= 3) {
+                                        dName = dName.substring(0, 3);
+                                    }
+                                    sb.append(dName).append(" ").append(sTime).append("-").append(eTime).append("\n");
+                                }
+                            }
+                            if (tvHours != null) {
+                                String text = sb.toString().trim();
+                                if (text.isEmpty()) text = "Fermé";
+                                tvHours.setText(text);
+                            }
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<List<Map<String, Object>>> call, Throwable t) {
+                        if (tvHours != null) tvHours.setText("Non spécifié");
+                    }
+                });
     }
 
     private void setupBackButton() {
@@ -425,7 +513,7 @@ public class DoctorDetailsActivity extends BaseActivity implements OnMapReadyCal
         String patientId = SessionManager.getInstance(this).getCurrentUserId();
 
         Map<String, String> body = new HashMap<>();
-        body.put("doctorId",  String.valueOf(doctor.getId()));
+        body.put("doctorId",  doctor.getUserId() != null ? doctor.getUserId() : String.valueOf(doctor.getId()));
         body.put("patientId", patientId);
 
         ApiClient.getClient().create(ApiService.class)
@@ -438,6 +526,7 @@ public class DoctorDetailsActivity extends BaseActivity implements OnMapReadyCal
                             Conversation conv = response.body();
                             conv.setOtherUserName(doctor.getFullName());
                             conv.setOtherUserRole(doctor.getSpecialty());
+                            conv.setOtherUserAvatar(doctor.getPhotoUrl());
                             ChatDetailActivity.start(DoctorDetailsActivity.this, conv);
                         } else {
                             Toast.makeText(DoctorDetailsActivity.this,

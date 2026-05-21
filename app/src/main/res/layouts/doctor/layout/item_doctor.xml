@@ -155,8 +155,7 @@
             android:layout_marginStart="8dp"
             android:background="@drawable/shape_doctor_card"
             android:padding="10dp"
-            android:src="@android:drawable/btn_star_big_off"
-            app:tint="#1A2A3A" />
+            android:src="@drawable/ic_heart_outline" />
 
     </LinearLayout>
 </LinearLayout>

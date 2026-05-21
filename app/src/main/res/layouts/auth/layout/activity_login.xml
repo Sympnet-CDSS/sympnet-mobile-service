@@ -160,6 +160,23 @@
                     android:textAllCaps="false"
                     android:textColor="#FFFFFF" />
 
+                <!-- GOOGLE LOGIN -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnGoogleLogin"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginBottom="16dp"
+                    android:backgroundTint="#FFFFFF"
+                    android:text="Continuer avec Google"
+                    android:textAllCaps="false"
+                    android:textColor="#1A2A3A"
+                    app:icon="@drawable/ic_google"
+                    app:iconGravity="textStart"
+                    app:iconPadding="12dp"
+                    app:iconTint="@null"
+                    app:strokeColor="#E5E7EB"
+                    app:strokeWidth="1dp" />
+
                 <TextView
                     android:id="@+id/tvRegister"
                     android:layout_width="match_parent"

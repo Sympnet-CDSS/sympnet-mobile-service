@@ -22,12 +22,26 @@ public class NotificationHelper {
             manager.createNotificationChannel(channel);
         }
 
-        Intent intent = new Intent(context, NotificationDetailsActivity.class);
+        Intent intent;
+        String lowerTitle = title != null ? title.toLowerCase() : "";
+        String lowerMessage = message != null ? message.toLowerCase() : "";
+        
+        if (lowerTitle.contains("ordonnance") || lowerMessage.contains("ordonnance") || lowerTitle.contains("prescription") || lowerMessage.contains("prescription")) {
+            intent = new Intent(context, com.sympnet.app.activities.prescription.PrescriptionsActivity.class);
+        } else if (lowerTitle.contains("rendez-vous") || lowerMessage.contains("rendez-vous") || lowerTitle.contains("rdv")) {
+            intent = new Intent(context, com.sympnet.app.activities.MainActivity.class);
+            intent.putExtra("TARGET_FRAGMENT", "SCHEDULE");
+        } else {
+            intent = new Intent(context, NotificationDetailsActivity.class);
+            intent.putExtra("title", title);
+            intent.putExtra("message", message);
+        }
+
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(android.R.drawable.ic_popup_reminder) // Correction : android.R.drawable
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setAutoCancel(true)

@@ -25,7 +25,16 @@ public class Doctor {
     @SerializedName("userId")
     private String userId;
 
-    // Getters 
+    @SerializedName("photoUrl")
+    private String photoUrl;
+
+    @SerializedName("bio")
+    private String bio;
+
+    @SerializedName("graduationYear")
+    private Integer graduationYear;
+
+    // ── Getters
 
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
@@ -46,8 +55,11 @@ public class Doctor {
     public String getFirstName()   { return firstName; }
     public String getLastName()    { return lastName; }
     public String getAddress()     { return address != null ? address : ""; }
+    public String getPhotoUrl()    { return photoUrl != null ? photoUrl : ""; }
+    public String getBio()         { return bio != null ? bio : ""; }
+    public Integer getGraduationYear() { return graduationYear; }
 
-    //  Setters 
+    // ── Setters
 
     public void setId(int id)                  { this.id = id; }
     public void setFirstName(String firstName) { this.firstName = firstName; }
@@ -57,4 +69,7 @@ public class Doctor {
     public void setLatitude(double latitude)   { this.latitude = latitude; }
     public void setLongitude(double longitude) { this.longitude = longitude; }
     public void setAddress(String address)     { this.address = address; }
+    public void setPhotoUrl(String photoUrl)   { this.photoUrl = photoUrl; }
+    public void setBio(String bio)             { this.bio = bio; }
+    public void setGraduationYear(Integer yr)  { this.graduationYear = yr; }
 }

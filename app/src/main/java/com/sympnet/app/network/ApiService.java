@@ -22,16 +22,18 @@ import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-//'interface qui définit vos requêtes HTTP
 
 public interface ApiService {
 
-    // Auth 
+    // ── Auth
     @POST("api/auth/login")
     Call<User> login(@Body Map<String, String> credentials);
 
     @POST("api/auth/register-mobile")
     Call<User> register(@Body Map<String, String> body);
+
+    @POST("api/auth/google-mobile")
+    Call<User> googleLogin(@Body Map<String, String> body);
 
     @POST("api/auth/forgot-password")
     Call<Void> forgotPassword(@Body Map<String, String> body);
@@ -45,7 +47,7 @@ public interface ApiService {
     @POST("api/auth/verify-code")
     Call<Void> verifyCode(@Body Map<String, String> body);
 
-    //  Patient 
+    // ── Patient
     @GET("api/patients/{id}")
     Call<Patient> getPatientByUserId(
             @Header("Authorization") String bearerToken,
@@ -57,15 +59,24 @@ public interface ApiService {
             @Path("id") String userId,
             @Body Map<String, Object> body);
 
-    //  Doctors 
+    @retrofit2.http.DELETE("api/patients/{id}")
+    Call<Void> deletePatientAccount(
+            @Header("Authorization") String bearerToken,
+            @Path("id") String userId);
+
+    // ── Doctors
     @GET("api/doctors")
     Call<List<Doctor>> getDoctors();
 
-    //  Speech 
+    @GET("api/workinghours/doctor/{doctorId}")
+    Call<List<Map<String, Object>>> getDoctorWorkingHours(
+            @Path("doctorId") String doctorId);
+
+    // ── Speech
     @POST("api/Speech/transcribe")
     Call<TranscriptionResult> transcribeAudio(@Body AudioRequest request);
 
-    //  Chat 
+    // ── Chat
     @GET("api/chat/conversations")
     Call<List<Conversation>> getConversations(
             @Header("Authorization") String bearerToken);
@@ -86,7 +97,12 @@ public interface ApiService {
             @Header("Authorization") String bearerToken,
             @Body Map<String, Object> body);
 
-    //  Notifications patient 
+    @POST("api/chat/conversations/{id}/read")
+    Call<Void> markConversationAsRead(
+            @Header("Authorization") String bearerToken,
+            @Path("id") String conversationId);
+
+    // ── Notifications patient
     @GET("api/patient-notifications")
     Call<List<PatientNotificationDto>> getMyNotifications(
             @Header("Authorization") String bearerToken);
@@ -108,7 +124,7 @@ public interface ApiService {
             @Header("Authorization") String bearerToken
     );
 
-    //  AI 
+    // ── AI
     @POST("api/ai/diagnostic")
     Call<java.util.Map<String, Object>> getDiagnostic(
             @Header("Authorization") String bearerToken,

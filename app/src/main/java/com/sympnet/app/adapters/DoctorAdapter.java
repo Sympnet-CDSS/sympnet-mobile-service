@@ -1,5 +1,4 @@
 package com.sympnet.app.adapters;
-import com.sympnet.app.activities.chat.ChatDetailActivity;
 import com.sympnet.app.activities.doctor.DoctorDetailsActivity;
 
 import android.content.Context;
@@ -135,7 +134,7 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.ViewHolder
     }
 
     @Override
-    public int getItemCount() { return doctors.size(); }// retourne la taille de la liste 
+    public int getItemCount() { return doctors.size(); }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView name, specialty, btnInfo, initials, rating;

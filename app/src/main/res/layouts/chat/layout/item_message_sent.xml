@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingHorizontal="16dp"
@@ -9,6 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
+        android:layout_marginEnd="36dp"
         android:layout_marginStart="60dp"
         android:background="@drawable/bg_chat_bubble_sent"
         android:elevation="1dp"
@@ -51,4 +53,22 @@
                 android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="2dp"
+        android:layout_marginStart="8dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivUserPhoto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#4B5563"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_profile_avatar"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Circle" />
+    </FrameLayout>
 </RelativeLayout>

@@ -55,26 +55,33 @@ public class FavoriteDoctorsActivity extends AppCompatActivity {
         }
     }
 
-
+    /**
+     * Lit les IDs favoris depuis "doctor_favorites"
+     * puis récupère les objets Doctor depuis "doctors_cache"
+     * (sauvegardé par ActivityHome lors du chargement de la liste).
+     */
     private List<Doctor> loadFavoriteDoctors() {
         List<Doctor> result = new ArrayList<>();
 
-        //  Récupère les IDs favoris
+        // 1. Récupère les IDs favoris pour cet utilisateur
+        SharedPreferences appPrefs = getSharedPreferences("SympNetPrefs", Context.MODE_PRIVATE);
+        String userId = appPrefs.getString("userId", "default_user");
+        String prefix = "fav_" + userId + "_";
+
         SharedPreferences favPrefs = getSharedPreferences(PREFS_FAVORITES, Context.MODE_PRIVATE);
         Map<String, ?> all = favPrefs.getAll();
 
         List<String> favIds = new ArrayList<>();
         for (Map.Entry<String, ?> entry : all.entrySet()) {
-            if (entry.getKey().startsWith("fav_")
+            if (entry.getKey().startsWith(prefix)
                     && Boolean.TRUE.equals(entry.getValue())) {
-
-                favIds.add(entry.getKey().replace("fav_", ""));
+                favIds.add(entry.getKey().replace(prefix, ""));
             }
         }
 
         if (favIds.isEmpty()) return result;
 
-        //  Récupère le cache des médecins
+        // 2. Récupère le cache des médecins
         SharedPreferences doctorPrefs = getSharedPreferences(PREFS_DOCTORS, Context.MODE_PRIVATE);
         String json = doctorPrefs.getString("all_doctors", null);
         if (json == null) return result;

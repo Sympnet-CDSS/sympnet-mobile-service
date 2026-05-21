@@ -40,7 +40,36 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.menuDeleteAccount).setOnClickListener(v -> {
-            Toast.makeText(this, "Delete Account functionality", Toast.LENGTH_SHORT).show();
+            new android.app.AlertDialog.Builder(this)
+                .setTitle("Supprimer le compte")
+                .setMessage("Êtes-vous sûr de vouloir supprimer définitivement votre compte ? Cette action est irréversible.")
+                .setPositiveButton("Supprimer", (dialog, which) -> {
+                    android.content.SharedPreferences prefs = getSharedPreferences("SympNetPrefs", MODE_PRIVATE);
+                    String token = "Bearer " + prefs.getString("userToken", "");
+                    String userId = prefs.getString("userId", "");
+                    
+                    com.sympnet.app.network.ApiClient.getClient().create(com.sympnet.app.network.ApiService.class)
+                        .deletePatientAccount(token, userId).enqueue(new retrofit2.Callback<Void>() {
+                            @Override
+                            public void onResponse(retrofit2.Call<Void> call, retrofit2.Response<Void> response) {
+                                if(response.isSuccessful()) {
+                                    prefs.edit().clear().apply();
+                                    Intent intent = new Intent(SettingsActivity.this, com.sympnet.app.activities.SplashActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(intent);
+                                    finish();
+                                } else {
+                                    Toast.makeText(SettingsActivity.this, "Erreur lors de la suppression", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                            @Override
+                            public void onFailure(retrofit2.Call<Void> call, Throwable t) {
+                                Toast.makeText(SettingsActivity.this, "Erreur réseau", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                })
+                .setNegativeButton("Annuler", null)
+                .show();
         });
 
         setupMenuItem(findViewById(R.id.menuHelp), "Aide & Support", R.drawable.ic_help);

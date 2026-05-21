@@ -165,8 +165,14 @@ public class ProfileFragment extends Fragment {
         }
 
         // Stats: Favoris
+        String favPrefix = "fav_" + prefs.getString("userId", "default_user") + "_";
         SharedPreferences favPrefs = requireContext().getSharedPreferences("doctor_favorites", Context.MODE_PRIVATE);
-        int favCount = favPrefs.getAll().size();
+        int favCount = 0;
+        for (java.util.Map.Entry<String, ?> entry : favPrefs.getAll().entrySet()) {
+            if (entry.getKey().startsWith(favPrefix) && Boolean.TRUE.equals(entry.getValue())) {
+                favCount++;
+            }
+        }
         TextView tvCountFav = view.findViewById(R.id.tvCountFav);
         TextView tvMenuFavBadge = view.findViewById(R.id.tvMenuFavCountBadge);
         TextView tvMenuFavText = view.findViewById(R.id.tvMenuFavCountText);

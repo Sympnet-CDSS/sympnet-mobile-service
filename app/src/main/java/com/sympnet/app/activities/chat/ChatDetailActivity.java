@@ -138,6 +138,7 @@ public class ChatDetailActivity extends BaseActivity {
         headerChat       = findViewById(R.id.headerChat);
         tvHeaderName     = findViewById(R.id.tvHeaderName);
         tvHeaderInitials = findViewById(R.id.tvHeaderInitials);
+        android.widget.ImageView ivHeaderAvatar = findViewById(R.id.ivHeaderAvatar);
         ImageButton btnBack = findViewById(R.id.btnBack);
 
         if (conversation != null) {
@@ -152,6 +153,20 @@ public class ChatDetailActivity extends BaseActivity {
                 if (parts.length > 1) initials += parts[1].charAt(0);
                 tvHeaderInitials.setText(initials.toUpperCase());
             }
+
+            if (conversation.getOtherUserAvatar() != null && !conversation.getOtherUserAvatar().isEmpty()) {
+                try {
+                    String base64 = conversation.getOtherUserAvatar();
+                    if (base64.contains(",")) base64 = base64.split(",")[1];
+                    byte[] bytes = android.util.Base64.decode(base64, android.util.Base64.DEFAULT);
+                    android.graphics.Bitmap bmp = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    if (bmp != null) {
+                        ivHeaderAvatar.setImageBitmap(bmp);
+                        ivHeaderAvatar.setVisibility(View.VISIBLE);
+                        tvHeaderInitials.setVisibility(View.GONE);
+                    }
+                } catch (Exception e) {}
+            }
         }
 
         btnBack.setOnClickListener(v -> finish());
@@ -163,7 +178,8 @@ public class ChatDetailActivity extends BaseActivity {
         ImageButton btnSend   = findViewById(R.id.btnSend);
         ImageButton btnAttach = findViewById(R.id.btnAttach);
 
-        messageAdapter = new MessageAdapter(messageList, currentUserId);
+        String partnerPhoto = (conversation != null) ? conversation.getOtherUserAvatar() : null;
+        messageAdapter = new MessageAdapter(messageList, currentUserId, partnerPhoto);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(messageAdapter);
 
@@ -319,11 +335,21 @@ public class ChatDetailActivity extends BaseActivity {
     }
 
     private void markConversationAsRead() {
+        boolean hasUnread = false;
         for (Message message : messageList) {
             if (message != null && !currentUserId.equals(message.getSenderId()) && !message.isRead()) {
-                webSocketManager.markAsRead(message.getId(), message.getSenderId());
                 message.setRead(true);
+                hasUnread = true;
             }
+        }
+        if (hasUnread && conversation != null && conversation.getId() != null) {
+            webSocketManager.markAsRead(conversation.getId());
+            // Also call REST API to ensure it's saved in DB reliably
+            String token = SessionManager.getInstance(this).getUserToken();
+            ApiClient.getClient().create(ApiService.class).markConversationAsRead("Bearer " + token, conversation.getId()).enqueue(new Callback<Void>() {
+                @Override public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> r) {}
+                @Override public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {}
+            });
         }
     }
 

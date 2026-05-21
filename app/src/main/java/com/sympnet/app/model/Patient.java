@@ -44,7 +44,7 @@ public class Patient {
     private String bloodType;
 
     @SerializedName("allergies")
-    private String allergies;
+    private java.util.List<String> allergies;
 
     @SerializedName("medicalHistory")
     private String medicalHistory;
@@ -71,7 +71,15 @@ public class Patient {
     public String getGender()            { return gender         != null ? gender         : ""; }
     public String getAddress()           { return address        != null ? address        : ""; }
     public String getBloodType()         { return bloodType      != null ? bloodType      : ""; }
-    public String getAllergies()         { return allergies      != null ? allergies      : ""; }
+    public String getAllergies() { 
+        if (allergies == null || allergies.isEmpty()) return "";
+        StringBuilder sb = new StringBuilder();
+        for(int i=0; i<allergies.size(); i++){
+            sb.append(allergies.get(i));
+            if(i < allergies.size()-1) sb.append(", ");
+        }
+        return sb.toString();
+    }
     public String getMedicalHistory()    { return medicalHistory != null ? medicalHistory : ""; }
     public int    getConsultationCount() { return consultationCount; }
     public String getUserId()            { return userId         != null ? userId         : ""; }

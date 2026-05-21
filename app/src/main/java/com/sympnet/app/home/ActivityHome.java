@@ -179,16 +179,21 @@ public class ActivityHome extends BaseActivity {
                     boolean hasUnread = false;
                     
                     for (PatientNotificationDto n : notifs) {
+                        String titleLower = n.title != null ? n.title.toLowerCase() : "";
+                        boolean isMessage = titleLower.contains("message") || titleLower.contains("nouveau message");
+
                         if (!n.isRead) {
-                            hasUnread = true;
-                            // Si nouvelle notif (pas encore alertée)
+                            if (!isMessage) {
+                                hasUnread = true;
+                            }
+                            // Si nouvelle notif (pas encore alertée), on affiche la push notification système dans tous les cas
                             if (!notifiedIds.contains(n.id)) {
                                 NotificationHelper.showNotification(ActivityHome.this, n.title, n.message);
                                 notifiedIds.add(n.id);
                             }
                         }
                     }
-                    // Affiche ou cache le point rouge
+                    // Affiche ou cache le point rouge pour les VRAIES notifications
                     if (notificationBadge != null) {
                         notificationBadge.setVisibility(hasUnread ? View.VISIBLE : View.GONE);
                     }
@@ -342,7 +347,7 @@ public class ActivityHome extends BaseActivity {
                     // Sauvegarde le cache pour FavoriteDoctorsActivity
                     cacheDoctors(allDoctors);
 
-                    doctorAdapter = new DoctorAdapter(allDoctors);
+                    doctorAdapter = new DoctorAdapter(allDoctors, userLocation);
                     recyclerDoctors.setAdapter(doctorAdapter);
                     Log.d(TAG, "Loaded " + allDoctors.size() + " doctors");
 

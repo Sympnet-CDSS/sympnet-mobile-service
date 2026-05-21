@@ -20,9 +20,9 @@
             android:id="@+id/splash_logo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="22dp"
+            android:padding="12dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/img_sympnet_logo" />
+            android:src="@mipmap/ic_launcher_round" />
     </androidx.cardview.widget.CardView>
 
     <TextView

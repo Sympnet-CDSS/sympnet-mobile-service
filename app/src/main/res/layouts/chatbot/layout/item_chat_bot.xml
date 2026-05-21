@@ -10,11 +10,9 @@
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_gravity="top"
-        android:background="#0D9488"
-        android:padding="6dp"
-        android:src="@drawable/ic_brain"
-        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Circle"
-        app:tint="@color/white" />
+        android:src="@drawable/ic_chatbot_avatar"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Circle" />
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="wrap_content"
