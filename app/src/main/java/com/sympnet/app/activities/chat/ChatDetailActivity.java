@@ -240,7 +240,7 @@ public class ChatDetailActivity extends BaseActivity {
                     Log.d(TAG, " Message envoyé via REST");
                     message.setDelivered(true);
                     // On peut mettre à jour l'ID réel ici si nécessaire
-                } else 
+                } else {
                     Log.e(TAG, " Erreur envoi REST: " + response.code());
                     // Fallback SignalR si l'API échoue
                     webSocketManager.sendMessage(convId, content, false);

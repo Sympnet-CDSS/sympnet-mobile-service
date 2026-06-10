@@ -347,7 +347,7 @@ public class ActivityHome extends BaseActivity {
                     // Sauvegarde le cache pour FavoriteDoctorsActivity
                     cacheDoctors(allDoctors);
 
-                    doctorAdapter = new DoctorAdapter(allDoctors, userLocation);
+                    doctorAdapter = new DoctorAdapter(allDoctors);
                     recyclerDoctors.setAdapter(doctorAdapter);
                     Log.d(TAG, "Loaded " + allDoctors.size() + " doctors");
 
