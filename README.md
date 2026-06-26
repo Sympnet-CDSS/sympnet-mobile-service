@@ -95,4 +95,4 @@ Clinical Safety: AI is strictly constrained to act as a Decision Support System 
 
 - **Sirine Rezgui** - _Software Engineering Student_ - [LinkedIn](www.linkedin.com/in/sirine-rezgui)
 
-- **Yasmine Ouertani** - _Software Engineering Student_ - [LinkedIn](www.linkedin.com/in/yasmine-ouertani)
+- **Yasmine Ouertani** - _Software Engineering Student_ - [LinkedIn](www.linkedin.com/in/yasmine-ouertani-a9946a3a3)
