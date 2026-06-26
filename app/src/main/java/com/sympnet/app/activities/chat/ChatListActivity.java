@@ -59,7 +59,7 @@ public class ChatListActivity extends AppCompatActivity implements WebSocketMana
             @Override
             public void run() {
                 loadConversations();
-                refreshHandler.postDelayed(this, 15000); // Rafraîchir toutes les 15s
+                refreshHandler.postDelayed(this, 15000); 
             }
         };
         refreshHandler.postDelayed(refreshRunnable, 15000);

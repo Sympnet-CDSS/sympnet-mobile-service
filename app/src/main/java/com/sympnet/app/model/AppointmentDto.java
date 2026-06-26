@@ -11,11 +11,8 @@ public class AppointmentDto {
     @SerializedName("doctorSpeciality") public String doctorSpeciality;
     @SerializedName("doctorAddress")    public String doctorAddress;
 
-    // Le backend renvoie un seul champ DateTime ISO 8601 : "2025-06-15T10:30:00"
-    // On va le splitter dans l'Activity
     @SerializedName("dateTime")     public String dateTime;   // "yyyy-MM-ddTHH:mm:ss"
 
-    // Champs étendus 
     @SerializedName("duration")         public int     duration   = 30;
     @SerializedName("type")             public String  type       = "InPerson";
     @SerializedName("isUrgent")         public boolean isUrgent   = false;
@@ -24,10 +21,10 @@ public class AppointmentDto {
     @SerializedName("reason")           public String  reason;
 
 
-    // Helpers pour splitter dateTime côté mobile
+    // Helpers pour splitter date and time
     public String getAppointmentDate() {
         if (dateTime == null || dateTime.length() < 10) return "";
-        return dateTime.substring(0, 10); // "yyyy-MM-dd"
+        return dateTime.substring(0, 10); 
     }
 
     public String getAppointmentTime() {

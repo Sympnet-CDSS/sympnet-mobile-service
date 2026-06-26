@@ -16,12 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.sympnet.app.R;
 import com.sympnet.app.activities.auth.LoginActivity;
 
-/**
- * Splash screen — always the launcher activity.
- * Routes to OnboardingActivity on first launch,
- * or directly to LoginActivity on every subsequent launch.
- *
- */
+
 public class SplashActivity extends BaseActivity {
 
     private static final String PREFS_NAME = "sympnet_prefs";

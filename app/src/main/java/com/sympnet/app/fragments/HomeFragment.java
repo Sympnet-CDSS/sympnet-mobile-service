@@ -37,11 +37,11 @@ public class HomeFragment extends Fragment {
         btnFindDoctor = view.findViewById(R.id.btn_find_doctor);
         btnConsultation = view.findViewById(R.id.btn_consultation);
 
-        // REAL DATA: Get User Name from SharedPreferences
+        //  Get User Name from SharedPreferences
         SharedPreferences prefs = getActivity().getSharedPreferences("SympNetPrefs", Context.MODE_PRIVATE);
         String name = prefs.getString("userName", "User");
         
-        // REAL DATA: Get Current Date
+        //  Get Current Date
         String currentDate = new SimpleDateFormat("EEEE, MMM dd", Locale.getDefault()).format(new Date());
 
         tvWelcome.setText("Welcome back, " + name + "!\n" + currentDate);
@@ -52,12 +52,6 @@ public class HomeFragment extends Fragment {
             startActivity(intent);
         });
 
-        btnBody3D.setOnClickListener(v -> {
-            // Intent for Body 3D if activity exists
-        });
-
-        btnConsultation.setOnClickListener(v -> {
-            // Intent for Consultation if activity exists
-        });
+       
     }
 }

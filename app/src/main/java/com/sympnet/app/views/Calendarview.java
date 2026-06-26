@@ -21,7 +21,7 @@ import java.util.Locale;
 public class Calendarview extends LinearLayout {
 
     public interface OnDaySelectedListener {
-        /** @param dateMillis midnight (UTC) of the selected day */
+        /** @param dateMillis */
         void onDaySelected(long dateMillis);
     }
 
@@ -53,7 +53,6 @@ public class Calendarview extends LinearLayout {
         setOrientation(VERTICAL);
         setPadding(0, 8, 0, 8);
 
-        //  Header row: < MONTH YEAR > 
         LinearLayout header = new LinearLayout(ctx);
         header.setOrientation(HORIZONTAL);
         header.setGravity(Gravity.CENTER_VERTICAL);
@@ -114,7 +113,7 @@ public class Calendarview extends LinearLayout {
         Calendar cal = (Calendar) displayedMonth.clone();
         cal.set(Calendar.DAY_OF_MONTH, 1);
 
-        // Monday-based offset (Mon=0 --> Sun=6)
+        // Monday-based offset 
         int firstDow = cal.get(Calendar.DAY_OF_WEEK); 
         int offset   = (firstDow == Calendar.SUNDAY) ? 6 : (firstDow - Calendar.MONDAY);
 
@@ -162,7 +161,7 @@ public class Calendarview extends LinearLayout {
                 final long ms = cellMillis;
                 tv.setOnClickListener(v -> {
                     selectedDateMillis = ms;
-                    renderMonth(); // redraw to reflect selection
+                    renderMonth(); 
                     if (listener != null) listener.onDaySelected(ms);
                 });
             }

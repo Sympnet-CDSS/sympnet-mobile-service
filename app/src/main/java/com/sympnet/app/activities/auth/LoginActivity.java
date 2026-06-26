@@ -93,7 +93,6 @@ public class LoginActivity extends BaseActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         btnGoogleLogin.setOnClickListener(v -> {
-            // Force la déconnexion pour toujours afficher le sélecteur de compte Google
             mGoogleSignInClient.signOut().addOnCompleteListener(this, task -> {
                 Intent signInIntent = mGoogleSignInClient.getSignInIntent();
                 startActivityForResult(signInIntent, RC_SIGN_IN);

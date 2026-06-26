@@ -93,9 +93,9 @@ public class EditProfileActivity extends AppCompatActivity {
         prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 
         bindViews();
-        loadLocalData();       // Prefill local cache immediately
+        loadLocalData();       
         setupListeners();
-        fetchPatientProfile();  // Retrieve actual data from the server in real-time
+        fetchPatientProfile();  
     }
 
     private void bindViews() {

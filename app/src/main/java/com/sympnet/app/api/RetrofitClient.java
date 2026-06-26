@@ -10,7 +10,7 @@ import okhttp3.Request;
 
 public class RetrofitClient {
 
-    private static final String BASE_URL = "https://faster-say-trimmer.ngrok-free.dev/";
+    private static final String BASE_URL = "https://unequal-barrier-placate.ngrok-free.dev/";
     private static Context appContext;
 
     public static void init(Context context) {
@@ -28,6 +28,9 @@ public class RetrofitClient {
         final String finalToken = token;
 
         OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
+                .readTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
+                .writeTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
                 .addInterceptor(chain -> {
                     Request.Builder builder = chain.request().newBuilder()
                             .addHeader("ngrok-skip-browser-warning", "true")

@@ -11,7 +11,7 @@ import okhttp3.Request;
 
 public class ApiClient {
 
-    private static final String BASE_URL = "https://faster-say-trimmer.ngrok-free.dev/";
+    private static final String BASE_URL = "https://unequal-barrier-placate.ngrok-free.dev/";
     private static Context appContext;
 
     public static void init(Context context) {
@@ -33,7 +33,7 @@ public class ApiClient {
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(logging) //  Affiche tout le contenu JSON
+                .addInterceptor(logging) //  Affiche le contenu JSON
                 .addInterceptor(chain -> {
                     Request.Builder builder = chain.request().newBuilder()
                             .header("ngrok-skip-browser-warning", "true")

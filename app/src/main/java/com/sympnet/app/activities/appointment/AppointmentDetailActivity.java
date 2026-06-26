@@ -70,9 +70,9 @@ public class AppointmentDetailActivity extends BaseActivity {
         if (appointmentId != -1) loadAppointment(appointmentId);
     }
 
-    // ── Bind
+    //  Bind
     private void bindViews() {
-        tvDoctorName      = findViewById(R.id.tvDoctorName);//pour lier les vues XML au code Java
+        tvDoctorName      = findViewById(R.id.tvDoctorName);
         tvDoctorSpecialty = findViewById(R.id.tvDoctorSpecialty);
         tvLocation        = findViewById(R.id.tvLocation);
         tvAppointmentDate = findViewById(R.id.tvAppointmentDate);
@@ -110,7 +110,7 @@ public class AppointmentDetailActivity extends BaseActivity {
         });
     }
 
-    //  Populate ─
+    //  Populate 
     private void populate(AppointmentDto a) {
         tvDoctorName.setText(a.doctorName != null ? a.doctorName : "—");
         tvDoctorSpecialty.setText(a.doctorSpeciality != null ? a.doctorSpeciality : "—");
@@ -139,13 +139,13 @@ public class AppointmentDetailActivity extends BaseActivity {
         if (a.status != null && (a.status.equalsIgnoreCase("Confirmed") || a.status.equalsIgnoreCase("Confirmé"))) {
             btnMessage.setVisibility(View.VISIBLE);
             
-            // Set real chat logic here
+          
             btnMessage.setOnClickListener(v -> openChat(a));
         } else {
             btnMessage.setVisibility(View.GONE);
         }
 
-        // --- REAL RATING AND REVIEW SYSTEM ---
+        //  RATING AND REVIEW SYSTEM 
         String doctorKey = String.valueOf(a.doctorId);
         SharedPreferences ratingsPrefs = getSharedPreferences("doctor_ratings", MODE_PRIVATE);
         float savedRating = ratingsPrefs.getFloat(doctorKey, 0f);
@@ -170,7 +170,7 @@ public class AppointmentDetailActivity extends BaseActivity {
                 return;
             }
 
-            // Save locally so that it persists and updates
+            
             ratingsPrefs.edit()
                     .putFloat(doctorKey, rating)
                     .putString(doctorKey + "_comment", comment)

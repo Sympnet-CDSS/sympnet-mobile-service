@@ -423,7 +423,7 @@ public class ChatbotFragment extends Fragment {
         if (base64 != null && !base64.isEmpty() && ivUserAvatar != null) {
             try {
                 if (base64.startsWith("http") || base64.startsWith("/uploads")) {
-                    String url = base64.startsWith("http") ? base64 : "https://faster-say-trimmer.ngrok-free.dev" + base64;
+                    String url = base64.startsWith("http") ? base64 : "https://unequal-barrier-placate.ngrok-free.dev" + base64;
                     ivUserAvatar.clearColorFilter();
                     ivUserAvatar.setBackgroundResource(android.R.color.transparent);
                     ivUserAvatar.setPadding(0, 0, 0, 0);
@@ -460,7 +460,7 @@ public class ChatbotFragment extends Fragment {
     }
 
     private View addDiagnosticCard(String diagnosis, double score, String specialty) {
-        // Retirer le message "Analyse en cours"
+        // Retirer le message 
         updateLastBotMessage(null); 
 
         View view = LayoutInflater.from(getContext()).inflate(R.layout.item_ai_diagnostic_card, chatContainer, false);
@@ -475,7 +475,6 @@ public class ChatbotFragment extends Fragment {
         tvConfidencePercent.setText(percent + "%");
         pbConfidence.setProgress(percent);
 
-        // Couleurs dynamiques selon le score
         int color;
         if (percent < 40) {
             color = 0xFFEF4444; 
