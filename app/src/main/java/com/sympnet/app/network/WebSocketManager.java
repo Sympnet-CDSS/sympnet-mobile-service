@@ -15,8 +15,8 @@ public class WebSocketManager {
     private HubConnection hubConnection;
     private final java.util.List<ChatListener> listeners = new java.util.concurrent.CopyOnWriteArrayList<>();
 
-    //  app.MapHub<ChatHub>("/hubs/chat")
-    private static final String HUB_URL = "https://faster-say-trimmer.ngrok-free.dev/hubs/chat"; // ngrok
+
+    private static final String HUB_URL = "https://unequal-barrier-placate.ngrok-free.dev/hubs/chat"; // ngrok
 
     // Interface 
 
@@ -32,8 +32,6 @@ public class WebSocketManager {
         void onMessageRead(String messageId);
 
         void onTyping(String userId, String userName, boolean isTyping);
-
-
 
         void onUpdateConversationList();
 
@@ -83,7 +81,7 @@ public class WebSocketManager {
         );
     }
 
-    //  Register server→client handlers 
+    //  Register server
 
     private void registerHandlers() {
 
@@ -126,34 +124,24 @@ public class WebSocketManager {
         }, String.class, String.class);
     }
 
-    // ChatHub.SendMessage(string consultationId, string message, bool isVoice)
     public void sendMessage(String consultationId, String content, boolean isVoice) {
         invoke("SendMessage", consultationId, content, isVoice);
     }
-
-    // ChatHub.JoinConsultation(string consultationId)
     public void joinConsultation(String consultationId) {
         invoke("JoinConsultation", consultationId);
     }
-
-    // ChatHub.LeaveConsultation(string consultationId)
     public void leaveConsultation(String consultationId) {
         invoke("LeaveConsultation", consultationId);
     }
-
-    // ChatHub.SendTyping(string consultationId, bool isTyping)
     public void sendTyping(String consultationId, boolean isTyping) {
         invoke("SendTyping", consultationId, isTyping);
     }
-
-
 
     public void markAsRead(String conversationId) {
         if (hubConnection != null && hubConnection.getConnectionState() == HubConnectionState.CONNECTED) {
             hubConnection.send("MarkAsRead", conversationId);
         }
     }
-
 
     public void markAsRead(String messageId, String senderId) {
         invoke("MarkAsRead", messageId, senderId);

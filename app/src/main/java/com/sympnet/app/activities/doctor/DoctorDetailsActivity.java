@@ -260,7 +260,7 @@ public class DoctorDetailsActivity extends BaseActivity implements OnMapReadyCal
                                 if (tvHours != null) tvHours.setText("Non spécifié");
                                 return;
                             }
-                            // Just get the first active day or summarize it
+                            // Just get the first active day
                             StringBuilder sb = new StringBuilder();
                             for (Map<String, Object> h : hours) {
                                 Boolean active = (Boolean) h.get("isActive");

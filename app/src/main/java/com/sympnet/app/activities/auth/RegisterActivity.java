@@ -31,22 +31,22 @@ import okhttp3.Response;
 
 public class RegisterActivity extends BaseActivity {
 
-    private static final String BASE_URL = "https://faster-say-trimmer.ngrok-free.dev"; // ← ngrok URL
+    private static final String BASE_URL = "https://unequal-barrier-placate.ngrok-free.dev"; // ← ngrok URL
 
-    // Step 1
+   
     private EditText etFirstName, etLastName, etEmail, etPhone;
-    // Step 2
+   
     private EditText etDob, etAllergies;
     private Spinner spinnerGender, spinnerBlood, spinnerCity;
-    // Step 3
+  
     private EditText etPassword, etConfirmPassword;
-    // Step 4
+   
     private EditText etVerificationCode;
 
     private Button btnRegister;
     private int step = 1;
 
-    // Données temporaires à garder pour EditProfile après login
+   
     private String tempFirstName, tempLastName, tempPhone, tempDob,
             tempGender, tempBloodType, tempCity, tempAllergies;
 
@@ -127,7 +127,6 @@ public class RegisterActivity extends BaseActivity {
         String fullName = (etFirstName.getText().toString().trim()
                 + " " + etLastName.getText().toString().trim()).trim();
 
-        // Sauvegarde temporaire des données du formulaire
         tempFirstName = etFirstName.getText().toString().trim();
         tempLastName  = etLastName.getText().toString().trim();
         tempPhone     = etPhone.getText().toString().trim();
@@ -236,7 +235,6 @@ public class RegisterActivity extends BaseActivity {
                         btnRegister.setEnabled(true);
                         if (response.isSuccessful()) {
                             //  Sauvegarde les données du formulaire dans SharedPreferences
-                            // pour que EditProfile les affiche après le premier login
                             saveFormDataLocally();
 
                             Toast.makeText(RegisterActivity.this,
@@ -266,8 +264,6 @@ public class RegisterActivity extends BaseActivity {
         }
     }
 
-    //  Sauvegarde locale des données du formulaire 
-    // Ces données seront disponibles dans EditProfile dès le premier login
     private void saveFormDataLocally() {
         getSharedPreferences("SympNetPrefs", MODE_PRIVATE).edit()
                 .putString("userFirstName", tempFirstName)
@@ -281,7 +277,7 @@ public class RegisterActivity extends BaseActivity {
                 .apply();
     }
 
-    //  Step navigation 
+    //  navigation 
 
     private void showStep(int newStep) {
         step = newStep;

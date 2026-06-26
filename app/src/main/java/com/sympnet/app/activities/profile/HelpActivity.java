@@ -60,7 +60,7 @@ public class HelpActivity extends AppCompatActivity {
         ) {
             @Override
             public boolean isEnabled(int position) {
-                // Disable the first item (hint)
+                // Disable the first item 
                 return position != 0;
             }
             @Override
@@ -164,7 +164,7 @@ public class HelpActivity extends AppCompatActivity {
             return;
         }
 
-        // Afficher un état de chargement premium
+        
         android.app.ProgressDialog progressDialog = new android.app.ProgressDialog(this);
         progressDialog.setMessage("Envoi en cours...");
         progressDialog.setCancelable(false);
@@ -194,7 +194,7 @@ public class HelpActivity extends AppCompatActivity {
                 }
 
                 if (response.isSuccessful()) {
-                    // Afficher un dialogue de succès avec confirmation de transmission à l'administration
+                    // Afficher un dialogue de succès avec confirmation de transmission à l'admin
                     new MaterialAlertDialogBuilder(HelpActivity.this)
                             .setTitle("Message envoyé avec succès !")
                             .setMessage("Merci " + firstName + " ! Votre message concernant le sujet \"" + selectedSubject + "\" a bien été transmis à l'administration de SympNet.\n\nNotre équipe administrative vous répondra par email dans les plus brefs délais.")

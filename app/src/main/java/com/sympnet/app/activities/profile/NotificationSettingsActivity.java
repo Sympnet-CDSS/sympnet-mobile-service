@@ -22,9 +22,9 @@ public class NotificationSettingsActivity extends AppCompatActivity {
 
         SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
 
-        setupSwitch(R.id.settingGeneral,      "🔔 General Notification", "general",      prefs, true);
-        setupSwitch(R.id.settingSound,        "🔊 Sound",                "sound",        prefs, true);
-        setupSwitch(R.id.settingVibrate,      "📳 Vibrate",              "vibrate",      prefs, false);
+        setupSwitch(R.id.settingGeneral,      " General Notification", "general",      prefs, true);
+        setupSwitch(R.id.settingSound,        " Sound",                "sound",        prefs, true);
+        setupSwitch(R.id.settingVibrate,      " Vibrate",              "vibrate",      prefs, false);
 
     }
 

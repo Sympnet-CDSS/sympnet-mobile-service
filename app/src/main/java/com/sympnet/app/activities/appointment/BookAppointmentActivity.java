@@ -77,7 +77,7 @@ public class BookAppointmentActivity extends BaseActivity {
         btnBack.setOnClickListener(v -> finish());
     }
 
-    // Bind ─
+    // Bind 
     private void bindViews() {
         btnTypeInPerson    = findViewById(R.id.btnTypeInPerson);
         btnTypeTeleconsult = findViewById(R.id.btnTypeTeleconsult);
@@ -93,7 +93,7 @@ public class BookAppointmentActivity extends BaseActivity {
         tvDocAddress       = findViewById(R.id.tvDocAddress);
     }
 
-    // Appointment Type─
+    // Appointment
     private void setupTypeToggle() {
         btnTypeInPerson.setOnClickListener(v -> selectType(AppointmentType.InPerson));
         btnTypeTeleconsult.setOnClickListener(v -> selectType(AppointmentType.Teleconsultation));
@@ -113,7 +113,7 @@ public class BookAppointmentActivity extends BaseActivity {
                 getColorStateList(inPerson ? R.color.gray_100 : R.color.teal_500));
     }
 
-    // Calendar Strip─
+    // Calendar 
     private void setupCalendarStrip() {
         calendarStrip.removeAllViews();
         LocalDate today = LocalDate.now();
@@ -157,7 +157,7 @@ public class BookAppointmentActivity extends BaseActivity {
         }
     }
 
-    // Time Slots─
+    // Time Slots
     private final String[] TIME_SLOTS = {
             "09:00","09:30","10:00","10:30",
             "11:00","11:30","12:00","12:30",
@@ -171,7 +171,6 @@ public class BookAppointmentActivity extends BaseActivity {
             LocalTime t = LocalTime.parse(slot);
             boolean isSelected = t.equals(selectedTime);
 
-            // Vérifier si ce créneau est déjà réservé par le médecin
             String prefix = selectedDate.toString() + "T" + slot;
             boolean isBooked = false;
             for (String booked : bookedSlots) {
@@ -194,13 +193,13 @@ public class BookAppointmentActivity extends BaseActivity {
             tv.setLayoutParams(params);
 
             if (isBooked) {
-                // Créneau indisponible: rouge doux/grisé et inactif
+                // Créneau indisponible
                 tv.setBackgroundResource(R.drawable.search_bg);
                 tv.getBackground().setTint(0xFFFFEAEA);
                 tv.setTextColor(0xFFE57373);
                 tv.setEnabled(false);
                 if (t.equals(selectedTime)) {
-                    selectedTime = null; // Dé-sélectionner s'il a été pris
+                    selectedTime = null; 
                 }
             } else if (isSelected) {
                 tv.setBackgroundResource(R.drawable.search_bg);
@@ -226,7 +225,7 @@ public class BookAppointmentActivity extends BaseActivity {
             timeSlotsGrid.addView(tv);
         }
 
-        // Bouton de confirmation: passe au vert si horaire sélectionné, gris sinon
+        // Bouton de confirmation
         if (selectedTime == null) {
             btnConfirmBooking.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFCFD8DC)); // Gris
             btnConfirmBooking.setEnabled(false);
@@ -277,7 +276,7 @@ public class BookAppointmentActivity extends BaseActivity {
         btnConfirmBooking.setText("Envoi…");
 
         AppointmentService service = ApiClient.getClient().create(AppointmentService.class);
-        // ← passer "Bearer " + token comme premier argument
+        //  passer "Bearer " + token
         service.createAppointment("Bearer " + token, req).enqueue(new Callback<AppointmentCreatedResponse>() {
             @Override
             public void onResponse(Call<AppointmentCreatedResponse> call,
@@ -338,7 +337,7 @@ public class BookAppointmentActivity extends BaseActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     bookedSlots.clear();
                     bookedSlots.addAll(response.body());
-                    setupTimeSlots(); // Rafraîchit les cases horaires
+                    setupTimeSlots(); 
                 }
             }
 

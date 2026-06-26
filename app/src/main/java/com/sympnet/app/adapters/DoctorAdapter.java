@@ -94,11 +94,11 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.ViewHolder
 
         // Message button removed
 
-        // Bouton Info : affiche les infos du médecin 
+      // affiche les infos du médecin 
         holder.btnInfoCircle.setOnClickListener(v -> {
-            String info = "👨‍⚕️ Dr. " + doctor.getName() + "\n"
-                    + "🏥 Spécialité : " + doctor.getSpecialty() + "\n"
-                    + "📍 Adresse : " + (doctor.getAddress() != null ? doctor.getAddress() : "N/A");
+            String info = " Dr. " + doctor.getName() + "\n"
+                    + " Spécialité : " + doctor.getSpecialty() + "\n"
+                    + " Adresse : " + (doctor.getAddress() != null ? doctor.getAddress() : "N/A");
 
             new android.app.AlertDialog.Builder(context)
                     .setTitle("Informations")
@@ -107,7 +107,7 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.ViewHolder
                     .show();
         });
 
-        // Bouton Favori: ajoute/retire des favoris
+        // ajoute/retire des favoris
         SharedPreferences prefs = context.getSharedPreferences(PREFS_FAVORITES, Context.MODE_PRIVATE);
         String key = "fav_" + doctor.getId();
         boolean isFav = prefs.getBoolean(key, false);

@@ -41,8 +41,7 @@ public class OnboardingActivity extends BaseActivity {
         // First-launch guard
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         if (prefs.getBoolean(KEY_FIRST, false)) {
-            // Not the first launch — skip directly to Login
-            goToLogin();
+            // Not the first launch 
             return;
         }
 
@@ -108,11 +107,11 @@ public class OnboardingActivity extends BaseActivity {
 
             LinearLayout.LayoutParams lp;
             if (i == activePosition) {
-                // Active dot: wide pill
+                // Active dot
                 lp = new LinearLayout.LayoutParams(dp24, dp8);
                 dot.setBackgroundResource(R.drawable.shape_dot_active);
             } else {
-                // Inactive: small circle
+                // Inactive
                 lp = new LinearLayout.LayoutParams(dp8, dp8);
                 dot.setBackgroundResource(R.drawable.shape_dot_inactive);
             }

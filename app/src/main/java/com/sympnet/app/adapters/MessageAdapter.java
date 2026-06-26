@@ -77,7 +77,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         void bind(Message message) {
             tvMessage.setText(message.getContent());
             if (message.getSentAt() != null) {
-                // Affichage direct de la String date ou extraction de l'heure
+               
                 String time = message.getSentAt();
                 if (time.contains("T") && time.contains(":")) {
                     try {

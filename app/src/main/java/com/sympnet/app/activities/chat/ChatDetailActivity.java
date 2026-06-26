@@ -88,7 +88,7 @@ public class ChatDetailActivity extends BaseActivity {
             String docName  = getIntent().getStringExtra(EXTRA_DOCTOR_NAME);
             if (doctorId != null) {
                 createOrGetConversation(doctorId, docName);
-                // Return for now, createOrGetConversation will re-initialize
+               
                 return;
             } else {
                 Toast.makeText(this, "Données de conversation manquantes", Toast.LENGTH_SHORT).show();
@@ -213,7 +213,7 @@ public class ChatDetailActivity extends BaseActivity {
         String convId = conversation.getId();
         if (convId == null) return;
 
-        // On ajoute le message localement pour une UI fluide
+        // On ajoute le message localement 
         Message message = new Message(currentUserId, conversation.getOtherUserId(), content);
         message.setId("temp_" + System.currentTimeMillis());
         message.setSenderName(currentUserName);
@@ -239,7 +239,7 @@ public class ChatDetailActivity extends BaseActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     Log.d(TAG, " Message envoyé via REST");
                     message.setDelivered(true);
-                    // On peut mettre à jour l'ID réel ici si nécessaire
+                    
                 } else {
                     Log.e(TAG, " Erreur envoi REST: " + response.code());
                     // Fallback SignalR si l'API échoue
@@ -275,12 +275,12 @@ public class ChatDetailActivity extends BaseActivity {
                     public void onResponse(@NonNull Call<List<Message>> call,
                                            @NonNull Response<List<Message>> response) {
                         if (response.isSuccessful() && response.body() != null) {
-                            // Ne vider que si on est au premier chargement
+                           
                             if (messageList.isEmpty()) {
                                 messageList.addAll(response.body());
                                 messageAdapter.notifyDataSetChanged();
                             } else {
-                                // Merging simple: ajouter seulement ceux qu'on n'a pas
+                               
                                 for (Message m : response.body()) {
                                     boolean exists = false;
                                     for (Message existing : messageList) {
@@ -344,7 +344,7 @@ public class ChatDetailActivity extends BaseActivity {
         }
         if (hasUnread && conversation != null && conversation.getId() != null) {
             webSocketManager.markAsRead(conversation.getId());
-            // Also call REST API to ensure it's saved in DB reliably
+            //call REST API to ensure it's saved in DB 
             String token = SessionManager.getInstance(this).getUserToken();
             ApiClient.getClient().create(ApiService.class).markConversationAsRead("Bearer " + token, conversation.getId()).enqueue(new Callback<Void>() {
                 @Override public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> r) {}
@@ -366,7 +366,7 @@ public class ChatDetailActivity extends BaseActivity {
     public void onNewMessage(Message message) {
         runOnUiThread(() -> {
             if (message != null && message.getSenderId() != null) {
-                // Éviter les doublons : si c'est nous qui avons envoyé le message, on l'ignore
+            
                 if (message.getSenderId().equals(SessionManager.getInstance(ChatDetailActivity.this).getCurrentUserId())) {
                     return;
                 }
@@ -408,7 +408,7 @@ public class ChatDetailActivity extends BaseActivity {
     
     @Override
     public void onUpdateConversationList() {
-        // Optionnel : recharger les messages si on est dans la conversation
+       
         runOnUiThread(this::loadMessages);
     }
 

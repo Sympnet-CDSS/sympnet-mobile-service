@@ -106,7 +106,7 @@ public class MainActivity extends BaseActivity {
                     updateNavIcons(navProfile);
                     break;
                 default:
-                    // Default to Home or previous state if unknown
+                    // Default to Home or previous state 
                     break;
             }
         }
